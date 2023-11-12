@@ -1082,8 +1082,7 @@ class ProductsTableSeeder extends Seeder
             ],
             [
                 'titulo' => 'Oblea Bon o Bon Blanca',
-                'precio_c7622201816414
-                osto' => '190.46',
+                'precio_costo' => '190.46',
                 'precio_venta' => '290',
                 'codigo_barra' =>  '7790580346614',
                 'stock_actual' => '9999'

@@ -33,7 +33,8 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        return view('productos.create');
+        $proveedores = Proveedor::all();
+        return view('productos.create', compact('proveedores'));
     }
 
     /**
@@ -41,6 +42,7 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
+
         $messages = [
             'titulo.required' => 'El campo Título es obligatorio.',
             'titulo.unique' => 'El título ya está en uso.',
@@ -59,16 +61,33 @@ class ProductoController extends Controller
             'precio_venta' => 'required|numeric',
             'precio_costo' => 'required|numeric',
             'stock' => 'required|numeric',
-            'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'size:13', 'unique:productos,codigo_barra,'],
+            'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
         ], $messages);
 
         $producto = new Producto;
         $producto->titulo = $request->titulo;
         $producto->precio_venta = $request->precio_venta;
         $producto->precio_costo = $request->precio_costo;
-        $producto->stock = $request->stock;
+        $producto->stock_actual = $request->stock;
         $producto->codigo_barra = $request->codigo_barra;
+        $producto->usar_control_por_lote = $request->control_por_lote == "on" ? 1 : 0;
         $producto->save();
+
+        if ($request->control_por_lote == "on") {
+            $newLoteProducto = new Lote;
+            $newLoteProducto->producto_id = $producto->id;
+            $newLoteProducto->fecha_compra = $request->fecha_compra ?? now();
+            $newLoteProducto->fecha_vencimiento = $request->fecha_vencimiento ?? null;
+            $newLoteProducto->numero_factura = $request->numero_factura ?? null;
+            $newLoteProducto->proveedor_id = $request->proveedor_id ?? null;
+            $newLoteProducto->precio_costo = $request->precio_costo;
+            $newLoteProducto->precio_venta = $request->precio_venta;
+            $newLoteProducto->precio_dolar = $request->precio_dolar ?? null;
+            $newLoteProducto->cantidad_inicial = $request->stock;
+            $newLoteProducto->cantidad_restante = $request->stock;
+            $newLoteProducto->save();
+        }
+
         return redirect()->route('create.productos');
     }
 
@@ -121,18 +140,18 @@ class ProductoController extends Controller
                 $newProducto->save();
 
                 if ($producto['usar_control_por_lote']) {
-                    $newLotoProducto = new Lote;
-                    $newLotoProducto->producto_id = $newProducto->id;
-                    $newLotoProducto->fecha_compra = $producto['fecha_compra'] ?? now();
-                    $newLotoProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
-                    $newLotoProducto->numero_factura = $producto['numero_factura'] ?? null;
-                    $newLotoProducto->proveedor_id = $producto['proveedor_id'] ?? null;
-                    $newLotoProducto->precio_costo = $producto['precio_costo'];
-                    $newLotoProducto->precio_venta = $producto['precio_venta'];
-                    $newLotoProducto->precio_dolar = $producto['precio_dolar'] ?? null;
-                    $newLotoProducto->cantidad_inicial = $producto['stock'];
-                    $newLotoProducto->cantidad_restante = $producto['stock'];
-                    $newLotoProducto->save();
+                    $newLoteProducto = new Lote;
+                    $newLoteProducto->producto_id = $newProducto->id;
+                    $newLoteProducto->fecha_compra = $producto['fecha_compra'] ?? now();
+                    $newLoteProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
+                    $newLoteProducto->numero_factura = $producto['numero_factura'] ?? null;
+                    $newLoteProducto->proveedor_id = $producto['proveedor_id'] ?? null;
+                    $newLoteProducto->precio_costo = $producto['precio_costo'];
+                    $newLoteProducto->precio_venta = $producto['precio_venta'];
+                    $newLoteProducto->precio_dolar = $producto['precio_dolar'] ?? null;
+                    $newLoteProducto->cantidad_inicial = $producto['stock'];
+                    $newLoteProducto->cantidad_restante = $producto['stock'];
+                    $newLoteProducto->save();
                 }
 
             }
@@ -252,18 +271,18 @@ class ProductoController extends Controller
                 $updateProducto->update();
 
                 if ($producto['usar_control_por_lote']) {
-                    $newLotoProducto = new Lote;
-                    $newLotoProducto->producto_id = $updateProducto->id;
-                    $newLotoProducto->fecha_compra = $producto['fecha_compra'] ?? now();
-                    $newLotoProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
-                    $newLotoProducto->numero_factura = $producto['numero_factura'] ?? null;
-                    $newLotoProducto->proveedor_id = $producto['proveedor_id'] ?? null;
-                    $newLotoProducto->precio_costo = $producto['precio_costo'];
-                    $newLotoProducto->precio_venta = $producto['precio_venta'];
-                    $newLotoProducto->precio_dolar = $producto['precio_dolar'] ?? null;
-                    $newLotoProducto->cantidad_inicial = $producto['stock'];
-                    $newLotoProducto->cantidad_restante = $producto['stock'];
-                    $newLotoProducto->save();
+                    $newLoteProducto = new Lote;
+                    $newLoteProducto->producto_id = $updateProducto->id;
+                    $newLoteProducto->fecha_compra = $producto['fecha_compra'] ?? now();
+                    $newLoteProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
+                    $newLoteProducto->numero_factura = $producto['numero_factura'] ?? null;
+                    $newLoteProducto->proveedor_id = $producto['proveedor_id'] ?? null;
+                    $newLoteProducto->precio_costo = $producto['precio_costo'];
+                    $newLoteProducto->precio_venta = $producto['precio_venta'];
+                    $newLoteProducto->precio_dolar = $producto['precio_dolar'] ?? null;
+                    $newLoteProducto->cantidad_inicial = $producto['stock'];
+                    $newLoteProducto->cantidad_restante = $producto['stock'];
+                    $newLoteProducto->save();
                 }
 
             }
