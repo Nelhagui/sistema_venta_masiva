@@ -42,50 +42,52 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-
         $messages = [
-            'titulo.required' => 'El campo Título es obligatorio.',
-            'titulo.unique' => 'El título ya está en uso.',
-            'precio_venta.required' => 'El campo Precio de venta es obligatorio.',
-            'precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
-            'precio_costo.required' => 'El campo Precio de costo es obligatorio.',
-            'precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
-            'stock.required' => 'El campo Stock es obligatorio.',
-            'stock.numeric' => 'El campo Stock debe ser un valor numérico.',
-            'codigo_barra.numeric' => 'El campo requiere números.',
-            'codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
+            'productos.*.titulo.required' => 'El campo Título es obligatorio.',
+            'productos.*.titulo.unique' => 'El título ya está en uso.',
+            'productos.*.precio_venta.required' => 'El campo Precio de venta es obligatorio.',
+            'productos.*.precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
+            'productos.*.precio_costo.required' => 'El campo Precio de costo es obligatorio.',
+            'productos.*.precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
+            'productos.*.stock.required' => 'El campo Stock es obligatorio.',
+            'productos.*.stock.numeric' => 'El campo Stock debe ser un valor numérico.',
+            'productos.*.codigo_barra.numeric' => 'El campo requiere números.',
+            'productos.*.codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
         ];
 
         $request->validate([
-            'titulo' => 'required|unique:productos,titulo,',
-            'precio_venta' => 'required|numeric',
-            'precio_costo' => 'required|numeric',
-            'stock' => 'required|numeric',
-            'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
+            'productos.*.titulo' => 'required|unique:productos,titulo,',
+            'productos.*.precio_venta' => 'required|numeric',
+            'productos.*.precio_costo' => 'required|numeric',
+            'productos.*.stock' => 'required|numeric',
+            'productos.*.codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
         ], $messages);
 
-        $producto = new Producto;
-        $producto->titulo = $request->titulo;
-        $producto->precio_venta = $request->precio_venta;
-        $producto->precio_costo = $request->precio_costo;
-        $producto->stock_actual = $request->stock;
-        $producto->codigo_barra = $request->codigo_barra;
-        $producto->usar_control_por_lote = $request->control_por_lote == "on" ? 1 : 0;
-        $producto->save();
-
-        if ($request->control_por_lote == "on") {
-            $newLoteProducto = new Lote;
-            $newLoteProducto->producto_id = $producto->id;
-            $newLoteProducto->fecha_compra = $request->fecha_compra ?? now();
-            $newLoteProducto->fecha_vencimiento = $request->fecha_vencimiento ?? null;
-            $newLoteProducto->numero_factura = $request->numero_factura ?? null;
-            $newLoteProducto->proveedor_id = $request->proveedor_id ?? null;
-            $newLoteProducto->precio_costo = $request->precio_costo;
-            $newLoteProducto->precio_venta = $request->precio_venta;
-            $newLoteProducto->precio_dolar = $request->precio_dolar ?? null;
-            $newLoteProducto->cantidad_inicial = $request->stock;
-            $newLoteProducto->cantidad_restante = $request->stock;
-            $newLoteProducto->save();
+        foreach ($request->input('productos') as $productoData) {
+            $producto = new Producto;
+            $producto->titulo = $productoData['titulo'];
+            $producto->precio_venta = $productoData['precio_venta'];
+            $producto->precio_costo = $productoData['precio_costo'];
+            $producto->stock_actual = $productoData['stock'];
+            $producto->codigo_barra = $productoData['codigo_barra'];
+            $producto->usar_control_por_lote = isset($productoData['control_por_lote']);
+            $producto->save();
+    
+            // Agrega lógica adicional si es necesario, por ejemplo, para lotes
+            if (isset($productoData['control_por_lote'])) {
+                $newLoteProducto = new Lote;
+                $newLoteProducto->producto_id = $producto->id;
+                $newLoteProducto->fecha_compra = $productoData['fecha_compra'] ?? now();
+                $newLoteProducto->fecha_vencimiento = $productoData['fecha_vencimiento'] ?? null;
+                $newLoteProducto->numero_factura = $productoData['numero_factura'] ?? null;
+                $newLoteProducto->proveedor_id = $productoData['proveedor_id'] ?? null;
+                $newLoteProducto->precio_costo = $productoData['precio_costo']; // Asegúrate de ajustar esto según tu estructura
+                $newLoteProducto->precio_venta = $productoData['precio_venta']; // Asegúrate de ajustar esto según tu estructura
+                $newLoteProducto->precio_dolar = $productoData['precio_dolar'] ?? null;
+                $newLoteProducto->cantidad_inicial = $productoData['stock']; // Asegúrate de ajustar esto según tu estructura
+                $newLoteProducto->cantidad_restante = $productoData['stock']; // Asegúrate de ajustar esto según tu estructura
+                $newLoteProducto->save();
+            }
         }
 
         return redirect()->route('create.productos');
