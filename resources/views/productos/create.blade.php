@@ -161,7 +161,9 @@
                                         type="text"
                                         name="productos[0][numero_factura]"
                                         value="{{old('numero_factura')}}"
+                                        id="numero_factura_0"
                                         style="padding: 2px"   
+                                        disabled
                                     />
                                     @error('numero_factura')
                                         <div class="alert alert-danger">{{ $message }}</div>
@@ -294,7 +296,8 @@
                             type="text"
                             name="productos[${contadorFilas}][numero_factura]" 
                             value="{{old('numero_factura')}}"
-                            style="padding: 2px"   
+                            style="padding: 2px"  
+                            id="numero_factura_${contadorFilas}" 
                         />
                         @error('numero_factura')
                             <div class="alert alert-danger">{{ $message }}</div>
@@ -306,40 +309,25 @@
                 cuerpoTabla.appendChild(nuevaFila)
                 contadorFilas++
 
-                deshabilitarCamposAdicionales();
             }
 
-            function deshabilitarCamposAdicionales(valor) {
-                let checkbox = document.getElementById(`control_por_lote_${valor}`);
-                let fechaVencimiento = document.getElementById(`fecha_vencimiento_${valor}`);
-                let proveedor = document.getElementById(`proveedor_id_${valor}`);
-
-                fechaVencimiento.disabled = !checkbox.checked;
-                proveedor.disabled = !checkbox.checked;
-            }
 
                // Agrega un evento de clic al botón de agregar producto
                 let agregarProductoBtn = document.getElementById('agregarProductoBtn');
                 agregarProductoBtn.addEventListener('click', function () {
                     agregarFila();
                 });
-
-                // Agrega un evento de cambio a cada checkbox de control_por_lote
-                for (let i = 0; i < contadorFilas; i++) {
-                    let checkbox = document.getElementById(`control_por_lote_${i}`);
-                    checkbox.addEventListener('change', function () {
-                        deshabilitarCamposAdicionales();
-                    });
-                } 
             })
 
             function deshabilitarCamposAdicionales(valor) {
                 let checkbox = document.getElementById(`control_por_lote_${valor}`);
                 let fechaVencimiento = document.getElementById(`fecha_vencimiento_${valor}`);
                 let proveedor = document.getElementById(`proveedor_id_${valor}`);
+                let factura = document.getElementById(`numero_factura_${valor}`);
 
                 fechaVencimiento.disabled = !checkbox.checked;
                 proveedor.disabled = !checkbox.checked;
+                factura.disabled = !checkbox.checked;
             }
     </script>
     
