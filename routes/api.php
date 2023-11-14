@@ -28,6 +28,8 @@ Route::get('/productos', function () {
     return $productos;
 });
 
+Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busqueda']);
+
 
 Route::get('/proveedores', function () {
     $proveedores = Proveedor::all();

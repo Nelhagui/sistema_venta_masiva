@@ -34,7 +34,17 @@ class ProductoController extends Controller
     public function create()
     {
         $proveedores = Proveedor::all();
-        return view('productos.create', compact('proveedores'));
+        $productos = Producto::all();
+        return view('productos.create', compact('proveedores', 'productos'));
+    }
+
+    public function busqueda($busqueda)
+    {
+        $productos = Producto::where('titulo', 'LIKE', '%' . $busqueda . '%')
+            ->orWhere('codigo_barra', 'LIKE', '%' . $busqueda . '%')
+            ->orderBy('titulo', 'ASC')
+            ->get();
+        return $productos;
     }
 
     /**

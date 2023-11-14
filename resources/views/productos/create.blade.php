@@ -19,8 +19,25 @@
             border-color: rgb(71 85, 105);
         }
         .border-slate-700 {
-        --tw-border-opacity: 1;
-        border-color: rgb(51 6,5 85);
+            --tw-border-opacity: 1;
+            border-color: rgb(51 6,5 85);
+        }
+
+        .dinone {display: none !important;}
+
+        #buscador_producto {
+            min-width: 450px;
+            appearance: none;
+            background-color: #fff;
+            border-color: #6b7280;
+            border-width: 1px;
+            border-radius: 0px;
+            padding-top: 0.5rem;
+            padding-right: 0.75rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5rem;
         }
     </style>
     <div class="py-12">
@@ -34,7 +51,20 @@
                         <a href="{{route('index.productosBase')}}">Agregar producto desde "lista de productos base"</a>
                     </div>
                 </div>
-                <form action="{{route('store.productos')}}" method="POST">
+                <div>
+                    <input id="buscador_producto" value="" placeholder="Ingrese el código de barras o título" onkeyup="buscaProducto(this)" autocomplete="off" required>
+                    <input type="hidden" name="producto_id" id="producto_id">
+                </div>
+                
+                <ul id="resultado_busqueda_mag" class="cont-resul-busca dinone">
+                    @foreach($productos as $producto)
+                        <li class="seleccionarProductoBtn" data-id="{{ $producto->id }}" data-titulo="{{ $producto->titulo }}">
+                            {{ $producto->titulo }}
+                        </li>
+                    @endforeach
+                </ul>
+
+                <form action="{{route('store.productos')}}" method="POST" class="mt-2">
                     @csrf
                     
                     <table class="table-auto border-collapse border border-slate-500 text-sm w-100">
@@ -171,9 +201,15 @@
                                 </td>
                             </tr>
                         </tbody>
-                    </table >
-                    <button type="button" id="agregarProductoBtn">Agregar fila</button>
-                    <button type="submit">Guardar producto</button>
+                    </table>
+                    <div class="flex flex-row justify-between mt-3">
+                        <div>
+                            <button type="button" id="agregarProductoBtn">Agregar fila</button>
+                        </div>
+                        <div>
+                            <button type="submit">Guardar producto</button>
+                        </div>
+                    </div>    
                 </form>
             </div>
         </div>
@@ -311,24 +347,126 @@
 
             }
 
+            // Agrega un evento de clic al botón de agregar producto
+            let agregarProductoBtn = document.getElementById('agregarProductoBtn');
+            agregarProductoBtn.addEventListener('click', function () {
+                agregarFila();
+            });
+        })
 
-               // Agrega un evento de clic al botón de agregar producto
-                let agregarProductoBtn = document.getElementById('agregarProductoBtn');
-                agregarProductoBtn.addEventListener('click', function () {
-                    agregarFila();
-                });
-            })
+        function deshabilitarCamposAdicionales(valor) {
+            let checkbox = document.getElementById(`control_por_lote_${valor}`);
+            let fechaVencimiento = document.getElementById(`fecha_vencimiento_${valor}`);
+            let proveedor = document.getElementById(`proveedor_id_${valor}`);
+            let factura = document.getElementById(`numero_factura_${valor}`);
 
-            function deshabilitarCamposAdicionales(valor) {
-                let checkbox = document.getElementById(`control_por_lote_${valor}`);
-                let fechaVencimiento = document.getElementById(`fecha_vencimiento_${valor}`);
-                let proveedor = document.getElementById(`proveedor_id_${valor}`);
-                let factura = document.getElementById(`numero_factura_${valor}`);
+            fechaVencimiento.disabled = !checkbox.checked;
+            proveedor.disabled = !checkbox.checked;
+            factura.disabled = !checkbox.checked;
+        }
 
-                fechaVencimiento.disabled = !checkbox.checked;
-                proveedor.disabled = !checkbox.checked;
-                factura.disabled = !checkbox.checked;
+        const path_p = "{{ asset('/') }}";
+        let tiempo = 0;
+        function buscaProducto(entrada) 
+        {
+            if(entrada.value.length > 0)
+            {
+    
+                clearTimeout(tiempo);
+                tiempo = setTimeout(function(entrada)
+                {
+                    document.getElementById('resultado_busqueda_mag').innerHTML = '';
+                    document.getElementById('resultado_busqueda_mag').classList.remove('dinone');
+
+                    let li = document.createElement('span');
+                        li.innerHTML = "Buscando...";
+                    document.getElementById('resultado_busqueda_mag').appendChild(li);
+
+                    //acá va la consulta
+                    console.log(entrada.value)
+                    let url = path_p + 'api/productos/busqueda/'+ encodeURIComponent(entrada.value);
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('resultado_busqueda_mag').innerHTML = '';
+                            if (data.length > 0)
+                            {
+                                console.log(data)
+                                data.forEach(producto => {    
+                                    let li = document.createElement('li');
+                                        li.innerHTML = producto.titulo
+                                        li.onclick = function()
+                                        {
+                                            document.getElementById('producto_id').value = producto.id;
+                                            document.getElementById('buscador_producto').value = producto.titulo;
+                                            document.getElementById('resultado_busqueda_mag').innerHTML = '';
+                                            document.getElementById('resultado_busqueda_mag').classList.add('dinone');
+                                            
+                                        }
+                                        document.getElementById('resultado_busqueda_mag').appendChild(li);
+                                    });
+
+                            }
+                            else {
+                                let span = document.createElement('span');
+                                span.innerHTML = "Sin resultados";
+                                document.getElementById('resultado_busqueda_mag').appendChild(span);
+                            }
+                        })
+                        .catch(error => console.log(error));
+                
+                }, 400, entrada);
             }
+            else {
+                document.getElementById('resultado_busqueda_mag').innerHTML = ''; 
+                document.getElementById('resultado_busqueda_mag').classList.add('dinone');
+            }
+        }
+
+        function seleccionarProducto(element) {
+            let contadorFilas = 10;
+            let id = element.getAttribute('data-id');
+            let titulo = element.getAttribute('data-titulo');
+            document.getElementById('producto_id').value = id;
+            document.getElementById('buscador_producto').value = titulo;
+            document.getElementById('resultado_busqueda_mag').innerHTML = '';
+            document.getElementById('resultado_busqueda_mag').classList.add('dinone');
+
+            const cuerpoTabla = document.getElementById('cuerpoTabla');
+
+            const nuevaFila = document.createElement('tr');
+            nuevaFila.innerHTML = `
+                <td class="p-2 border border-slate-700">
+                    <input 
+                        type="text" 
+                        name="producto"  
+                        required 
+                        value="{{old('titulo')}}"
+                        style="padding: 2px"    
+                    >
+                    @error('titulo')
+                        <div class="alert alert-danger">{{ $message }}</div>
+                    @enderror
+                </td>
+            `;
+
+            cuerpoTabla.appendChild(nuevaFila);
+            contadorFilas++;
+        }
+
+
+        // Cambia 'getElementsByClassName' a 'querySelectorAll' para obtener una NodeList
+        let seleccionarProductoBtns = document.querySelectorAll('.seleccionarProductoBtn');
+
+        // Itera sobre los elementos y agrega el evento de clic
+        seleccionarProductoBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                let id = btn.getAttribute('data-id');
+                let titulo = btn.getAttribute('data-titulo');
+                seleccionarProducto(id, titulo);
+            });
+        });
+
     </script>
     
 </x-app-layout>
