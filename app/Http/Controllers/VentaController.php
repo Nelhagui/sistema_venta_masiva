@@ -37,7 +37,7 @@ class VentaController extends Controller
 
     public function storeApi(Request $request)
     {
-        return $request;
+        dd($request);
         $monto_total_costo = 0;
         $monto_total_venta = 0;
         $user = Auth::user();

@@ -27,7 +27,7 @@ function ListProductos({ productos }) {
                 setProveedores(data);
             })
             .finally(() => {
-                setIsLoadingProveedores(false);
+                setIsLoading(false);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);

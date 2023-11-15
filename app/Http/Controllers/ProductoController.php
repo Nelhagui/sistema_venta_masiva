@@ -9,6 +9,7 @@ use App\Models\Lote;
 
 use Illuminate\Http\Request;
 use App\Models\Producto;
+use App\Models\ProductosBase;
 use App\Models\Proveedor;
 
 class ProductoController extends Controller
@@ -34,13 +35,13 @@ class ProductoController extends Controller
     public function create()
     {
         $proveedores = Proveedor::all();
-        $productos = Producto::all();
-        return view('productos.create', compact('proveedores', 'productos'));
+
+        return view('productos.create', compact('proveedores'));
     }
 
     public function busqueda($busqueda)
     {
-        $productos = Producto::where('titulo', 'LIKE', '%' . $busqueda . '%')
+        $productos = ProductosBase::where('titulo', 'LIKE', '%' . $busqueda . '%')
             ->orWhere('codigo_barra', 'LIKE', '%' . $busqueda . '%')
             ->orderBy('titulo', 'ASC')
             ->get();

@@ -1,6 +1,5 @@
 
 <x-app-layout>
-
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Crear Productos') }}
@@ -52,16 +51,11 @@
                     </div>
                 </div>
                 <div>
-                    <input id="buscador_producto" value="" placeholder="Ingrese el código de barras o título" onkeyup="buscaProducto(this)" autocomplete="off" required>
+                    <input id="buscador_producto" value="" placeholder="Ingrese el código de barras o título" onkeyup="buscaProducto(this)" autocomplete="off" required >
                     <input type="hidden" name="producto_id" id="producto_id">
                 </div>
                 
                 <ul id="resultado_busqueda_mag" class="cont-resul-busca dinone">
-                    @foreach($productos as $producto)
-                        <li class="seleccionarProductoBtn" data-id="{{ $producto->id }}" data-titulo="{{ $producto->titulo }}">
-                            {{ $producto->titulo }}
-                        </li>
-                    @endforeach
                 </ul>
 
                 <form action="{{route('store.productos')}}" method="POST" class="mt-2">
@@ -217,9 +211,10 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        // document.addEventListener('DOMContentLoaded', function () {
             let contadorFilas = 1
-            function agregarFila() {
+            function agregarFila(data = false) {
+                console.log(data)
                 const cuerpoTabla = document.getElementById('cuerpoTabla')
                 const nuevaFila = document.createElement('tr')
 
@@ -229,24 +224,18 @@
                             type="text" 
                             name="productos[${contadorFilas}][titulo]"  
                             required 
-                            value="{{old('titulo')}}"
-                            style="padding: 2px"    
+                            style="padding: 2px"   
+                            value="${data ? data.titulo : ""}"
                         >
-                        @error('titulo')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
                     </td>
                     <td class="p-2 border border-slate-700">
                         <input 
                             type="text" 
                             name="productos[${contadorFilas}][codigo_barra]" 
                             required 
-                            value="{{old('codigo_barra')}}"
+                            value="${data ? data.codigo_barra : ""}"
                             style="max-width: 7.8em; padding: 2px" 
                         >
-                        @error('codigo_barra')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
                     </td>
                     <td class="p-2 border border-slate-700">
                         <input
@@ -255,11 +244,7 @@
                             required
                             style="max-width: 5rem; padding: 2px"  
                             type="number"
-                            value="{{old('precio_costo')}}"
                         />
-                        @error('precio_costo')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
                     </td>
                     <td class="p-2 border border-slate-700">
                         <input
@@ -268,11 +253,7 @@
                             required
                             style="max-width: 5rem; padding: 2px"  
                             type="number"
-                            value="{{old('precio_venta')}}"
                         />
-                        @error('precio_venta')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
                     </td>
                     <td class="p-2 border border-slate-700">
                         <input
@@ -281,11 +262,7 @@
                             name="productos[${contadorFilas}][stock]" 
                             required
                             type="text"
-                            value="{{old('stock')}}"
                         />
-                        @error('stock')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
                     </td>
                     <td class="p-2 border border-slate-700">
                         <input
@@ -305,9 +282,6 @@
                             value="{{old('fecha_vencimiento')}}"
                             disabled
                         />
-                        @error('fecha_vencimiento')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
                     </td>
                     <td class="p-2 border border-slate-700">
                         <select
@@ -322,9 +296,6 @@
                                 <option value="{{$proveedor->id}}">{{$proveedor->nombre}}</option>
                             @endforeach
                         </select>
-                        @error('proveedor_id')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
                     </td>
                     <td class="p-2 border border-slate-700">
                         <input
@@ -335,12 +306,7 @@
                             style="padding: 2px"  
                             id="numero_factura_${contadorFilas}" 
                         />
-                        @error('numero_factura')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
-                    </td>
-                                
-                `
+                    </td>`
 
                 cuerpoTabla.appendChild(nuevaFila)
                 contadorFilas++
@@ -352,7 +318,6 @@
             agregarProductoBtn.addEventListener('click', function () {
                 agregarFila();
             });
-        })
 
         function deshabilitarCamposAdicionales(valor) {
             let checkbox = document.getElementById(`control_por_lote_${valor}`);
@@ -401,7 +366,7 @@
                                             document.getElementById('buscador_producto').value = producto.titulo;
                                             document.getElementById('resultado_busqueda_mag').innerHTML = '';
                                             document.getElementById('resultado_busqueda_mag').classList.add('dinone');
-                                            
+                                            agregarFila(producto)   
                                         }
                                         document.getElementById('resultado_busqueda_mag').appendChild(li);
                                     });
@@ -422,50 +387,6 @@
                 document.getElementById('resultado_busqueda_mag').classList.add('dinone');
             }
         }
-
-        function seleccionarProducto(element) {
-            let contadorFilas = 10;
-            let id = element.getAttribute('data-id');
-            let titulo = element.getAttribute('data-titulo');
-            document.getElementById('producto_id').value = id;
-            document.getElementById('buscador_producto').value = titulo;
-            document.getElementById('resultado_busqueda_mag').innerHTML = '';
-            document.getElementById('resultado_busqueda_mag').classList.add('dinone');
-
-            const cuerpoTabla = document.getElementById('cuerpoTabla');
-
-            const nuevaFila = document.createElement('tr');
-            nuevaFila.innerHTML = `
-                <td class="p-2 border border-slate-700">
-                    <input 
-                        type="text" 
-                        name="producto"  
-                        required 
-                        value="{{old('titulo')}}"
-                        style="padding: 2px"    
-                    >
-                    @error('titulo')
-                        <div class="alert alert-danger">{{ $message }}</div>
-                    @enderror
-                </td>
-            `;
-
-            cuerpoTabla.appendChild(nuevaFila);
-            contadorFilas++;
-        }
-
-
-        // Cambia 'getElementsByClassName' a 'querySelectorAll' para obtener una NodeList
-        let seleccionarProductoBtns = document.querySelectorAll('.seleccionarProductoBtn');
-
-        // Itera sobre los elementos y agrega el evento de clic
-        seleccionarProductoBtns.forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                let id = btn.getAttribute('data-id');
-                let titulo = btn.getAttribute('data-titulo');
-                seleccionarProducto(id, titulo);
-            });
-        });
 
     </script>
     
