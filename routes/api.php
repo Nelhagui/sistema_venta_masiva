@@ -29,7 +29,7 @@ Route::get('/productos', function () {
 });
 
 Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busqueda']);
-
+ 
 
 Route::get('/proveedores', function () {
     $proveedores = Proveedor::all();

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\DetalleVenta;
 use App\Models\Producto;
+use App\Models\ProductosBase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Venta;
+use Illuminate\Support\Facades\DB;
 
 class VentaController extends Controller
 {
@@ -37,38 +39,59 @@ class VentaController extends Controller
 
     public function storeApi(Request $request)
     {
-        dd($request);
-        $monto_total_costo = 0;
-        $monto_total_venta = 0;
-        $user = Auth::user();
+        try {
+            $user = Auth::user();
+    
+            DB::beginTransaction(); // Inicia la transacción
+    
+            $venta = new Venta;
+            $venta->sesion_caja_id = 1;
+            $venta->user_id = 1;
+            $venta->monto_total_costo = 0;
+            $venta->monto_total_venta = 0;
+            $venta->fecha_venta = now();
+            $venta->save();
+    
+            $productos = $request->productos;
 
-        // VENTA
-        $venta = new Venta;
-        $venta->sesion_caja_id = 1;
-        $venta->user_id = $user->id;
-        
+            $monto_total_venta = 0;
+            $monto_total_costo = 0;
 
-        // DETALLE VENTA
-        $productos = $request->productos;
-        foreach ($productos as $producto) {
+    
+            foreach ($productos as $producto) {
+                $productoDb = Producto::find($producto['id']);
+    
+                if (!$productoDb) {
+                    DB::rollBack(); // Revierte la transacción si un producto no se encuentra
+                    throw new \Exception('Producto no encontrado.');
+                }
+    
+                $detalle_venta = new DetalleVenta;
+                $detalle_venta->venta_id = $venta->id;
+                $detalle_venta->producto_id = $productoDb->id;
+                $detalle_venta->cantidad = $producto['cantidad'];
+                $detalle_venta->precio_unitario = $productoDb->precio_venta;
+                $detalle_venta->costo_unitario = $productoDb->precio_costo;
+                $detalle_venta->save();
+   
+                $monto_total_venta += ($productoDb->precio_venta * $producto['cantidad']);
+                $monto_total_costo += ($productoDb->precio_costo * $producto['cantidad']);
 
-            $productoDb = Producto::find($producto->id);
-            $detalle_venta = new DetalleVenta;
-            $detalle_venta->venta_id = $venta->id;
-            $detalle_venta->producto_id = $productoDb->id;
-            $detalle_venta->cantidad = $producto->cantidad;
-            $detalle_venta->precio_unitario = $productoDb->precio_venta;
-            $detalle_venta->costo_unitario = $productoDb->precio_costo;
-
-            $monto_total_venta = $monto_total_venta+($productoDb->precio_venta * $producto->cantidad);
-            $monto_total_costo = $monto_total_costo+($productoDb->precio_costo * $producto->cantidad);
+            }
+    
+            $venta->monto_total_costo = $monto_total_costo;
+            $venta->monto_total_venta = $monto_total_venta;
+            $venta->update();
+    
+            DB::commit(); // Confirma la transacción si todo se ejecuta correctamente
+    
+            return response()->json(['status' => 'success', 'message' => 'Venta realizada con éxito.']);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Revierte la transacción si hay una excepción
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
-
-        $venta->monto_total_venta = $monto_total_venta;
-        $venta->monto_total_costo = $monto_total_costo;
-        $venta->fecha_venta = date('Y-m-d H:i:s');
-        
     }
+    
 
     /**
      * Display the specified resource.

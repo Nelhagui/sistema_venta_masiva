@@ -16,15 +16,21 @@ function ListProductos({ productos }) {
     }, [productos]);
 
     const handleSubmit = () => {
-        fetch('ventas/crear')
+        console.log({productos: productosSeleccionados})
+        fetch('http://127.0.0.1:8000/api/ventas/crear', {
+            method: 'POST', // Usar el método POST
+            headers: {
+                'Content-Type': 'application/json', // Asegurarse de enviar los datos en formato JSON
+            },
+            // Aquí debes incluir los datos que deseas enviar al servidor
+            body: JSON.stringify({productos: productosSeleccionados}),
+        })
             .then((response) => {
                 if (!response.ok) {
+                    console.log(response)
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
-            })
-            .then((data) => {
-                setProveedores(data);
             })
             .finally(() => {
                 setIsLoading(false);
