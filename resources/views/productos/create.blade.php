@@ -38,6 +38,26 @@
             font-size: 1rem;
             line-height: 1.5rem;
         }
+
+        .productosList {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            /* min-width: 450px; */
+            max-width: max-content;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            z-index: 1;
+            border: 1px solid #ccc;
+        }
+
+        .containerRowProducto {
+            display: flex;
+            justify-content: space-between;
+            padding: 9px 15px 9px 10px;
+            background-color: #fff
+        }
     </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -50,13 +70,16 @@
                         <a href="{{route('index.productosBase')}}">Agregar producto desde "lista de productos base"</a>
                     </div>
                 </div>
-                <div>
-                    <input id="buscador_producto" value="" placeholder="Ingrese el código de barras o título" onkeyup="buscaProducto(this)" autocomplete="off" required >
-                    <input type="hidden" name="producto_id" id="producto_id">
+                <div style="position: relative; margin-bottom: 20px">
+                    <div class="flex justify-between">
+                        <div>
+                            <input id="buscador_producto" value="" placeholder="Ingrese el código de barras o título" onkeyup="buscaProducto(this)" autocomplete="off" required >
+                            <input type="hidden" name="producto_id" id="producto_id">
+                        </div>
+                    </div>
+                    <ul id="resultado_busqueda_mag" class="cont-resul-busca dinone productosList">
+                    </ul>
                 </div>
-                
-                <ul id="resultado_busqueda_mag" class="cont-resul-busca dinone">
-                </ul>
 
                 <form action="{{route('store.productos')}}" method="POST" class="mt-2">
                     @csrf
@@ -360,6 +383,7 @@
                                 data.forEach(producto => {    
                                     let li = document.createElement('li');
                                         li.innerHTML = producto.titulo
+                                        li.classList.add('border-t', 'border-b', 'containerRowProducto');
                                         li.onclick = function()
                                         {
                                             document.getElementById('producto_id').value = producto.id;
@@ -370,7 +394,7 @@
                                         }
                                         document.getElementById('resultado_busqueda_mag').appendChild(li);
                                     });
-
+                                   
                             }
                             else {
                                 let span = document.createElement('span');
