@@ -238,27 +238,17 @@ class ProductoController extends Controller
     public function updateStockProductos(Request $request)
     {
         $productos = $request->productos;
-
         $messages = [
             'titulo.required' => 'El campo Título es obligatorio.',
-            'titulo.unique' => 'El título ya está en uso.',
-            'precio_venta.required' => 'El campo Precio de venta es obligatorio.',
-            'precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
-            'precio_costo.required' => 'El campo Precio de costo es obligatorio.',
-            'precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
-            'stock.required' => 'El campo Stock es obligatorio.',
-            'stock.numeric' => 'El campo Stock debe ser un valor numérico.',
+            'nuevo_stock.required' => 'El campo Stock es obligatorio.',
+            'nuevo_stock.numeric' => 'El campo Stock debe ser un valor numérico.',
             'codigo_barra.numeric' => 'El campo requiere números.',
-            'codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
         ];
 
         $rules = [
-            'productos.*.titulo' => 'required|unique:productos,titulo,',
+            'productos.*.titulo' => 'required',
             'productos.*.descripcion' => ['nullable', 'sometimes', 'string'],
-            'productos.*.precio_costo' => 'required|numeric',
-            'productos.*.precio_venta' => 'required|numeric',
-            'productos.*.stock' => 'required|numeric',
-            'productos.*.codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
+            'productos.*.nuevo_stock' => 'required|numeric',
             'productos.*.usar_control_por_lote' => 'required|boolean',
         ];
 
@@ -274,13 +264,7 @@ class ProductoController extends Controller
         DB::transaction(function () use ($productos) {
             foreach ($productos as $producto) {
                 $updateProducto = Producto::find($producto['id']);
-                $updateProducto->titulo = ucwords($producto['titulo']);
-                $updateProducto->codigo_barra = $producto['codigo_barra'];
-                $updateProducto->usar_control_por_lote = $producto['usar_control_por_lote'];
-                $updateProducto->habilitado = $producto['habilitado'];
-                $updateProducto->precio_venta = $producto['precio_venta'];
-                $updateProducto->precio_costo = $producto['precio_costo'];
-                $updateProducto->stock_actual = $producto['stock'];
+                $updateProducto->stock_actual = $updateProducto['stock_actual'] + $producto['nuevo_stock'];
                 $updateProducto->update();
 
                 if ($producto['usar_control_por_lote']) {
@@ -290,11 +274,11 @@ class ProductoController extends Controller
                     $newLoteProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
                     $newLoteProducto->numero_factura = $producto['numero_factura'] ?? null;
                     $newLoteProducto->proveedor_id = $producto['proveedor_id'] ?? null;
-                    $newLoteProducto->precio_costo = $producto['precio_costo'];
-                    $newLoteProducto->precio_venta = $producto['precio_venta'];
+                    $newLoteProducto->precio_costo = $producto['precio_costo']; // Asegúrate de ajustar esto según tu estructura
+                    $newLoteProducto->precio_venta = $producto['precio_venta']; // Asegúrate de ajustar esto según tu estructura
                     $newLoteProducto->precio_dolar = $producto['precio_dolar'] ?? null;
-                    $newLoteProducto->cantidad_inicial = $producto['stock'];
-                    $newLoteProducto->cantidad_restante = $producto['stock'];
+                    $newLoteProducto->cantidad_inicial = $producto['nuevo_stock'];
+                    $newLoteProducto->cantidad_restante = $producto['nuevo_stock'];
                     $newLoteProducto->save();
                 }
 
@@ -310,5 +294,10 @@ class ProductoController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function actualizarStock()
+    {
+
     }
 }

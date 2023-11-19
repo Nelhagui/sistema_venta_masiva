@@ -58,6 +58,16 @@
             padding: 9px 15px 9px 10px;
             background-color: #fff
         }
+
+        .containerRowProducto:hover {
+            background-color: #f1eff7;
+            cursor: pointer
+        }
+
+        .seleccionado {
+            background-color: #f1eff7;
+            cursor: pointer
+        }
     </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -99,124 +109,6 @@
                             </tr>
                         </thead>
                         <tbody id="cuerpoTabla">
-                            <tr class="highlighted-none">
-                                <td class="p-2 border border-slate-700">
-                                    <input 
-                                        type="text" 
-                                        name="productos[0][titulo]" 
-                                        required 
-                                        value="{{old('titulo')}}"
-                                        style="padding: 2px"    
-                                    >
-                                    @error('titulo')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </td>
-                                <td class="p-2 border border-slate-700">
-                                    <input 
-                                        type="text" 
-                                        name="productos[0][codigo_barra]" 
-                                        required 
-                                        value="{{old('codigo_barra')}}"
-                                        style="max-width: 7.8em; padding: 2px" 
-                                    >
-                                    @error('codigo_barra')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </td>
-                                <td class="p-2 border border-slate-700">
-                                    <input
-                                        class='text-sm'
-                                        name="productos[0][precio_costo]"
-                                        required
-                                        style="max-width: 5rem; padding: 2px"  
-                                        type="number"
-                                        value="{{old('precio_costo')}}"
-                                    />
-                                    @error('precio_costo')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </td>
-                                <td class="p-2 border border-slate-700">
-                                    <input
-                                        class='text-sm'
-                                        name="productos[0][precio_venta]"
-                                        required
-                                        style="max-width: 5rem; padding: 2px"  
-                                        type="number"
-                                        value="{{old('precio_venta')}}"
-                                    />
-                                    @error('precio_venta')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </td>
-                                <td class="p-2 border border-slate-700">
-                                    <input
-                                        class='text-sm'
-                                        style="max-width: 3rem; padding: 2px"
-                                        name="productos[0][stock]"  
-                                        required
-                                        type="text"
-                                        value="{{old('stock')}}"
-                                    />
-                                    @error('stock')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </td>
-                                <td class="p-2 border border-slate-700">
-                                    <input
-                                        class='text-sm'
-                                        type="checkbox"
-                                        name="productos[0][control_por_lote]"
-                                        id="control_por_lote_0"
-                                        onclick="deshabilitarCamposAdicionales('0')"
-                                    />
-                                </td>
-                                <td class="p-2 border border-slate-700">
-                                    <input
-                                        class='text-sm'
-                                        type="date"
-                                        name="productos[0][fecha_vencimiento]"
-                                        id="fecha_vencimiento_0"
-                                        value="{{old('fecha_vencimiento')}}"
-                                        disabled
-                                    />
-                                    @error('fecha_vencimiento')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </td>
-                                <td class="p-2 border border-slate-700">
-                                    <select
-                                        class='text-sm'
-                                        name="productos[0][proveedor_id]"
-                                        id="proveedor_id_0"
-                                        value="{{old('proveedor_id')}}"
-                                        disabled
-                                    >
-                                        <option value="">Seleccione un proveedor</option>
-                                        @foreach ($proveedores as $proveedor)
-                                            <option value="{{$proveedor->id}}">{{$proveedor->nombre}}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('proveedor_id')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </td>
-                                <td class="p-2 border border-slate-700">
-                                    <input
-                                        class='text-sm'
-                                        type="text"
-                                        name="productos[0][numero_factura]"
-                                        value="{{old('numero_factura')}}"
-                                        id="numero_factura_0"
-                                        style="padding: 2px"   
-                                        disabled
-                                    />
-                                    @error('numero_factura')
-                                        <div class="alert alert-danger">{{ $message }}</div>
-                                    @enderror
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                     <div class="flex flex-row justify-between mt-3">
@@ -235,7 +127,7 @@
 
     <script>
         // document.addEventListener('DOMContentLoaded', function () {
-            let contadorFilas = 1
+            let contadorFilas = 0
             function agregarFila(data = false) {
                 console.log(data)
                 const cuerpoTabla = document.getElementById('cuerpoTabla')
@@ -411,6 +303,55 @@
                 document.getElementById('resultado_busqueda_mag').classList.add('dinone');
             }
         }
+        
+        // Obtener la lista, para recorrer cada elemento
+let listGroup = document.querySelector('ul.cont-resul-busca');
+// Asignar evento al campo de texto
+document.querySelector('#buscador_producto').addEventListener('keydown', e => {
+    if(!listGroup) {
+        return; // No existe la lista
+    }
+    // Obtener todos los elementos
+    let items = listGroup.querySelectorAll('li');
+    // Saber si alguno está activo
+    let actual = Array.from(items).findIndex(item => item.classList.contains('active'));
+    // Analizar tecla pulsada
+    if(e.keyCode == 13) {
+        // Tecla Enter, evitar que se procese el formulario
+        e.preventDefault();
+        // ¿Hay un elemento activo?
+        if(items[actual]) {
+            // Hacer clic
+            items[actual].click();
+        }
+    } if(e.keyCode == 38 || e.keyCode == 40) {
+        // Flecha arriba (restar) o abajo (sumar)
+        if(items[actual]) {
+            // Solo si hay un elemento activo, eliminar clase
+            items[actual].classList.remove('active');
+        }
+        // Calcular posición del siguiente
+        actual += (e.keyCode == 38) ? -1 : 1;
+        // Asegurar que está dentro de los límites
+        if(actual < 0) {
+            actual = 0;
+        } else if(actual >= items.length) {
+            actual = items.length - 1;
+        }
+        // Asignar clase activa
+        items[actual].classList.add('active');
+    }
+});
+// En la función donde generas la lista debes activar evento clic para cada elemento
+// Para este ejemplo se hace manual
+listGroup.querySelectorAll('li').forEach(li => {
+    li.addEventListener('click', e => {
+        // Asignar valor al campo
+        document.querySelector('#buscador_producto').value = e.currentTarget.textContent;
+        // Aquí deberías cerrar la lista y/o eliminar el contenido
+    });
+});
+
 
     </script>
     

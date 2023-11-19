@@ -10,11 +10,26 @@ function ListProductos({ productos }) {
     const [isLoading, setIsLoading] = useState(false)
     const [inputText, setInputText] = useState('');
     const inputRef = useRef(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         setProductosIniciales(productos);
     }, [productos]);
 
+    const handleModalConfirmation = () => {
+        setShowModal(true);
+    };
+      
+    const handleCloseModal = () => {
+        setShowModal(false);
+    };
+    
+    const handleConfirmVenta = () => {
+        handleSubmit();
+        setShowModal(false);
+    };
+
+    
     const handleSubmit = () => {
         console.log({productos: productosSeleccionados})
         fetch('http://127.0.0.1:8000/api/ventas/crear', {
@@ -178,13 +193,23 @@ function ListProductos({ productos }) {
                             borderRadius: 5,
                             visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible'
                         }}
-                        onClick={handleSubmit}
+                        onClick={handleModalConfirmation}
                     >
                         Cargar Venta (F12)
                     </button>
                 </div>
             </div>
-
+            {showModal && (
+                <div style={styles.modalVenta}>
+                    <div style={styles.modalContent}>
+                        <h2 className="font-semibold text-xl leading-tight pb-3">¿Estás seguro que deseas cargar la venta?</h2>
+                        <div className='mt-3 flex justify-end'>
+                            <button onClick={handleConfirmVenta} className="hover:bg-gray-500 bg-gray-600 text-gray-200 px-3 py-1  cursor-pointer rounded">Confirmar</button>
+                            <button onClick={handleCloseModal} className="hover:bg-gray-500 bg-gray-300 text-white px-3 py-1 cursor-pointer rounded">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            )}
             {
                 productosSeleccionados.length > 0
                     ?
@@ -228,7 +253,28 @@ const styles = {
     },
     productoPrecioVenta: {
         fontSize: "9pt",
-    }
+    },
+    modalVenta: {
+        position: 'fixed',
+        background: '#0000003b',
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: '999999',
+        display: 'block',
+        transitionDuration: '.2s',
+    },
+    modalContent: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: 'white',
+        padding: '2rem 3rem',
+        borderRadius: '11px',
+    },
 };
 styles.productosListWithBorder = {
     ...styles.productosList,

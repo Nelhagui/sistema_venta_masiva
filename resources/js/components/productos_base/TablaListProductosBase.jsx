@@ -393,7 +393,7 @@ const styles = {
         paddingRight: 15,
         paddingTop: 9,
         paddingBottom: 9,
-        backgroundColor: "#fff"
+        backgroundColor: "#fff",
     },
     productoTitulo: {
         fontSize: '10pt',

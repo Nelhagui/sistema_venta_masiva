@@ -8,6 +8,7 @@ use App\Models\ProductosBase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Venta;
+use App\Models\Lote;
 use Illuminate\Support\Facades\DB;
 
 class VentaController extends Controller
@@ -41,7 +42,7 @@ class VentaController extends Controller
     {
         try {
             $user = Auth::user();
-    
+            $status = 2;
             DB::beginTransaction(); // Inicia la transacción
     
             $venta = new Venta;
@@ -56,7 +57,6 @@ class VentaController extends Controller
 
             $monto_total_venta = 0;
             $monto_total_costo = 0;
-
     
             foreach ($productos as $producto) {
                 $productoDb = Producto::find($producto['id']);
@@ -77,6 +77,23 @@ class VentaController extends Controller
                 $monto_total_venta += ($productoDb->precio_venta * $producto['cantidad']);
                 $monto_total_costo += ($productoDb->precio_costo * $producto['cantidad']);
 
+                // Validar si hay suficiente stock disponible para realizar la operación.
+                if ($productoDb->stock_actual >= $producto['cantidad']) {
+                    // Restar la cantidad del producto del stock actual.
+                    $productoDb->stock_actual -= $producto['cantidad'];
+
+                    $productoDb->save();
+                } else {
+                    return response()->json(['status' => 2, 'message' => 'No hay suficiente stock disponible para esta operación.']);
+                }
+
+                $lote = Lote::where('cantidad_restante', '>', 0)
+                ->orderByRaw('ISNULL(fecha_vencimiento), fecha_vencimiento DESC') // Ordena por fecha de vencimiento
+                    ->orderByRaw('IF(fecha_vencimiento IS NULL, 1, 0)') // Prioriza los lotes sin fecha de vencimiento
+                    ->orderByDesc('precio_costo') // Prioriza los lotes con precio de costo más alto
+                    ->get();
+                $lote->cantidad_restante -= $producto['cantidad'];
+                $lote->save();
             }
     
             $venta->monto_total_costo = $monto_total_costo;
@@ -84,11 +101,12 @@ class VentaController extends Controller
             $venta->update();
     
             DB::commit(); // Confirma la transacción si todo se ejecuta correctamente
-    
-            return response()->json(['status' => 'success', 'message' => 'Venta realizada con éxito.']);
+            $status = 1;
+            return response()->json(['status' => $status, 'message' => 'Venta realizada con éxito.']);
         } catch (\Exception $e) {
             DB::rollBack(); // Revierte la transacción si hay una excepción
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            $status = 2;
+            return response()->json(['status' => $status, 'message' => $e->getMessage()], 500);
         }
     }
     

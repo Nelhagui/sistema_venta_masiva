@@ -148,13 +148,6 @@ const TablaListaProductosActualizarStock = ({productos}) => {
                         updatedProducto.numero_factura = '';
                     }
 
-                    // Si el campo que se está modificando es "precio_costo", actualizamos "precio_venta"
-                    if (campo === 'precio_costo') {
-                        const porcentaje = 1.50; // Aumentamos en un 10%
-                        const nuevoPrecio = valor * porcentaje;
-                        updatedProducto.precio_venta = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
-                    }
-
                     return updatedProducto;
                 }
                 return producto;
@@ -212,7 +205,6 @@ const TablaListaProductosActualizarStock = ({productos}) => {
             <div style={styles.listContainer}>
                 <div className='flex justify-between'>
                     <div>
-
                         <input
                             type="text"
                             value={inputText}
@@ -247,80 +239,43 @@ const TablaListaProductosActualizarStock = ({productos}) => {
             </div>
             {/* FIN BUSCADOR */}
 
-
-            <table className="table-auto border-collapse border border-slate-500 text-sm" style={{ width: '100%' }}>
-                <thead>
-                    <tr>
-                        <th className="text-left p-2 border border-slate-600">Titulo</th>
-                        <th className="text-left p-2 border border-slate-600">Código Barra</th>
-                        <th className="text-left p-2 border border-slate-600">Precio Costo</th>
-                        <th className="text-left p-2 border border-slate-600">Precio Venta</th>
-                        <th className="text-left p-2 border border-slate-600 ">Stock</th>
-                        <th className="text-left p-2 border border-slate-600">Control x lote</th>
-                        <th className="text-left p-2 border border-slate-600">Fecha vencimiento</th>
-                        <th className="text-left p-2 border border-slate-600">Proveedor</th>
-                        <th className="text-left p-2 border border-slate-600">Factura</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        productosSeleccionados.map((producto) =>
-                        (
-                            <tr key={producto.codigo_barra} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
-                                <td className="p-2 border border-slate-700">
-                                    {capitalizeFirstLetterOfEachWord(producto.titulo)}
-                                </td>
-                                <td className="p-2 border border-slate-700">{producto.codigo_barra}</td>
-                                <td className="p-2 border border-slate-700">
+            <div class="flex flex-col justify-center mb-3">
+                {
+                    productosSeleccionados.map((producto) => 
+                    (
+                    <div key={producto.codigo_barra} style={styles.productosStock} className="flex rounded bg-gray-300 mb-3 gap-4">
+                            <p>{capitalizeFirstLetterOfEachWord(producto.titulo)}</p>
+                            <p>{producto.usar_control_por_lote == 1 && "(Control por lote)"}</p>
+                            <p>{producto.usar_control_por_lote == 0 && `Actual: ${producto.stock_actual}`}</p>
+                            <input
+                                className='text-sm'
+                                style={{ maxWidth: '4rem', padding: 2 }}
+                                type="text"
+                                value={producto.nuevo_stock}
+                                onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'nuevo_stock', e.target.value)}
+                            />
+                            {
+                                producto.usar_control_por_lote == 1 && 
+                                <>
                                     <input
-                                        className='text-sm'
-                                        style={{ maxWidth: '5rem', padding: 2 }}
+                                        class='text-sm' 
                                         type="number"
                                         value={producto.precio_costo || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'precio_costo', e.target.value)}
                                     />
-                                </td>
-                                <td className="p-2 border border-slate-700">
                                     <input
-                                        className='text-sm'
-                                        style={{ maxWidth: '5rem', padding: 2 }}
+                                        class='text-sm' 
                                         type="number"
                                         value={producto.precio_venta || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'precio_venta', e.target.value)}
                                     />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        style={{ maxWidth: '4rem', padding: 2 }}
-                                        type="text"
-                                        value={producto.stock_actual || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'stock_actual', e.target.value)}
-                                    />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        type="checkbox"
-                                        checked={producto.usar_control_por_lote}
-                                        value={producto.usar_control_por_lote}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'usar_control_por_lote', e.target.checked)}
-                                    />
-                                </td>
-                                <td className="p-2 border border-slate-700">
                                     <input
                                         className='text-sm'
                                         type="date"
                                         value={producto.fecha_vencimiento || ''}
-                                        disabled={!producto.usar_control_por_lote}  // Añadir esta línea para deshabilitar el input si usar_control_por_lote es false
                                         onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'fecha_vencimiento', e.target.value)}
                                     />
-                                </td>
-                                <td className="p-2 border border-slate-700">
                                     <select
                                         className='text-sm'
                                         value={producto.proveedor_id || ''}
-                                        disabled={!producto.usar_control_por_lote && !isLoadingProveedores}  // Deshabilitar el select si usar_control_por_lote es false
                                         onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'proveedor_id', e.target.value)}
                                     >
                                         <option value="">Seleccione un proveedor</option>
@@ -330,28 +285,28 @@ const TablaListaProductosActualizarStock = ({productos}) => {
                                             })
                                         }
                                     </select>
-
-                                </td>
-                                <td className="p-2 border border-slate-700">
                                     <input
                                         className='text-sm'
                                         type="text"
                                         value={producto.numero_factura || ''}
-                                        disabled={!producto.usar_control_por_lote}  // Añadir esta línea para deshabilitar el input si usar_control_por_lote es false
                                         onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'numero_factura', e.target.value)}
                                     />
-                                </td>
-                            </tr>
-                        )
-                        )
-                    }
-                </tbody>
-            </table >
+                                </>
+                            }
+                    </div> 
+                    )
+                    )
+                }
+            </div>
         </>
     )
 }
 
 const styles = {
+    productosStock: {
+        padding: '1rem 2rem',
+        
+    },
     listContainer: {
         position: 'relative',
         marginBottom: 20,
