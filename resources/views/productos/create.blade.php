@@ -24,6 +24,10 @@
 
         .dinone {display: none !important;}
 
+        #tableCreateProductos {
+            display: none;
+        }
+
         #buscador_producto {
             min-width: 450px;
             appearance: none;
@@ -94,7 +98,7 @@
                 <form action="{{route('store.productos')}}" method="POST" class="mt-2">
                     @csrf
                     
-                    <table class="table-auto border-collapse border border-slate-500 text-sm w-100">
+                    <table id="tableCreateProductos" class="table-auto border-collapse border border-slate-500 text-sm w-100">
                         <thead>
                             <tr>
                                 <th class="text-left p-2 border border-slate-600">Titulo</th>
@@ -226,6 +230,8 @@
                 cuerpoTabla.appendChild(nuevaFila)
                 contadorFilas++
 
+                // Mostrar la tabla después de agregar la primera fila
+                document.getElementById('tableCreateProductos').style.display = 'table';
             }
 
             // Agrega un evento de clic al botón de agregar producto
