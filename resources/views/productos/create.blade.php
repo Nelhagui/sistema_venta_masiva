@@ -131,14 +131,38 @@
 
     <script>
         // document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('buscador_producto');
+            searchInput.focus();
+
             let contadorFilas = 0
             function agregarFila(data = false) {
-                console.log(data)
                 const cuerpoTabla = document.getElementById('cuerpoTabla')
+                const filasExistente = cuerpoTabla.querySelectorAll('tr');
+
+                for (let i = 0; i < filasExistente.length; i++) {
+                    const codigoBarraFila = filasExistente[i].querySelector(`[name^="productos[${i}][codigo_barra]"]`);
+                    if (codigoBarraFila && codigoBarraFila.value === (data ? data.codigo_barra : '')) {
+                        filasExistente[i].classList.remove('highlighted-none');
+                        filasExistente[i].classList.add('highlighted-row')
+                        setTimeout(function() {
+                            filasExistente[i].classList.remove('highlighted-row');
+                            filasExistente[i].classList.add('highlighted-none');
+                        }, 500)
+                        // Si se encuentra el mismo código de barras, aumentar el stock y salir de la función
+                        const stockInput = filasExistente[i].querySelector(`[name^="productos[${i}][stock]"]`);
+                        if (stockInput) {
+                            stockInput.value = parseInt(stockInput.value) + 1;
+                        }
+                        document.getElementById('buscador_producto').value = '';
+                        searchInput.focus();
+                        return; // Detener la ejecución de la función
+                    }
+                }
+
                 const nuevaFila = document.createElement('tr')
 
                 nuevaFila.innerHTML = `
-                    <td class="p-2 border border-slate-700">
+                    <td class="p-2 border border-slate-700" data-codigo-barra="${data ? data.codigo_barra : ''}">
                         <input 
                             type="text" 
                             name="productos[${contadorFilas}][titulo]"  
@@ -179,6 +203,7 @@
                             class='text-sm'
                             style="max-width: 3rem; padding: 2px"
                             name="productos[${contadorFilas}][stock]" 
+                            value='1'
                             required
                             type="text"
                         />
@@ -229,7 +254,16 @@
 
                 cuerpoTabla.appendChild(nuevaFila)
                 contadorFilas++
+                searchInput.focus();
+                
+                nuevaFila.classList.remove('highlighted-none');
+                nuevaFila.classList.add('highlighted-row')
+                setTimeout(function() {
+                    nuevaFila.classList.remove('highlighted-row');
+                    nuevaFila.classList.add('highlighted-none');
+                }, 500)
 
+                document.getElementById('buscador_producto').value = '';
                 // Mostrar la tabla después de agregar la primera fila
                 document.getElementById('tableCreateProductos').style.display = 'table';
             }
@@ -268,17 +302,18 @@
                         li.innerHTML = "Buscando...";
                     document.getElementById('resultado_busqueda_mag').appendChild(li);
 
-                    //acá va la consulta
-                    console.log(entrada.value)
                     let url = path_p + 'api/productos/busqueda/'+ encodeURIComponent(entrada.value);
                     fetch(url)
                         .then(response => response.json())
                         .then(data => {
                             document.getElementById('resultado_busqueda_mag').innerHTML = '';
                             if (data.length > 0)
-                            {
-                                console.log(data)
-                                data.forEach(producto => {    
+                            {                                
+                                if(/^\d+$/.test(entrada.value)) {
+                                    agregarFila(data[0])
+                                    document.getElementById('buscador_producto').value = '';
+                                } else {
+                                    data.forEach(producto => {    
                                     let li = document.createElement('li');
                                         li.innerHTML = producto.titulo
                                         li.classList.add('border-t', 'border-b', 'containerRowProducto');
@@ -292,7 +327,7 @@
                                         }
                                         document.getElementById('resultado_busqueda_mag').appendChild(li);
                                     });
-                                   
+                                }
                             }
                             else {
                                 let span = document.createElement('span');
@@ -310,53 +345,55 @@
             }
         }
         
+
         // Obtener la lista, para recorrer cada elemento
-let listGroup = document.querySelector('ul.cont-resul-busca');
-// Asignar evento al campo de texto
-document.querySelector('#buscador_producto').addEventListener('keydown', e => {
-    if(!listGroup) {
-        return; // No existe la lista
-    }
-    // Obtener todos los elementos
-    let items = listGroup.querySelectorAll('li');
-    // Saber si alguno está activo
-    let actual = Array.from(items).findIndex(item => item.classList.contains('active'));
-    // Analizar tecla pulsada
-    if(e.keyCode == 13) {
-        // Tecla Enter, evitar que se procese el formulario
-        e.preventDefault();
-        // ¿Hay un elemento activo?
-        if(items[actual]) {
-            // Hacer clic
-            items[actual].click();
-        }
-    } if(e.keyCode == 38 || e.keyCode == 40) {
-        // Flecha arriba (restar) o abajo (sumar)
-        if(items[actual]) {
-            // Solo si hay un elemento activo, eliminar clase
-            items[actual].classList.remove('active');
-        }
-        // Calcular posición del siguiente
-        actual += (e.keyCode == 38) ? -1 : 1;
-        // Asegurar que está dentro de los límites
-        if(actual < 0) {
-            actual = 0;
-        } else if(actual >= items.length) {
-            actual = items.length - 1;
-        }
-        // Asignar clase activa
-        items[actual].classList.add('active');
-    }
-});
-// En la función donde generas la lista debes activar evento clic para cada elemento
-// Para este ejemplo se hace manual
-listGroup.querySelectorAll('li').forEach(li => {
-    li.addEventListener('click', e => {
-        // Asignar valor al campo
-        document.querySelector('#buscador_producto').value = e.currentTarget.textContent;
-        // Aquí deberías cerrar la lista y/o eliminar el contenido
-    });
-});
+        let listGroup = document.querySelector('ul.cont-resul-busca');
+        // Asignar evento al campo de texto
+        document.querySelector('#buscador_producto').addEventListener('keydown', e => {
+            if(!listGroup) {
+                return; // No existe la lista
+            }
+            // Obtener todos los elementos
+            let items = listGroup.querySelectorAll('li');
+            // Saber si alguno está activo
+            let actual = Array.from(items).findIndex(item => item.classList.contains('active'));
+  
+            // Analizar tecla pulsada
+            if(e.keyCode == 13) {
+                // Tecla Enter, evitar que se procese el formulario
+                e.preventDefault();
+                // ¿Hay un elemento activo?
+                if(items[actual]) {
+                    // Hacer clic
+                    items[actual].click();
+                }
+            } if(e.keyCode == 38 || e.keyCode == 40) {
+                // Flecha arriba (restar) o abajo (sumar)
+                if(items[actual]) {
+                    // Solo si hay un elemento activo, eliminar clase
+                    items[actual].classList.remove('active');
+                }
+                // Calcular posición del siguiente
+                actual += (e.keyCode == 38) ? -1 : 1;
+                // Asegurar que está dentro de los límites
+                if(actual < 0) {
+                    actual = 0;
+                } else if(actual >= items.length) {
+                    actual = items.length - 1;
+                }
+                // Asignar clase activa
+                items[actual].classList.add('active');
+            }
+        });
+        // En la función donde generas la lista debes activar evento clic para cada elemento
+        // Para este ejemplo se hace manual
+        listGroup.querySelectorAll('li').forEach(li => {
+            li.addEventListener('click', e => {
+                // Asignar valor al campo
+                document.querySelector('#buscador_producto').value = e.currentTarget.textContent;
+                // Aquí deberías cerrar la lista y/o eliminar el contenido
+            });
+        });
 
 
     </script>

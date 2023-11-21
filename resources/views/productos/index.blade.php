@@ -10,7 +10,6 @@
             <div class="bg-gray-100 flex flex-col">
                 <div class="flex flex-row justify-between mb-3">
                         <a href="{{ route('create.productos') }}" class="button-link"> Agregar producto</a>
-                        <a href="{{ route('create.productosStock') }}" class="button-link"> Actualizar stock</a>
                         <a href="{{ route('create.productosStock') }}" class="button-link"> Cargar Stock de Productos</a>
                 </div>
                 <div id="mainProductos"></div>

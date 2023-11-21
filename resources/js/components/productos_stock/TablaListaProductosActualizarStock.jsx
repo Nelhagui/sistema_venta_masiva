@@ -7,7 +7,7 @@ const highlightedStyle = {
     transition: 'background-color 2s ease', // Animación de transición
 };
 
-const TablaListaProductosActualizarStock = ({productos}) => {
+const TablaListaProductosActualizarStock = ({ productos }) => {
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [proveedores, setProveedores] = useState([])
     const [isLoading, setIsLoading] = useState(false)
@@ -104,18 +104,20 @@ const TablaListaProductosActualizarStock = ({productos}) => {
                         )
                     );
                 }, 1000);
+                console.log("hola2")
                 return prevProductos.map(p => {
                     if (p.codigo_barra === productoExistente.codigo_barra) {
                         return {
                             ...p,
                             stock: p.stock + 1,
+                            cantidad: p.cantidad + 1,
                             highlighted: true
                         };
                     }
                     return p;
                 });
             } else {
-
+                console.log("hola")
                 setTimeout(() => {
                     setProductosSeleccionados((prevProductos) =>
                         prevProductos.map((p) =>
@@ -125,7 +127,7 @@ const TablaListaProductosActualizarStock = ({productos}) => {
                         )
                     );
                 }, 1000);
-
+                producto = { ...producto, highlighted: true, cantidad: 1 }
                 return [producto, ...prevProductos];
             }
         });
@@ -198,6 +200,11 @@ const TablaListaProductosActualizarStock = ({productos}) => {
             });
     }
 
+    const sacarProducto = (productoId) => {
+        const filtrados = productosSeleccionados.filter((item) => item.id !== productoId)
+        setProductosSeleccionados(filtrados);
+    }
+
 
     return (
         <>
@@ -239,61 +246,108 @@ const TablaListaProductosActualizarStock = ({productos}) => {
             </div>
             {/* FIN BUSCADOR */}
 
-            <div class="flex flex-col justify-center mb-3">
+            <div style={styles.productosStockContainer}>
                 {
-                    productosSeleccionados.map((producto) => 
+                    productosSeleccionados.map((producto) =>
                     (
-                    <div key={producto.codigo_barra} style={styles.productosStock} className="flex rounded bg-gray-300 mb-3 gap-4">
-                            <p>{capitalizeFirstLetterOfEachWord(producto.titulo)}</p>
-                            <p>{producto.usar_control_por_lote == 1 && "(Control por lote)"}</p>
-                            <p>{producto.usar_control_por_lote == 0 && `Actual: ${producto.stock_actual}`}</p>
-                            <input
-                                className='text-sm'
-                                style={{ maxWidth: '4rem', padding: 2 }}
-                                type="text"
-                                value={producto.nuevo_stock}
-                                onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'nuevo_stock', e.target.value)}
-                            />
+                        <div key={producto.codigo_barra}>
                             {
-                                producto.usar_control_por_lote == 1 && 
-                                <>
-                                    <input
-                                        class='text-sm' 
-                                        type="number"
-                                        value={producto.precio_costo || ''}
-                                    />
-                                    <input
-                                        class='text-sm' 
-                                        type="number"
-                                        value={producto.precio_venta || ''}
-                                    />
-                                    <input
-                                        className='text-sm'
-                                        type="date"
-                                        value={producto.fecha_vencimiento || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'fecha_vencimiento', e.target.value)}
-                                    />
-                                    <select
-                                        className='text-sm'
-                                        value={producto.proveedor_id || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'proveedor_id', e.target.value)}
-                                    >
-                                        <option value="">Seleccione un proveedor</option>
-                                        {
-                                            proveedores.map((proveedor) => {
-                                                return <option key={proveedor.id} value={proveedor.id}>{proveedor.nombre}</option>
-                                            })
-                                        }
-                                    </select>
-                                    <input
-                                        className='text-sm'
-                                        type="text"
-                                        value={producto.numero_factura || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'numero_factura', e.target.value)}
-                                    />
-                                </>
+                                producto.usar_control_por_lote == 1 ?
+                                    <div style={styles.productosStock} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
+                                        <div className='flex justify-between'>
+                                            <div className='flex'>
+                                                <p className='text-center'>{capitalizeFirstLetterOfEachWord(producto.titulo)}</p>
+                                                <p className='text-center'>(control por lote)</p>
+                                            </div>
+                                            <div>
+                                                <span style={{ cursor: 'pointer' }} onClick={() => sacarProducto(producto.id)}>x</span>
+                                            </div>
+                                        </div>
+                                        <div className='flex items-center gap-4 mt-2'>
+                                            <div>
+                                                <input
+                                                    className='text-sm'
+                                                    type="number"
+                                                    value={producto.precio_costo || ''}
+                                                    style={styles.inputStock}
+                                                    onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'precio_costo', e.target.value)}
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    className='text-sm'
+                                                    type="number"
+                                                    value={producto.precio_venta || ''}
+                                                    style={styles.inputStock}
+                                                    onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'precio_venta', e.target.value)}
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    className='text-sm'
+                                                    type="date"
+                                                    value={producto.fecha_vencimiento || ''}
+                                                    style={styles.inputStock}
+                                                    onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'fecha_vencimiento', e.target.value)}
+                                                />
+                                            </div>
+                                            <div>
+                                                <select
+                                                    className='text-sm'
+                                                    value={producto.proveedor_id || ''}
+                                                    style={styles.selectStock}
+                                                    onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'proveedor_id', e.target.value)}
+                                                >
+                                                    <option value="">Seleccione un proveedor</option>
+                                                    {
+                                                        proveedores.map((proveedor) => {
+                                                            return <option key={proveedor.id} value={proveedor.id}>{proveedor.nombre}</option>
+                                                        })
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <input
+                                                    className='text-sm'
+                                                    type="text"
+                                                    value={producto.numero_factura || ''}
+                                                    placeholder='n° Factura'
+                                                    style={styles.inputStock}
+                                                    onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'numero_factura', e.target.value)}
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    className='text-sm'
+                                                    style={styles.inputStock}
+                                                    type="text"
+                                                    value={producto.cantidad}
+                                                    placeholder='stock'
+                                                    onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'nuevo_stock', e.target.value)}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    :
+                                    <div style={styles.productos} className={producto.highlighted ? 'highlighted-row justify-between' : 'highlighted-none justify-between'}>
+                                        <div>
+                                            <p>{capitalizeFirstLetterOfEachWord(producto.titulo)}</p>
+                                        </div>
+                                        <div className='flex items-center gap-4'>
+                                            <p>Actual: {producto.stock_actual}</p>
+                                            <input
+                                                className='text-sm'
+                                                style={styles.inputStock}
+                                                type="text"
+                                                value={producto.cantidad}
+                                                placeholder='Nuevo stock'
+                                                onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'nuevo_stock', e.target.value)}
+                                            />
+                                            <span style={{ cursor: 'pointer' }} onClick={() => sacarProducto(producto.id)}>x</span>
+                                        </div>
+                                    </div>
                             }
-                    </div> 
+                        </div>
                     )
                     )
                 }
@@ -303,9 +357,43 @@ const TablaListaProductosActualizarStock = ({productos}) => {
 }
 
 const styles = {
+    inputStock: {
+        maxWidth: '7.8em',
+        padding: '2px',
+    },
+    selectStock: {
+        padding: '2px',
+    },
+    productosStockContainer: {
+        display: 'grid',
+        rowGap: '1.5rem',
+        gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
+        maxWidth: '1000px',
+        width: '100%',
+        margin: '0 auto',
+    },
     productosStock: {
-        padding: '1rem 2rem',
-        
+        padding: '1.3rem 1.5rem',
+        cursor: 'pointer',
+        borderRadius: '.5rem',
+        borderWidth: '1px',
+        boxSizing: 'border-box',
+        borderStyle: 'solid',
+        borderColor: '#e5e7eb',
+        boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        backgroundColor: '#fff'
+    },
+    productos: {
+        display: 'flex', 
+        padding: '1.3rem 1.5rem',
+        cursor: 'pointer',
+        borderRadius: '.5rem',
+        borderWidth: '1px',
+        boxSizing: 'border-box',
+        borderStyle: 'solid',
+        borderColor: '#e5e7eb',
+        boxShadow: '0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        backgroundColor: '#fff'
     },
     listContainer: {
         position: 'relative',

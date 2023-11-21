@@ -14,6 +14,7 @@ function ListProductos({ productos }) {
 
     useEffect(() => {
         setProductosIniciales(productos);
+        focusInput()
     }, [productos]);
 
     const handleModalConfirmation = () => {
@@ -84,7 +85,9 @@ function ListProductos({ productos }) {
             if (/^\d+$/.test(textoBusqueda)) {
                 const productoEncontrado = productosIniciales.find((producto) => Number(producto.codigo_barra) === Number(textoBusqueda));
                 if (productoEncontrado) {
+                    console.log(productoEncontrado)
                     addProducto(productoEncontrado)
+                    focusInput()
                 } else {
                     setObjetosBuscados([]);
                     handleInputFocus();
@@ -115,6 +118,7 @@ function ListProductos({ productos }) {
                             : p
                     )
                 );
+
                 return prevProductos.map(p => {
                     if (p.titulo === productoExistente.titulo) {
                         return {
@@ -126,15 +130,7 @@ function ListProductos({ productos }) {
                     return p;
                 });
             } else {
-                console.log('aca2')
-                setProductosSeleccionados((prevProductos) =>
-                    prevProductos.map((p) =>
-                        p?.titulo === producto?.titulo
-                            ? { ...p, highlighted: false, cantidad: 1 }
-                            : { ...p }
-                    )
-                );
-
+                producto = { ...producto, highlighted: false, cantidad: 1 }
                 return [producto, ...prevProductos];
             }
         });
@@ -152,7 +148,6 @@ function ListProductos({ productos }) {
                 <div style={styles.listContainer}>
                     <div className='flex justify-between'>
                         <div>
-
                             <input
                                 type="text"
                                 value={inputText}

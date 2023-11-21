@@ -5,7 +5,7 @@
     <style>
         /* En tu archivo de estilos CSS */
         .highlighted-row {
-            background-color: rgb(131, 206, 131);
+            background-color: rgb(131, 206, 131) !important;
             transition: background-color 0.5s ease;
         }
         .highlighted-none {

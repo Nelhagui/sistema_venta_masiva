@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 
 const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados }) => {
+    console.warn(productosSeleccionados)
     const [total, setTotal] = useState(0)
     const [vuelto, setVuelto] = useState(null)
     const [inputVuelto, setInputVuelto] = useState('')
 
     useEffect(() => {
-        if (productosSeleccionados.length) {
+        if (productosSeleccionados.length > 0) {
             obtenerTotal();
         } else {
             setTotal(0)
@@ -106,7 +107,7 @@ const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados }) =>
                                     </td>
                                     <td className="p-2 border border-slate-700">{productoSeleccionado.titulo}</td>
                                     <td className="p-2 border border-slate-700">${productoSeleccionado.precio_venta}</td>
-                                    <td className="p-2 border border-slate-700">${productoSeleccionado.precio_venta * productoSeleccionado.cantidad}</td>
+                                    <td className="p-2 border border-slate-700">${productoSeleccionado.precio_venta * (productoSeleccionado.cantidad)}</td>
                                     <td className="p-2 border border-slate-700">
                                         <span style={{ cursor: 'pointer' }} onClick={() => sacarProducto(productoSeleccionado.id)}>x</span>
                                     </td>

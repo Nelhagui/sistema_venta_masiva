@@ -18,7 +18,6 @@ return new class extends Migration
             $table->decimal('monto_total_venta', 8, 2);
             $table->decimal('monto_total_costo', 8, 2);
             $table->date('fecha_venta');
-            $table->string('nombre_producto');
             $table->softDeletes();
             $table->timestamps();
 

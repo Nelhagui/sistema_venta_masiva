@@ -69,6 +69,7 @@ class VentaController extends Controller
                 $detalle_venta = new DetalleVenta;
                 $detalle_venta->venta_id = $venta->id;
                 $detalle_venta->producto_id = $productoDb->id;
+                $detalle_venta->nombre_producto = $productoDb->titulo;
                 $detalle_venta->cantidad = $producto['cantidad'];
                 $detalle_venta->precio_unitario = $productoDb->precio_venta;
                 $detalle_venta->costo_unitario = $productoDb->precio_costo;
@@ -88,10 +89,11 @@ class VentaController extends Controller
                 }
 
                 $lote = Lote::where('cantidad_restante', '>', 0)
-                ->orderByRaw('ISNULL(fecha_vencimiento), fecha_vencimiento DESC') // Ordena por fecha de vencimiento
+                    ->orderByRaw('ISNULL(fecha_vencimiento), fecha_vencimiento DESC') // Ordena por fecha de vencimiento
                     ->orderByRaw('IF(fecha_vencimiento IS NULL, 1, 0)') // Prioriza los lotes sin fecha de vencimiento
                     ->orderByDesc('precio_costo') // Prioriza los lotes con precio de costo más alto
-                    ->get();
+                    ->get()
+                    ->first();
                 $lote->cantidad_restante -= $producto['cantidad'];
                 $lote->save();
             }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('cantidad');
             $table->decimal('precio_unitario', 8, 2); // Precio de venta en el momento de la venta
             $table->decimal('costo_unitario', 8, 2);  // Costo del producto en el momento de la venta
+            $table->string('nombre_producto');
             $table->softDeletes();
             $table->timestamps();
 
