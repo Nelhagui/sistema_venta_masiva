@@ -3,7 +3,7 @@ import ResumenPedido from './ResumenPedido';
 import { debounce } from '../../utils/debounce';
 import Example from './Example';
 
-function ListProductos({ productos }) {
+function ListProductos({ productos, metodosDePago }) {
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
     const [objetosBuscados, setObjetosBuscados] = useState([]);
@@ -177,6 +177,16 @@ function ListProductos({ productos }) {
                     </ul>
                 </div>
                 {/* FIN BUSCADOR */}
+                <div style={{ marginTop: '-20px' , visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible'}}>
+                    <h2>Seleccionar Método de Pago:</h2>
+                    <select name="metodo_pago_id">
+                    {metodosDePago.map(metodo => (
+                        <option key={metodo.id} value={metodo.id}>
+                        {metodo.nombre}
+                        </option>
+                    ))}
+                    </select>
+                </div>
                 <div>
                     <button
                         type="button"

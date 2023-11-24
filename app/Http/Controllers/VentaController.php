@@ -44,7 +44,7 @@ class VentaController extends Controller
             $user = Auth::user();
             $status = 2;
             DB::beginTransaction(); // Inicia la transacción
-    
+            dd($request);
             $venta = new Venta;
             $venta->sesion_caja_id = 1;
             $venta->user_id = 1;

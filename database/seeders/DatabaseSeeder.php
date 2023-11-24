@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ProductosBaseSeeder::class,
             ClientesTableSeeder::class,
             ProveedorSeeder::class,
+            MetodoPagoSeeder::class,
         ]);
 
         $user = User::create([

@@ -34,5 +34,9 @@ class Venta extends Model
     public function lote() {
         return $this->belongsTo(Lote::class);
     }
+
+    public function metodoPago() {
+        return $this->belongsTo(MetodoPago::class);
+    }
     
 }

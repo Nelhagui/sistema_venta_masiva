@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Producto;
 use App\Models\Proveedor;
 use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\MetodoPagoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,8 @@ Route::get('/productos', function () {
     $productos = Producto::all();
     return $productos;
 });
+
+Route::get('/metodos-pago', [MetodoPagoController::class, 'index']);
 
 Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busqueda']);
  
