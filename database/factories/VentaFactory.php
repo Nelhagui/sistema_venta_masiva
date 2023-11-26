@@ -35,8 +35,7 @@ class VentaFactory extends Factory
             'cantidad' => fake()->numberBetween(1, 100),
             'fecha_venta' => fake()->date(),
             'monto_total' => $this->faker->randomFloat(2, 10, 1000),
-            'metodo_pago_id' => $metodoPago->id,
-            'metodo_pago_nombre' => $metodoPago->nombre,
+            'metodos_de_pago' => fake()->string(),
             'markup' => $faker->randomFloat(2, 0, 10),
             'tipo_markup' => $metodoPago->tipo_markup, // Puedes generar un valor aleatorio o usar el del método de pago
             'created_at' => $this->faker->dateTimeBetween(Carbon::now()->subDays(30), Carbon::now()),

@@ -12,6 +12,50 @@ function ListProductos({ productos, metodosDePago }) {
     const inputRef = useRef(null);
     const [showModal, setShowModal] = useState(false);
 
+    const [metodosSeleccionados, setMetodosSeleccionados] = useState([]);
+    const [segundoMetodoPago, setSegundoMetodoPago] = useState(false);
+    const [metodosDisponibles, setMetodosDisponibles] = useState(metodosDePago);
+
+    const totalVenta = productosSeleccionados.reduce((sum, producto) => sum + (producto.precio_venta * producto.cantidad), 0)
+    const [montos, setMontos] = useState({
+        monto_abonado: totalVenta,
+        monto_abonado_dos: 0,
+    });
+
+    const handleChangeMetodoPago = (e) => {
+        const metodoId = parseInt(e.target.value);
+        const nombreMetodo = e.target.options[e.target.selectedIndex].text;
+
+        const nuevoMetodo = {
+            nombre: nombreMetodo,
+            metodo_pago_id: metodoId,
+            monto_abonado: montos.monto_abonado,
+        };
+        setMetodosSeleccionados([...metodosSeleccionados, nuevoMetodo]);
+
+        const nuevosMetodosDisponibles = metodosDePago.filter(
+            (metodo) => metodo.id !== metodoId
+        );
+        setMetodosDisponibles(nuevosMetodosDisponibles);
+
+        // Mostrar el segundo método de pago y su monto si se eligen múltiples métodos
+        if (metodosSeleccionados.length === 0) {
+            setSegundoMetodoPago(true);
+        }
+    };
+
+    const handleChangeMonto = (e) => {
+        const inputName = e.target.name;
+        const value = parseFloat(e.target.value);
+        setMontos({ ...montos, [inputName]: value });
+    };
+
+    const handleElegirOtroMetodo = () => {
+        // Mostrar el segundo método de pago
+        setSegundoMetodoPago(true);
+    };
+
+
     useEffect(() => {
         setProductosIniciales(productos);
         focusInput()
@@ -20,26 +64,32 @@ function ListProductos({ productos, metodosDePago }) {
     const handleModalConfirmation = () => {
         setShowModal(true);
     };
-      
+
+    // const handleChangeMetodoPago = (e) => {
+    //     let value = e.target.value
+    //     setMetodoPagoSeleccionado(value)
+    // }
+
     const handleCloseModal = () => {
         setShowModal(false);
     };
-    
+
     const handleConfirmVenta = () => {
         handleSubmit();
         setShowModal(false);
     };
 
-    
+
     const handleSubmit = () => {
-        console.log({productos: productosSeleccionados})
+        console.log({ productos: productosSeleccionados })
+        console.log(metodosSeleccionados)
         fetch('http://127.0.0.1:8000/api/ventas/crear', {
             method: 'POST', // Usar el método POST
             headers: {
                 'Content-Type': 'application/json', // Asegurarse de enviar los datos en formato JSON
             },
             // Aquí debes incluir los datos que deseas enviar al servidor
-            body: JSON.stringify({productos: productosSeleccionados}),
+            body: JSON.stringify({ productos: productosSeleccionados, metodos_de_pago: metodosSeleccionados }),
         })
             .then((response) => {
                 if (!response.ok) {
@@ -76,6 +126,7 @@ function ListProductos({ productos, metodosDePago }) {
         setInputText(value);
         debouncedSearchRef.current(value);
     }
+
 
     const realizarBusqueda = (textoBusqueda) => {
         const MAX_PRODUCTOS = 30;
@@ -142,7 +193,6 @@ function ListProductos({ productos, metodosDePago }) {
 
     return (
         <>
-        {/* <Example/> */}
             <div className='flex justify-between'>
                 {/* BUSCADOR */}
                 <div style={styles.listContainer}>
@@ -173,19 +223,46 @@ function ListProductos({ productos, metodosDePago }) {
                                     ))
                                 ) : (
                                     inputText && !isLoading ? <li style={{ textAlign: 'center', padding: 8, backgroundColor: '#e2e2e2' }}>Sin Resultados</li> : ''
-                                )}
+                                )
+                        }
                     </ul>
                 </div>
                 {/* FIN BUSCADOR */}
-                <div style={{ marginTop: '-20px' , visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible'}}>
+                <div style={{ marginTop: '-20px', visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible' }}>
                     <h2>Seleccionar Método de Pago:</h2>
-                    <select name="metodo_pago_id">
-                    {metodosDePago.map(metodo => (
-                        <option key={metodo.id} value={metodo.id}>
-                        {metodo.nombre}
-                        </option>
-                    ))}
+                    <select name="metodo_pago_id" onChange={handleChangeMetodoPago}>
+                        {metodosDePago.map((metodo) => (
+                            <option key={metodo.id} value={metodo.id}>
+                                {metodo.nombre}
+                            </option>
+                        ))}
                     </select>
+                    {segundoMetodoPago && (
+                        <>
+                            <input
+                                name='monto_abonado'
+                                type='number'
+                                value={montos.monto_abonado}
+                                onChange={handleChangeMonto}
+                            />
+                            <h2>Seleccionar Método de Pago dos:</h2>
+                            <select name="metodo_pago_id_dos" onChange={handleChangeMetodoPago}>
+                                <option value="">Seleccionar segundo método de pago</option>
+                                {metodosDisponibles.map((metodo) => (
+                                    <option key={metodo.id} value={metodo.id}>
+                                        {metodo.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                            <input
+                                name='monto_abonado_dos'
+                                type='number'
+                                value={montos.monto_abonado_dos}
+                                onChange={handleChangeMonto}
+                            />
+                        </>
+                    )}
+                    <button onClick={handleElegirOtroMetodo}>Elegir otro metodo</button>
                 </div>
                 <div>
                     <button
