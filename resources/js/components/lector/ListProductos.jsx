@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ResumenPedido from './ResumenPedido';
 import { debounce } from '../../utils/debounce';
-import Example from './Example';
+import InputMetodoPago from './InputMetodoPago';
 
 function ListProductos({ productos, metodosDePago }) {
+    const [metodosAgregados, setMetodosAgregados] = useState([]);
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
     const [objetosBuscados, setObjetosBuscados] = useState([]);
@@ -13,48 +14,87 @@ function ListProductos({ productos, metodosDePago }) {
     const [showModal, setShowModal] = useState(false);
 
     const [metodosSeleccionados, setMetodosSeleccionados] = useState([]);
-    const [segundoMetodoPago, setSegundoMetodoPago] = useState(false);
-    const [metodosDisponibles, setMetodosDisponibles] = useState(metodosDePago);
+    const nameFirstSelectorMetodoPago = "metodo_primero";
+    const [valueMontoFirstSelector, setValueMontoFirstSelector] = useState('')
+    const [firstMetodoValue, setFirstMetodoValue] = useState('')
+    const [firstMetodoNombre, setFirstMetodoNombre] = useState('')
+
+    useEffect(() => {
+        if (metodosDePago && metodosDePago.length > 0) {
+            // Encontrar el método de pago con el nombre "Efectivo"
+            const metodoEfectivo = metodosDePago.find(metodo => metodo.nombre === "Efectivo");
+            if (metodoEfectivo) {
+                // Establecer el método de pago "Efectivo" como el primer método seleccionado
+                setMetodosSeleccionados([{
+                    nombre: metodoEfectivo.nombre,
+                    metodo_pago_id: metodoEfectivo.id, // Asumiendo que el método tiene una propiedad 'id'
+                    monto_abonado: 0, // Establece este valor según sea necesario
+                    selectorName: nameFirstSelectorMetodoPago,
+                }]);
+            }
+        }
+        setFirstMetodoNombre('Efectivo')
+    }, [metodosDePago])
+
 
     const totalVenta = productosSeleccionados.reduce((sum, producto) => sum + (producto.precio_venta * producto.cantidad), 0)
-    const [montos, setMontos] = useState({
-        monto_abonado: totalVenta,
-        monto_abonado_dos: 0,
-    });
+
 
     const handleChangeMetodoPago = (e) => {
-        const metodoId = parseInt(e.target.value);
+        const { value, name } = e.target;
         const nombreMetodo = e.target.options[e.target.selectedIndex].text;
 
-        const nuevoMetodo = {
-            nombre: nombreMetodo,
-            metodo_pago_id: metodoId,
-            monto_abonado: montos.monto_abonado,
-        };
-        setMetodosSeleccionados([...metodosSeleccionados, nuevoMetodo]);
+        setMetodosSeleccionados(prevMetodos => {
+            // Buscar el índice del método de pago que coincida con el name del selector
+            const indiceExistente = prevMetodos.findIndex(metodo => metodo.selectorName === name);
 
-        const nuevosMetodosDisponibles = metodosDePago.filter(
-            (metodo) => metodo.id !== metodoId
-        );
-        setMetodosDisponibles(nuevosMetodosDisponibles);
-
-        // Mostrar el segundo método de pago y su monto si se eligen múltiples métodos
-        if (metodosSeleccionados.length === 0) {
-            setSegundoMetodoPago(true);
+            if (indiceExistente >= 0) {
+                // Crear un nuevo objeto de método con el monto existente
+                const nuevoMetodo = {
+                    ...prevMetodos[indiceExistente], // Copia el objeto existente
+                    nombre: nombreMetodo,
+                    metodo_pago_id: value,
+                    selectorName: name,
+                };
+                // Actualizar el método existente con el nuevo valor
+                return prevMetodos.map((metodo, indice) =>
+                    indice === indiceExistente ? nuevoMetodo : metodo
+                );
+            } else {
+                // Si no existe un método para este selector, agregar como nuevo elemento
+                const nuevoMetodo = {
+                    nombre: nombreMetodo,
+                    metodo_pago_id: value,
+                    monto_abonado: '', // Puede inicializarse con un valor predeterminado
+                    selectorName: name,
+                };
+                return [...prevMetodos, nuevoMetodo];
+            }
+        });
+        if (name === nameFirstSelectorMetodoPago) {
+            setFirstMetodoValue(e.target.value)
+            setFirstMetodoNombre(e.target.options[e.target.selectedIndex].text)
         }
     };
 
     const handleChangeMonto = (e) => {
-        const inputName = e.target.name;
-        const value = parseFloat(e.target.value);
-        setMontos({ ...montos, [inputName]: value });
+        const { value, name } = e.target;
+        setValueMontoFirstSelector(value);
+        const nuevoMetodo = {
+            nombre: firstMetodoNombre,
+            metodo_pago_id: firstMetodoValue,
+            monto_abonado: value,
+            selectorName: name,
+        };
+        setMetodosSeleccionados(prevMetodos => {
+            const indiceExistente = prevMetodos?.findIndex(metodo => metodo?.selectorName === name);
+            if (indiceExistente >= 0) {
+                return prevMetodos.map((metodo, indice) =>
+                    indice === indiceExistente ? nuevoMetodo : metodo
+                );
+            }
+        });
     };
-
-    const handleElegirOtroMetodo = () => {
-        // Mostrar el segundo método de pago
-        setSegundoMetodoPago(true);
-    };
-
 
     useEffect(() => {
         setProductosIniciales(productos);
@@ -64,11 +104,6 @@ function ListProductos({ productos, metodosDePago }) {
     const handleModalConfirmation = () => {
         setShowModal(true);
     };
-
-    // const handleChangeMetodoPago = (e) => {
-    //     let value = e.target.value
-    //     setMetodoPagoSeleccionado(value)
-    // }
 
     const handleCloseModal = () => {
         setShowModal(false);
@@ -81,8 +116,6 @@ function ListProductos({ productos, metodosDePago }) {
 
 
     const handleSubmit = () => {
-        console.log({ productos: productosSeleccionados })
-        console.log(metodosSeleccionados)
         fetch('http://127.0.0.1:8000/api/ventas/crear', {
             method: 'POST', // Usar el método POST
             headers: {
@@ -106,7 +139,6 @@ function ListProductos({ productos, metodosDePago }) {
             });
     }
 
-    // BUSCADOR
     const focusInput = () => inputRef.current.focus();
 
     const handleInputFocus = () => {
@@ -136,7 +168,6 @@ function ListProductos({ productos, metodosDePago }) {
             if (/^\d+$/.test(textoBusqueda)) {
                 const productoEncontrado = productosIniciales.find((producto) => Number(producto.codigo_barra) === Number(textoBusqueda));
                 if (productoEncontrado) {
-                    console.log(productoEncontrado)
                     addProducto(productoEncontrado)
                     focusInput()
                 } else {
@@ -155,12 +186,9 @@ function ListProductos({ productos, metodosDePago }) {
     const debouncedSearchRef = useRef(debounce((textoBusqueda) => realizarBusqueda(textoBusqueda), 200));
 
     const addProducto = (producto) => {
-        console.log('productos seleccionados', productosSeleccionados);
         setProductosSeleccionados(prevProductos => {
             const productoExistente = prevProductos.find(p => (producto.titulo === p.titulo));
-            console.log('producto Existente', productoExistente);
             if (productoExistente) {
-                console.log('aca1')
                 // Si el producto ya existe, incrementamos su stock en 1 y le agregamos el efecto highlighted
                 setProductosSeleccionados((prevProductos) =>
                     prevProductos.map((p) =>
@@ -189,7 +217,14 @@ function ListProductos({ productos, metodosDePago }) {
 
     };
 
-    // FIN BUSCADOR
+    const agregarComponente = () => {
+        setMetodosAgregados(prev => [...prev, <InputMetodoPago key={prev.length} metodos={metodosDePago} name={Math.random()} metodosSeleccionados={metodosSeleccionados} handleChangeMetodoPago={handleChangeMetodoPago} setMetodosSeleccionados={setMetodosSeleccionados} />]);
+    };
+
+    useEffect(() => {
+        console.log(metodosSeleccionados)
+    }, [metodosSeleccionados])
+
 
     return (
         <>
@@ -228,41 +263,33 @@ function ListProductos({ productos, metodosDePago }) {
                     </ul>
                 </div>
                 {/* FIN BUSCADOR */}
-                <div style={{ marginTop: '-20px', visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible' }}>
-                    <h2>Seleccionar Método de Pago:</h2>
-                    <select name="metodo_pago_id" onChange={handleChangeMetodoPago}>
-                        {metodosDePago.map((metodo) => (
-                            <option key={metodo.id} value={metodo.id}>
-                                {metodo.nombre}
-                            </option>
-                        ))}
-                    </select>
-                    {segundoMetodoPago && (
-                        <>
-                            <input
-                                name='monto_abonado'
-                                type='number'
-                                value={montos.monto_abonado}
-                                onChange={handleChangeMonto}
-                            />
-                            <h2>Seleccionar Método de Pago dos:</h2>
-                            <select name="metodo_pago_id_dos" onChange={handleChangeMetodoPago}>
-                                <option value="">Seleccionar segundo método de pago</option>
-                                {metodosDisponibles.map((metodo) => (
-                                    <option key={metodo.id} value={metodo.id}>
-                                        {metodo.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                            <input
-                                name='monto_abonado_dos'
-                                type='number'
-                                value={montos.monto_abonado_dos}
-                                onChange={handleChangeMonto}
-                            />
-                        </>
-                    )}
-                    <button onClick={handleElegirOtroMetodo}>Elegir otro metodo</button>
+                <div style={{ marginTop: '-20px', visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible', maxWidth: '257px' }}>
+
+                    <div className='flex'>
+                        <select name={nameFirstSelectorMetodoPago} onChange={handleChangeMetodoPago}>
+                            {metodosDePago.map((metodo) => (
+                                <option key={metodo.id} value={metodo.id}>
+                                    {metodo.nombre}
+                                </option>
+                            ))}
+                        </select>
+                        <input
+                            name={nameFirstSelectorMetodoPago}
+                            type='number'
+                            value={valueMontoFirstSelector}
+                            onChange={handleChangeMonto}
+                        />
+                    </div>
+                    <div className='flex flex-col mb-6' style={{ maxWidth: '257px' }}>
+                        {metodosAgregados}
+                        <div>
+                            {
+                                metodosAgregados.length < (metodosDePago.length - 1)
+                                    ? <button onClick={agregarComponente} className='mt-2'>Agregar otro metodo</button>
+                                    : ""
+                            }
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <button

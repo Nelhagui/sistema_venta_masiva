@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
 const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados }) => {
-    console.warn(productosSeleccionados)
     const [total, setTotal] = useState(0)
     const [vuelto, setVuelto] = useState(null)
     const [inputVuelto, setInputVuelto] = useState('')
