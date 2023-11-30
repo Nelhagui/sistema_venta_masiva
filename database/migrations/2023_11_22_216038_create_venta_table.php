@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('fecha_venta');
             $table->string('metodos_de_pago');
             $table->decimal('markup', 8, 2)->nullable();
-            $table->string('tipo_markup'); 
+            $table->string('tipo_markup')->nullable(); 
             $table->softDeletes();
             $table->timestamps();
 

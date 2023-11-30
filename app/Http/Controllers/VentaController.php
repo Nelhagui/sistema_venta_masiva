@@ -44,13 +44,13 @@ class VentaController extends Controller
             $user = Auth::user();
             $status = 2;
             DB::beginTransaction(); // Inicia la transacción
-            dd($request);
             $venta = new Venta;
             $venta->sesion_caja_id = 1;
             $venta->user_id = 1;
             $venta->monto_total_costo = 0;
             $venta->monto_total_venta = 0;
             $venta->fecha_venta = now();
+            $venta->metodos_de_pago = json_encode($request->metodos_de_pago);
             $venta->save();
     
             $productos = $request->productos;

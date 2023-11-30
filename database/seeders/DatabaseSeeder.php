@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             ProductosBaseSeeder::class,
             ClientesTableSeeder::class,
             ProveedorSeeder::class,
+            InversorSeeder::class,
             MetodoPagoSeeder::class,
         ]);
 

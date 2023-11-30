@@ -8,6 +8,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LectorController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\MetodoController;
+use App\Http\Controllers\InversorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,6 +57,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/clientes/agregar', [ClienteController::class, 'store'])->name('store.clientes');
         Route::get('/clientes/editar/{id}', [ClienteController::class, 'edit'])->name('edit.clientes');
         Route::post('/clientes/editar/{id}', [ClienteController::class, 'update'])->name('update.clientes');
+
+        //CLIENTES
+        Route::get('/inversores', [InversorController::class, 'index'])->name('index.inversores');
+        Route::get('/inversores/agregar', [InversorController::class, 'create'])->name('create.inversores');
+        Route::post('/inversores/agregar', [InversorController::class, 'store'])->name('store.inversores');
+        Route::get('/inversores/editar/{inversor}', [InversorController::class, 'edit'])->name('edit.inversores');
+        Route::post('/inversores/editar/{inversor}', [InversorController::class, 'update'])->name('update.inversores');
+
 
         // VENTAS
         Route::get('/ventas', [VentaController::class, 'index'])->name('index.ventas');
