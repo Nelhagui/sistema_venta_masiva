@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import ResumenPedido from './ResumenPedido';
 import { debounce } from '../../utils/debounce';
 import InputMetodoPago from './InputMetodoPago';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function ListProductos({ productos, metodosDePago }) {
     const [metodosAgregados, setMetodosAgregados] = useState([]);
@@ -11,7 +13,7 @@ function ListProductos({ productos, metodosDePago }) {
     const [isLoading, setIsLoading] = useState(false)
     const [inputText, setInputText] = useState('');
     const inputRef = useRef(null);
-    const [showModal, setShowModal] = useState(false);
+    const [mostrarModalConfirmacionVenta, setMostrarModalConfirmacionVenta] = useState(false);
 
     const [metodosSeleccionados, setMetodosSeleccionados] = useState([]);
     const nameFirstSelectorMetodoPago = "metodo_primero";
@@ -35,9 +37,6 @@ function ListProductos({ productos, metodosDePago }) {
         }
         setFirstMetodoNombre('Efectivo')
     }, [metodosDePago])
-
-
-    const totalVenta = productosSeleccionados.reduce((sum, producto) => sum + (producto.precio_venta * producto.cantidad), 0)
 
 
     const handleChangeMetodoPago = (e) => {
@@ -102,18 +101,29 @@ function ListProductos({ productos, metodosDePago }) {
     }, [productos]);
 
     const handleModalConfirmation = () => {
-        setShowModal(true);
+        setMostrarModalConfirmacionVenta(true);
     };
 
     const handleCloseModal = () => {
-        setShowModal(false);
+        setMostrarModalConfirmacionVenta(false);
     };
 
     const handleConfirmVenta = () => {
         handleSubmit();
-        setShowModal(false);
+        setMostrarModalConfirmacionVenta(false);
+        setProductosSeleccionados([])
+        setMetodosSeleccionados([])
+        toast.success('Venta realizada con éxito', {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            });
     };
-
 
     const handleSubmit = () => {
         fetch('http://127.0.0.1:8000/api/ventas/crear', {
@@ -263,10 +273,10 @@ function ListProductos({ productos, metodosDePago }) {
                     </ul>
                 </div>
                 {/* FIN BUSCADOR */}
-                <div style={{ marginTop: '-20px', visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible', maxWidth: '257px' }}>
+                <div style={{ visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible', maxWidth: '400px' }}>
 
-                    <div className='flex'>
-                        <select name={nameFirstSelectorMetodoPago} onChange={handleChangeMetodoPago}>
+                    <div className='flex my-2'>
+                        <select name={nameFirstSelectorMetodoPago} onChange={handleChangeMetodoPago} className='text-sm'>
                             {metodosDePago.map((metodo) => (
                                 <option key={metodo.id} value={metodo.id}>
                                     {metodo.nombre}
@@ -278,9 +288,10 @@ function ListProductos({ productos, metodosDePago }) {
                             type='number'
                             value={valueMontoFirstSelector}
                             onChange={handleChangeMonto}
+                            style={{maxWidth: "100px"}}
                         />
                     </div>
-                    <div className='flex flex-col mb-6' style={{ maxWidth: '257px' }}>
+                    <div className='flex flex-col mb-6' style={{ maxWidth: '400px' }}>
                         {metodosAgregados}
                         <div>
                             {
@@ -308,17 +319,27 @@ function ListProductos({ productos, metodosDePago }) {
                     </button>
                 </div>
             </div>
-            {showModal && (
+            {mostrarModalConfirmacionVenta && (
                 <div style={styles.modalVenta}>
                     <div style={styles.modalContent}>
                         <h2 className="font-semibold text-xl leading-tight pb-3">¿Estás seguro que deseas cargar la venta?</h2>
                         <div className='mt-3 flex justify-end'>
-                            <button onClick={handleConfirmVenta} className="hover:bg-gray-500 bg-gray-600 text-gray-200 px-3 py-1  cursor-pointer rounded">Confirmar</button>
-                            <button onClick={handleCloseModal} className="hover:bg-gray-500 bg-gray-300 text-white px-3 py-1 cursor-pointer rounded">Cancelar</button>
+                            <button 
+                                onClick={handleConfirmVenta} 
+                                className="hover:bg-gray-500 bg-gray-600 text-gray-200 px-3 py-1  cursor-pointer rounded" 
+                                id="confirmarVentaToast">
+                                    Confirmar
+                            </button>
+                            <button 
+                                onClick={handleCloseModal} 
+                                className="hover:bg-gray-500 bg-gray-300 text-white px-3 py-1 cursor-pointer rounded">
+                                    Cancelar
+                            </button>
                         </div>
                     </div>
                 </div>
             )}
+            <ToastContainer />
             {
                 productosSeleccionados.length > 0
                     ?
@@ -340,7 +361,6 @@ const styles = {
     },
     productosList: {
         position: 'absolute',
-        top: '100%',
         left: 0,
         minWidth: '450px',
         maxHeight: '200px',
