@@ -31,9 +31,9 @@ const InputMetodoPago = ({ name, metodos, handleChangeMetodoPago, setMetodosSele
         setMetodoNombre(e.target.options[e.target.selectedIndex].text);
     };
     return (
-        <div className='flex'>
-            <select onChange={handleSelection} name={name}>
-                <option value="">Seleccionar segundo método de pago</option>
+        <div className='flex my-2'>
+            <select onChange={handleSelection} name={name} className='text-sm'>
+                <option value="">Seleccionar método de pago</option>
                 {metodos?.map((metodo) => (
                     <option key={metodo?.id} value={metodo?.id}>
                         {metodo?.nombre}
@@ -45,6 +45,7 @@ const InputMetodoPago = ({ name, metodos, handleChangeMetodoPago, setMetodosSele
                 type='number'
                 value={value}
                 onChange={handleChangeMonto}
+                style={{maxWidth: "100px"}}
             />
         </div>
     )
