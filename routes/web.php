@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CajaMovimientoController;
+use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\SesionCajaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\LectorController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\MetodoController;
 use App\Http\Controllers\InversorController;
+use App\Http\Controllers\ReporteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -97,6 +99,17 @@ Route::middleware('auth')->group(function () {
         Route::post('/metodos/agregar', [MetodoController::class, 'store'])->name('store.metodos');
         Route::get('/metodos/editar/{id}', [MetodoController::class, 'edit'])->name('edit.metodos');
         Route::post('/metodos/editar/{id}', [MetodoController::class, 'update'])->name('update.metodos');
+
+        //PROVEEDORES
+        Route::get('/proveedores', [ProveedorController::class, 'index'])->name('index.proveedores');
+        Route::get('/proveedores/agregar', [ProveedorController::class, 'create'])->name('create.proveedores');
+        Route::post('/proveedores/agregar', [ProveedorController::class, 'store'])->name('store.proveedores');
+        Route::get('/proveedores/editar/{id}', [ProveedorController::class, 'edit'])->name('edit.proveedores');
+        Route::post('/proveedores/editar/{id}', [ProveedorController::class, 'update'])->name('update.proveedores');
+
+
+        // REPORTES
+        Route::get('/reportes', [ReporteController::class, 'index'])->name('index.reportes');
     });
 
 

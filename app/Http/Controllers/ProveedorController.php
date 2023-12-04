@@ -12,7 +12,8 @@ class ProveedorController extends Controller
      */
     public function index()
     {
-        //
+        $proveedores = Proveedor::all();
+        return view('proveedores.index', compact('proveedores'));
     }
 
     /**
@@ -20,7 +21,7 @@ class ProveedorController extends Controller
      */
     public function create()
     {
-        //
+        return view('proveedores.create');
     }
 
     /**
@@ -28,7 +29,14 @@ class ProveedorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $proveedor = new Proveedor;
+        $proveedor->nombre = $request->nombre;
+        $proveedor->direccion = $request->direccion;
+        $proveedor->telefono = $request->telefono;
+        $proveedor->whatsapp = $request->whatsapp;
+        $proveedor->nota = $request->nota;
+        $proveedor->save();
+        return redirect()->route('index.proveedores');
     }
 
     /**

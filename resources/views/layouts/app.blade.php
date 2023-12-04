@@ -29,6 +29,7 @@
     {{-- @vite(['resources/css/app.css']) --}}
     @viteReactRefresh
     @vite('resources/js/components/lector/MainLector.jsx')
+    @vite('resources/js/components/reportes/MainReportes.jsx')
     @vite('resources/js/components/productos/MainProductos.jsx')
     @vite('resources/js/components/productos_base/MainProductosBase.jsx')
     @vite('resources/js/components/productos_stock/MainProductosActualizarStock.jsx')

@@ -33,6 +33,12 @@
                     <x-nav-link :href="route('index.gastos')" :active="request()->routeIs(['index.gastos'])">
                         {{ __('Gastos') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('index.proveedores')" :active="request()->routeIs(['index.proveedores'])">
+                        {{ __('Proveedores') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('index.reportes')" :active="request()->routeIs(['index.reportes'])">
+                        {{ __('Reportes') }}
+                    </x-nav-link>
                 </div>
             </div>
 
