@@ -9,6 +9,7 @@ const InputMetodoPago = ({ name, metodos, handleChangeMetodoPago, setMetodosSele
     const handleChangeMonto = (e) => {
         const { value, name } = e.target;
         setValue(value);
+        
         const nuevoMetodo = {
             nombre: metodoNombre,
             metodo_pago_id: metodoValue,

@@ -91,7 +91,8 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
 
     const addProducto = (producto) => {
         setProductosSeleccionados(prevProductos => {
-            const productoExistente = prevProductos.find(p => Number(p.codigo_barra) === Number(producto.codigo_barra));
+            console.log(producto)
+            const productoExistente = prevProductos.find(p => p.titulo === producto.titulo);
 
             if (productoExistente) {
                 // Si el producto ya existe, incrementamos su stock en 1 y le agregamos el efecto highlighted
@@ -250,7 +251,7 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
                 {
                     productosSeleccionados.map((producto) =>
                     (
-                        <div key={producto.codigo_barra}>
+                        <div key={producto.codigo_barra || producto.id}>
                             {
                                 producto.usar_control_por_lote == 1 ?
                                     <div style={styles.productosStock} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>

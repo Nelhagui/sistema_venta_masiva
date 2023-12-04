@@ -21,6 +21,13 @@ function ListProductos({ productos, metodosDePago }) {
     const [firstMetodoValue, setFirstMetodoValue] = useState('')
     const [firstMetodoNombre, setFirstMetodoNombre] = useState('')
 
+
+    useEffect(() => {
+        setProductosIniciales(productos);
+        focusInput()
+    }, [productos]);
+
+
     useEffect(() => {
         if (metodosDePago && metodosDePago.length > 0) {
             // Encontrar el método de pago con el nombre "Efectivo"
@@ -94,11 +101,6 @@ function ListProductos({ productos, metodosDePago }) {
             }
         });
     };
-
-    useEffect(() => {
-        setProductosIniciales(productos);
-        focusInput()
-    }, [productos]);
 
     const handleModalConfirmation = () => {
         setMostrarModalConfirmacionVenta(true);
