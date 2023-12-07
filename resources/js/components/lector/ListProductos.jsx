@@ -20,6 +20,9 @@ function ListProductos({ productos, metodosDePago }) {
     const [valueMontoFirstSelector, setValueMontoFirstSelector] = useState('')
     const [firstMetodoValue, setFirstMetodoValue] = useState('')
     const [firstMetodoNombre, setFirstMetodoNombre] = useState('')
+    const [firstMetodoMarkup, setFirstMetodoMarkup] = useState('')
+    const [firstMetodoTipoMarkup, setFirstMetodoTipoMarkup] = useState('')
+    const [montoTotalMarkups, setMontoTotalMarkups] = useState(0)
 
 
     useEffect(() => {
@@ -49,10 +52,16 @@ function ListProductos({ productos, metodosDePago }) {
     const handleChangeMetodoPago = (e) => {
         const { value, name } = e.target;
         const nombreMetodo = e.target.options[e.target.selectedIndex].text;
+        // Aquí puedes obtener el markup del método de pago, por ejemplo, asumiendo que el markup está en la propiedad 'markup' del objeto de método de pago
+        const metodoSeleccionado = metodosDePago.find((metodo) => metodo.id == value);
+        console.log(metodoSeleccionado)
+        const markup = metodoSeleccionado ? metodoSeleccionado.markup : null;
+        const tipo_markup = metodoSeleccionado ? metodoSeleccionado.tipo_markup : null;
 
         setMetodosSeleccionados(prevMetodos => {
             // Buscar el índice del método de pago que coincida con el name del selector
             const indiceExistente = prevMetodos.findIndex(metodo => metodo.selectorName === name);
+            
 
             if (indiceExistente >= 0) {
                 // Crear un nuevo objeto de método con el monto existente
@@ -61,7 +70,10 @@ function ListProductos({ productos, metodosDePago }) {
                     nombre: nombreMetodo,
                     metodo_pago_id: value,
                     selectorName: name,
+                    markup: markup, 
+                    tipo_markup: tipo_markup
                 };
+           
                 // Actualizar el método existente con el nuevo valor
                 return prevMetodos.map((metodo, indice) =>
                     indice === indiceExistente ? nuevoMetodo : metodo
@@ -73,13 +85,18 @@ function ListProductos({ productos, metodosDePago }) {
                     metodo_pago_id: value,
                     monto_abonado: '', // Puede inicializarse con un valor predeterminado
                     selectorName: name,
+                    markup: markup, 
+                    tipo_markup: tipo_markup
                 };
+                console.log(nuevoMetodo)
                 return [...prevMetodos, nuevoMetodo];
             }
         });
         if (name === nameFirstSelectorMetodoPago) {
             setFirstMetodoValue(e.target.value)
             setFirstMetodoNombre(e.target.options[e.target.selectedIndex].text)
+            setFirstMetodoTipoMarkup(tipo_markup)
+            setFirstMetodoMarkup(markup)
         }
     };
 
@@ -230,12 +247,19 @@ function ListProductos({ productos, metodosDePago }) {
     };
 
     const agregarComponente = () => {
-        setMetodosAgregados(prev => [...prev, <InputMetodoPago key={prev.length} metodos={metodosDePago} name={Math.random()} metodosSeleccionados={metodosSeleccionados} handleChangeMetodoPago={handleChangeMetodoPago} setMetodosSeleccionados={setMetodosSeleccionados} />]);
+        setMetodosAgregados(prev => 
+            [...prev, 
+                <InputMetodoPago key={prev.length} 
+                    metodos={metodosDePago} 
+                    name={Math.random()} 
+                    metodosSeleccionados={metodosSeleccionados} 
+                    handleChangeMetodoPago={handleChangeMetodoPago} 
+                    setMetodosSeleccionados={setMetodosSeleccionados} 
+                    setMontoTotalMarkups={setMontoTotalMarkups}
+                />
+            ]
+        );
     };
-
-    useEffect(() => {
-        console.log(metodosSeleccionados)
-    }, [metodosSeleccionados])
 
 
     return (
@@ -292,6 +316,18 @@ function ListProductos({ productos, metodosDePago }) {
                             onChange={handleChangeMonto}
                             style={{maxWidth: "100px"}}
                         />
+                         {
+                            firstMetodoTipoMarkup == 1 &&
+                            <div className='flex items-center px-2'>
+                                <p>+${firstMetodoMarkup}% (${Number(valueMontoFirstSelector)+Number(valueMontoFirstSelector*firstMetodoMarkup/100)})</p>
+                            </div>
+                        }
+                        {
+                            firstMetodoTipoMarkup == 2 &&
+                            <div className='flex items-center px-2'>
+                                <p>+${firstMetodoMarkup} (${Number(valueMontoFirstSelector)+Number(firstMetodoMarkup)})</p>
+                            </div>
+                        }
                     </div>
                     <div className='flex flex-col mb-6' style={{ maxWidth: '400px' }}>
                         {metodosAgregados}
@@ -348,6 +384,8 @@ function ListProductos({ productos, metodosDePago }) {
                     <ResumenPedido
                         productosSeleccionados={productosSeleccionados}
                         setProductosSeleccionados={setProductosSeleccionados}
+                        montoTotalMarkups={montoTotalMarkups}
+
                     />
                     :
                     ""

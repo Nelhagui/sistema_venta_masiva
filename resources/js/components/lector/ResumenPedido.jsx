@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados }) => {
+const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, montoTotalMarkups }) => {
     const [total, setTotal] = useState(0)
     const [vuelto, setVuelto] = useState(null)
     const [inputVuelto, setInputVuelto] = useState('')
@@ -76,7 +76,7 @@ const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados }) =>
                         }
                     </div>
                 </div>
-                <span onClick={borrarSeleccionados}>X</span>
+                <span onClick={borrarSeleccionados}>X {montoTotalMarkups}</span>
             </div>
             <div className='flex flex-col' style={{ padding: 20 }}>
                 <table className="table-auto border-collapse border border-slate-500">
