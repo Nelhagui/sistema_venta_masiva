@@ -2,19 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lote;
-use Illuminate\Http\Request;
+use App\Models\InversorProducto;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreInversorProductoRequest;
+use App\Http\Requests\UpdateInversorProductoRequest;
 
-class LoteController extends Controller
+class InversorProductoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $lotes = Lote::all();
-        dd($lotes);
-        return view('productos.index', compact('lotes', 'productos'));
+        //
     }
 
     /**
@@ -28,7 +28,7 @@ class LoteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreInversorProductoRequest $request)
     {
         //
     }
@@ -36,7 +36,7 @@ class LoteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Lote $lote)
+    public function show(InversorProducto $inversorProducto)
     {
         //
     }
@@ -44,7 +44,7 @@ class LoteController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Lote $lote)
+    public function edit(InversorProducto $inversorProducto)
     {
         //
     }
@@ -52,7 +52,7 @@ class LoteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Lote $lote)
+    public function update(UpdateInversorProductoRequest $request, InversorProducto $inversorProducto)
     {
         //
     }
@@ -60,7 +60,7 @@ class LoteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Lote $lote)
+    public function destroy(InversorProducto $inversorProducto)
     {
         //
     }

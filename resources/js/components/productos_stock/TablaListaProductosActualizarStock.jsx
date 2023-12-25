@@ -10,8 +10,10 @@ const highlightedStyle = {
 const TablaListaProductosActualizarStock = ({ productos }) => {
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [proveedores, setProveedores] = useState([])
+    const [inversores, setInversores] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingProveedores, setIsLoadingProveedores] = useState(true)
+    const [isLoadingInversores, setIsLoadingInversores] = useState(true)
     const [inputText, setInputText] = useState('');
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
@@ -35,6 +37,24 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
             })
             .finally(() => {
                 setIsLoadingProveedores(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
+
+        fetch('/api/inversores')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // Actualizar el estado con la lista de productos
+                setInversores(data);
+            })
+            .finally(() => {
+                setIsLoadingInversores(false);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
@@ -318,11 +338,26 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
                                                 />
                                             </div>
                                             <div>
+                                                <select
+                                                    className='text-sm'
+                                                    value={producto.inversor_id || ''}
+                                                    style={styles.selectStock}
+                                                    onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'inversor_id', e.target.value)}
+                                                >
+                                                    <option value="">Seleccione un inversor</option>
+                                                    {
+                                                        inversores.map((inversor) => {
+                                                            return <option key={inversor.id} value={inversor.id}>{inversor.nombre} {inversor.apellido}</option>
+                                                        })
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div>
                                                 <input
                                                     className='text-sm'
                                                     style={styles.inputStock}
                                                     type="text"
-                                                    value={producto.cantidad}
+                                                    defaultValue={producto.cantidad}
                                                     placeholder='stock'
                                                     onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'nuevo_stock', e.target.value)}
                                                 />
@@ -334,13 +369,28 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
                                         <div>
                                             <p>{capitalizeFirstLetterOfEachWord(producto.titulo)}</p>
                                         </div>
+                                        <div>
+                                            <select
+                                                className='text-sm'
+                                                value={producto.inversor_id || ''}
+                                                style={styles.selectStock}
+                                                onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'inversor_id', e.target.value)}
+                                            >
+                                                <option value="">Seleccione un inversor</option>
+                                                {
+                                                    inversores.map((inversor) => {
+                                                        return <option key={inversor.id} value={inversor.id}>{inversor.nombre} {inversor.apellido}</option>
+                                                    })
+                                                }
+                                            </select>
+                                        </div>
                                         <div className='flex items-center gap-4'>
                                             <p>Actual: {producto.stock_actual}</p>
                                             <input
                                                 className='text-sm'
                                                 style={styles.inputStock}
                                                 type="text"
-                                                value={producto.cantidad}
+                                                defaultValue={producto.cantidad}
                                                 placeholder='Nuevo stock'
                                                 onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'nuevo_stock', e.target.value)}
                                             />

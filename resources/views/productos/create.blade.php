@@ -109,8 +109,8 @@
                                 <th class="text-left p-2 border border-slate-600">Control por lote</th>
                                 <th class="text-left p-2 border border-slate-600">Fecha vencimiento</th>
                                 <th class="text-left p-2 border border-slate-600">Proveedor</th>
+                                <th class="text-left p-2 border border-slate-600">Factura</th>                                <th class="text-left p-2 border border-slate-600">Inversor</th>
                                 <th class="text-left p-2 border border-slate-600">Inversor</th>
-                                <th class="text-left p-2 border border-slate-600">Factura</th>
                             </tr>
                         </thead>
                         <tbody id="cuerpoTabla">
@@ -243,20 +243,6 @@
                         </select>
                     </td>
                     <td class="p-2 border border-slate-700">
-                        <select
-                            class='text-sm'
-                            name="productos[${contadorFilas}][inversor_id]" 
-                            id="inversor_id_${contadorFilas}"
-                            value="{{old('inversor_id')}}"
-                            disabled
-                        >
-                            <option value="">Seleccione un inversor</option>
-                            @foreach ($inversores as $inversor)
-                                <option value="{{$inversor->id}}">{{$inversor->nombre}}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td class="p-2 border border-slate-700">
                         <input
                             class='text-sm'
                             type="text"
@@ -265,6 +251,21 @@
                             style="padding: 2px"  
                             id="numero_factura_${contadorFilas}" 
                         />
+                    </td>
+                    
+                    <td class="p-2 border border-slate-700">
+                        <select
+                            class='text-sm'
+                            name="productos[${contadorFilas}][inversor_id]" 
+                            id="inversor_id_${contadorFilas}"
+                            value="{{old('inversor_id')}}"
+                            
+                        >
+                            <option value="">Seleccione un inversor</option>
+                            @foreach ($inversores as $inversor)
+                                <option value="{{$inversor->id}}">{{$inversor->nombre}} {{$inversor->apellido}}</option>
+                            @endforeach
+                        </select>
                     </td>`
 
                 cuerpoTabla.appendChild(nuevaFila)
@@ -294,12 +295,10 @@
             let fechaVencimiento = document.getElementById(`fecha_vencimiento_${valor}`);
             let proveedor = document.getElementById(`proveedor_id_${valor}`);
             let factura = document.getElementById(`numero_factura_${valor}`);
-            let inversor = document.getElementById(`inversor_id_${valor}`);
 
             fechaVencimiento.disabled = !checkbox.checked;
             proveedor.disabled = !checkbox.checked;
             factura.disabled = !checkbox.checked;
-            inversor.disabled = !checkbox.checked;
         }
 
         const path_p = "{{ asset('/') }}";

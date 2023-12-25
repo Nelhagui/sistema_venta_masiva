@@ -11,6 +11,7 @@ use App\Http\Controllers\VentaController;
 use App\Http\Controllers\MetodoController;
 use App\Http\Controllers\InversorController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\LoteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -92,6 +93,10 @@ Route::middleware('auth')->group(function () {
 
         //LECTOR
         Route::get('/lector', [LectorController::class, 'index'])->name('index.lector')->middleware('checksesion');
+
+        // LOTES
+        Route::get('/lotes/productos', [LoteController::class, 'index'])->name('index.lotes');
+        Route::get('/lotes/productos/{producto}', [LoteController::class, 'create'])->name('index.loteProducto');
         
         //METODOS
         Route::get('/metodos', [MetodoController::class, 'index'])->name('index.metodos');

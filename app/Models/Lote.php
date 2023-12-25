@@ -21,5 +21,10 @@ class Lote extends Model
     public function ventas() {
         return $this->hasMany(Venta::class);
     }
+
+    public function inversorProductos()
+    {
+        return $this->morphMany(InversorProducto::class, 'model', 'model_type', 'model_id');
+    }
     
 }
