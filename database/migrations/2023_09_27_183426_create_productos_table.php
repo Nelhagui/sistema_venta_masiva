@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
+            // $table->unsignedBigInteger('inversor_id')->nullable();
             $table->string('titulo')->unique();
             $table->text('descripcion')->nullable();
             $table->decimal('precio_costo', 15, 2)->nullable();
@@ -20,9 +21,13 @@ return new class extends Migration
             $table->integer('stock_actual')->nullable();
             $table->string('codigo_barra')->unique()->nullable();
             $table->boolean('usar_control_por_lote')->default(false);
+            $table->string('inversor_id')->nullable();
             $table->boolean('habilitado')->default(1);
             $table->softDeletes();
             $table->timestamps();
+
+            // Llave foránea
+            // $table->foreign('inversor_id')->references('id')->on('inversores')->onDelete('cascade');
         });
     }
 

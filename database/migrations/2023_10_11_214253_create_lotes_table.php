@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('producto_id');
             $table->unsignedBigInteger('proveedor_id')->nullable();
+            $table->unsignedBigInteger('inversor_id')->nullable();
             $table->string('numero_factura')->nullable();
             $table->decimal('precio_costo', 8, 2);
             $table->decimal('precio_venta', 8, 2);
@@ -28,6 +29,7 @@ return new class extends Migration
 
             // Llave foránea
             $table->foreign('proveedor_id')->references('id')->on('proveedores')->onDelete('cascade');
+            $table->foreign('inversor_id')->references('id')->on('inversores')->onDelete('cascade');
             $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
         });
     }

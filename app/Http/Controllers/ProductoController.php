@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\ProductosBase;
 use App\Models\Proveedor;
+use App\Models\Inversor;
 
 class ProductoController extends Controller
 {
@@ -35,8 +36,9 @@ class ProductoController extends Controller
     public function create()
     {
         $proveedores = Proveedor::all();
+        $inversores = Inversor::all();
 
-        return view('productos.create', compact('proveedores'));
+        return view('productos.create', compact('proveedores', 'inversores'));
     }
 
     public function busqueda($busqueda)
@@ -92,6 +94,7 @@ class ProductoController extends Controller
                 $newLoteProducto->fecha_vencimiento = $productoData['fecha_vencimiento'] ?? null;
                 $newLoteProducto->numero_factura = $productoData['numero_factura'] ?? null;
                 $newLoteProducto->proveedor_id = $productoData['proveedor_id'] ?? null;
+                $newLoteProducto->inversor_id = $productoData['inversor_id'] ?? null;
                 $newLoteProducto->precio_costo = $productoData['precio_costo']; // Asegúrate de ajustar esto según tu estructura
                 $newLoteProducto->precio_venta = $productoData['precio_venta']; // Asegúrate de ajustar esto según tu estructura
                 $newLoteProducto->precio_dolar = $productoData['precio_dolar'] ?? null;
