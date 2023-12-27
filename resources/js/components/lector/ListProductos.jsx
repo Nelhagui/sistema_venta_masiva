@@ -42,6 +42,8 @@ function ListProductos({ productos, metodosDePago }) {
                     metodo_pago_id: metodoEfectivo.id, // Asumiendo que el método tiene una propiedad 'id'
                     monto_abonado: 0, // Establece este valor según sea necesario
                     selectorName: nameFirstSelectorMetodoPago,
+                    markup: metodoEfectivo.markup, 
+                    tipo_markup: metodoEfectivo.tipo_markup
                 }]);
             }
         }
@@ -256,6 +258,7 @@ function ListProductos({ productos, metodosDePago }) {
                     handleChangeMetodoPago={handleChangeMetodoPago} 
                     setMetodosSeleccionados={setMetodosSeleccionados} 
                     setMontoTotalMarkups={setMontoTotalMarkups}
+                    metodosAgregados={metodosAgregados}
                 />
             ]
         );

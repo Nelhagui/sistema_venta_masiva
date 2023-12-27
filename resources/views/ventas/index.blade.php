@@ -28,9 +28,9 @@
                                 <td class="p-2 border border-slate-600">{{ $venta->id }}</td>
                                 <td class="p-2 border border-slate-600">{{ \Carbon\Carbon::parse($venta->created_at)->format('d/m/Y') }}</td>
                                 <td class="p-2 border border-slate-600">{{ \Carbon\Carbon::parse($venta->created_at)->format('H:i') }}</td>
-                                <td class="p-2 border border-slate-600">${{ $venta->monto_total }}</td>
+                                <td class="p-2 border border-slate-600">${{ $venta->monto_total_venta }}</td>
                                 <td class="p-2 border border-slate-600">{{ $venta->user->nombre }}</td>
-                                <td class="p-2 border border-slate-600"><a href='{{route('show.ventas', $venta->id)}}'>detalle</a></td>
+                                <td class="p-2 border border-slate-600"><a href='{{route('show.ventas', $venta->id)}}'>ver detalle</a></td>
                             </tr>
                         @endforeach
                     </tbody>

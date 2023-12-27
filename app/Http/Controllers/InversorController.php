@@ -6,6 +6,7 @@ use App\Models\Inversor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreInversorRequest;
 use App\Http\Requests\UpdateInversorRequest;
+use Illuminate\Http\Request;
 
 class InversorController extends Controller
 {
@@ -15,7 +16,7 @@ class InversorController extends Controller
     public function index()
     {
         $inversores = Inversor::all();
-        return view('index.inversores', compact ('inversores'));
+        return view('inversores.index', compact ('inversores'));
     }
 
     /**
@@ -23,7 +24,7 @@ class InversorController extends Controller
      */
     public function create()
     {
-        return view('create.inversores');
+        return view('inversores.create');
     }
 
     /**
@@ -33,9 +34,9 @@ class InversorController extends Controller
     {
         $inversor = new Inversor;
         $inversor->nombre = $request->nombre;
-        $inversor->telefono = $request->telefono;
+        $inversor->apellido = $request->apellido;
         $inversor->save();
-        return redirect()->route('index.clientes');
+        return redirect()->route('index.inversores');
     }
 
     /**
@@ -52,7 +53,7 @@ class InversorController extends Controller
      */
     public function edit(Inversor $inversor)
     {
-        //
+        return view('inversores.edit', compact('inversor'));
     }
 
     /**
@@ -60,12 +61,10 @@ class InversorController extends Controller
      */
     public function update(Inversor $inversor, Request $request)
     {
-        $cliente = Cliente::find($id);
-        $cliente->nombre = $request->nombre;
-        $cliente->telefono = $request->telefono;
-        $cliente->whatsapp = $request->whatsapp;
-        $cliente->nota = $request->nota;
-        $cliente->update();
+        $inversor->nombre = $request->nombre;
+        $inversor->apellido = $request->apellido;
+        $inversor->estado = $request->estado == "on" ? 1 : 0;
+        $inversor->update();
         return redirect()->route('index.inversores');
     }
 

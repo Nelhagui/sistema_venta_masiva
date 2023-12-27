@@ -36,6 +36,9 @@
                     <x-nav-link :href="route('index.proveedores')" :active="request()->routeIs(['index.proveedores'])">
                         {{ __('Proveedores') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('index.inversores')" :active="request()->routeIs(['index.inversores'])">
+                        {{ __('Inversores') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('index.reportes')" :active="request()->routeIs(['index.reportes'])">
                         {{ __('Reportes') }}
                     </x-nav-link>

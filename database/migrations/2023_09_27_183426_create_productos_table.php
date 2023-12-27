@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('habilitado')->default(1);
             $table->softDeletes();
             $table->timestamps();
+
         });
     }
 

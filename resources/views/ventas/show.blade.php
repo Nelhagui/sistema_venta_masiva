@@ -18,8 +18,8 @@
                             <th class="text-left p-2 border border-slate-600">Cantidad</th>
                             <th class="text-left p-2 border border-slate-600">Precio</th>
                             <th class="text-left p-2 border border-slate-600">Costo</th>
-                            <th class="text-left p-2 border border-slate-600">Total P</th>
-                            <th class="text-left p-2 border border-slate-600">Total C</th>
+                            <th class="text-left p-2 border border-slate-600">Total Precio</th>
+                            <th class="text-left p-2 border border-slate-600">Total Costo</th>
                         </tr>
                     </thead>
                     <tbody>

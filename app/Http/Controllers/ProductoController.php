@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use App\Models\Producto;
 use App\Models\ProductosBase;
 use App\Models\Proveedor;
+use App\Models\Inversor;
+use App\Models\InversorProducto;
 
 class ProductoController extends Controller
 {
@@ -35,8 +37,9 @@ class ProductoController extends Controller
     public function create()
     {
         $proveedores = Proveedor::all();
+        $inversores = Inversor::all();
 
-        return view('productos.create', compact('proveedores'));
+        return view('productos.create', compact('proveedores', 'inversores'));
     }
 
     public function busqueda($busqueda)
@@ -83,6 +86,13 @@ class ProductoController extends Controller
             $producto->codigo_barra = $productoData['codigo_barra'];
             $producto->usar_control_por_lote = isset($productoData['control_por_lote']);
             $producto->save();
+
+            if(!isset($productoData['control_por_lote']) && $productoData['inversor_id'] !== null && $productoData['inversor_id'] !== '') {
+                $inversorProducto = new InversorProducto;
+                $inversorProducto->model()->associate($producto);
+                $inversorProducto->cantidad_producto_invertido = $productoData['stock'];
+                $inversorProducto->save();
+            }
     
             // Agrega lógica adicional si es necesario, por ejemplo, para lotes
             if (isset($productoData['control_por_lote'])) {
@@ -98,6 +108,13 @@ class ProductoController extends Controller
                 $newLoteProducto->cantidad_inicial = $productoData['stock']; // Asegúrate de ajustar esto según tu estructura
                 $newLoteProducto->cantidad_restante = $productoData['stock']; // Asegúrate de ajustar esto según tu estructura
                 $newLoteProducto->save();
+
+                if($productoData['inversor_id'] !== null && $productoData['inversor_id'] !== '') {
+                    $newInversorProducto = new InversorProducto;
+                    $newInversorProducto->model()->associate($newLoteProducto);
+                    $newInversorProducto->cantidad_producto_invertido = $productoData['stock'];
+                    $newInversorProducto->save();
+                }
             }
         }
 
@@ -267,6 +284,14 @@ class ProductoController extends Controller
                 $updateProducto->stock_actual = $updateProducto['stock_actual'] + $producto['nuevo_stock'];
                 $updateProducto->update();
 
+                
+                if(!$producto['usar_control_por_lote'] && $producto['inversor_id'] !== null && $producto['inversor_id'] !== '') {
+                    $inversorProducto = new InversorProducto;
+                    $inversorProducto->model()->associate($updateProducto);
+                    $inversorProducto->cantidad_producto_invertido = $producto['nuevo_stock'];
+                    $inversorProducto->save();
+                }
+
                 if ($producto['usar_control_por_lote']) {
                     $newLoteProducto = new Lote;
                     $newLoteProducto->producto_id = $updateProducto->id;
@@ -280,6 +305,13 @@ class ProductoController extends Controller
                     $newLoteProducto->cantidad_inicial = $producto['nuevo_stock'];
                     $newLoteProducto->cantidad_restante = $producto['nuevo_stock'];
                     $newLoteProducto->save();
+
+                    if($producto['inversor_id'] !== null && $producto['inversor_id'] !== '') {
+                        $newInversorProducto = new InversorProducto;
+                        $newInversorProducto->model()->associate($newLoteProducto);
+                        $newInversorProducto->cantidad_producto_invertido = $producto['nuevo_stock'];
+                        $newInversorProducto->save();
+                    }
                 }
 
             }

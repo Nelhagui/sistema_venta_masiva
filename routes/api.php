@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\Inversor;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MetodoPagoController;
 
@@ -37,6 +38,11 @@ Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busque
 Route::get('/proveedores', function () {
     $proveedores = Proveedor::all();
     return $proveedores;
+});
+
+Route::get('/inversores', function () {
+    $inversores = Inversor::all();
+    return $inversores;
 });
 
 Route::post('/productos/base/agregar', [ProductoController::class, 'storeDesdeBase']);

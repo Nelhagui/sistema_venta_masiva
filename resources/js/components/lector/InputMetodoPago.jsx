@@ -1,28 +1,30 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 
-const InputMetodoPago = ({ name, metodos, handleChangeMetodoPago, setMetodosSeleccionados, setMontoTotalMarkups, montoTotalMarkups }) => {
+const InputMetodoPago = ({ name, metodos, handleChangeMetodoPago, setMetodosSeleccionados, metodosAgregados, setMontoTotalMarkups, montoTotalMarkups }) => {
 
     const [value, setValue] = useState('');
     const [metodoValue, setMetodoValue] = useState('');
     const [metodoNombre, setMetodoNombre] = useState('');
     const [markup, setMarkup] = useState(null)
     const [tipoMarkup, setTipoMarkup] = useState(null)
-    const [totalMarkupFijo, setTotalMarkupFijo] = useState(0)
-    const [totalMarkupPorcentaje, setTotalMarkupPorcentaje] = useState(0)
 
     const handleChangeMonto = (e) => {
         const { value, name } = e.target;
         setValue(value);
+
+        const metodoSeleccionado = metodos.find((metodo) => metodo.id == metodoValue);
+        setMarkup(metodoSeleccionado.markup);
+        setTipoMarkup(metodoSeleccionado.tipo_markup);
+
         const nuevoMetodo = {
             nombre: metodoNombre,
             metodo_pago_id: metodoValue,
             monto_abonado: value,
             selectorName: name, 
+            markup: metodoSeleccionado.markup,
+            tipo_markup: metodoSeleccionado.tipo_markup
         };
 
-        const metodoSeleccionado = metodos.find((metodo) => metodo.id == metodoValue);
-        setMarkup(metodoSeleccionado.markup);
-        setTipoMarkup(metodoSeleccionado.tipo_markup);
 
         setMetodosSeleccionados(prevMetodos => {
             const indiceExistente = prevMetodos?.findIndex(metodo => metodo?.selectorName === name);
@@ -33,22 +35,7 @@ const InputMetodoPago = ({ name, metodos, handleChangeMetodoPago, setMetodosSele
                 );
             }
         });
-
-        if(metodoSeleccionado.tipo_markup == 2) {
-            setTotalMarkupFijo(calcularTotalMarkupsMontoFijo(metodoSeleccionado.markup))
-        } else if (metodoSeleccionado.tipo_markup == 1) {
-            setTotalMarkupPorcentaje(calcularTotalMarkupsPorcentaje(metodoSeleccionado.markup, value))
-        } 
-    }
-
-    function calcularTotalMarkupsMontoFijo(markup) {
-        let total = 0
-        return total = Number(markup)
-    }
-
-    function calcularTotalMarkupsPorcentaje(markup, valorDelPago) {
-        let total = 0
-        return total = Number(valorDelPago * markup / 100);
+        console.log(metodosAgregados)
     }
 
     const handleSelection = (e) => {
@@ -58,11 +45,8 @@ const InputMetodoPago = ({ name, metodos, handleChangeMetodoPago, setMetodosSele
     };
 
     useEffect(() => {
-        setMontoTotalMarkups(totalMarkupFijo + totalMarkupPorcentaje);
-        console.log(totalMarkupFijo)
-        console.log(totalMarkupPorcentaje)
-        console.log("a")
-    }, [handleChangeMonto])
+        
+    }, [])
     
     return (
         <div className='flex my-2'>

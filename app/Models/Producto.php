@@ -28,5 +28,8 @@ class Producto extends Model
         return $this->hasMany(Venta::class);
     }
     
-    
+    public function inversorProductos()
+    {
+        return $this->morphMany(InversorProducto::class, 'model', 'model_type', 'model_id');
+    }
 }
