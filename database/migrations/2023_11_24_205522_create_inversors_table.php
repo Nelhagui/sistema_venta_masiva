@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('apellido');
             $table->string('estado')->default(1);
             $table->timestamps();
+
         });
     }
 

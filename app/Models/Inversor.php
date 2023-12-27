@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Inversor extends Model
 {
     use HasFactory;
+    protected $table = 'inversors';
+
 }

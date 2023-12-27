@@ -91,6 +91,7 @@ class ProductoController extends Controller
                 $inversorProducto = new InversorProducto;
                 $inversorProducto->model()->associate($producto);
                 $inversorProducto->cantidad_producto_invertido = $productoData['stock'];
+                $inversorProducto->inversor_id = $productoData['inversor_id'];
                 $inversorProducto->save();
             }
     
@@ -113,6 +114,7 @@ class ProductoController extends Controller
                     $newInversorProducto = new InversorProducto;
                     $newInversorProducto->model()->associate($newLoteProducto);
                     $newInversorProducto->cantidad_producto_invertido = $productoData['stock'];
+                    $newInversorProducto->inversor_id = $productoData['inversor_id'];
                     $newInversorProducto->save();
                 }
             }
@@ -289,6 +291,7 @@ class ProductoController extends Controller
                     $inversorProducto = new InversorProducto;
                     $inversorProducto->model()->associate($updateProducto);
                     $inversorProducto->cantidad_producto_invertido = $producto['nuevo_stock'];
+                    $inversorProducto->inversor_id = $producto['inversor_id'];
                     $inversorProducto->save();
                 }
 
@@ -310,6 +313,7 @@ class ProductoController extends Controller
                         $newInversorProducto = new InversorProducto;
                         $newInversorProducto->model()->associate($newLoteProducto);
                         $newInversorProducto->cantidad_producto_invertido = $producto['nuevo_stock'];
+                        $newInversorProducto->inversor_id = $producto['inversor_id'];
                         $newInversorProducto->save();
                     }
                 }

@@ -14,4 +14,9 @@ class InversorProducto extends Model
     {
         return $this->morphTo();
     }
+
+    public function inversor() 
+    {
+        return $this->belongsTo(Inversor::class);
+    }
 }

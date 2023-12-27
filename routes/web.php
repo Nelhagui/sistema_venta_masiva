@@ -96,7 +96,7 @@ Route::middleware('auth')->group(function () {
 
         // LOTES
         Route::get('/lotes/productos', [LoteController::class, 'index'])->name('index.lotes');
-        Route::get('/lotes/productos/{producto}', [LoteController::class, 'create'])->name('index.loteProducto');
+        Route::get('/lotes/productos/{producto}', [LoteController::class, 'show'])->name('show.lote');
         
         //METODOS
         Route::get('/metodos', [MetodoController::class, 'index'])->name('index.metodos');

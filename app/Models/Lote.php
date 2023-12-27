@@ -26,5 +26,9 @@ class Lote extends Model
     {
         return $this->morphMany(InversorProducto::class, 'model', 'model_type', 'model_id');
     }
+
+    public function proveedor() {
+        return $this->belongsTo(Proveedor::class);
+    }
     
 }

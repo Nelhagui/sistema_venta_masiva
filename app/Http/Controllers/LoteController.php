@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Lote;
 use Illuminate\Http\Request;
+use App\Models\Producto;
+
 
 class LoteController extends Controller
 {
@@ -13,8 +15,17 @@ class LoteController extends Controller
     public function index()
     {
         $lotes = Lote::all();
-        dd($lotes);
-        return view('productos.index', compact('lotes', 'productos'));
+        $productos = [];
+        foreach($lotes as $lote) {
+            $producto = Producto::find($lote->producto_id);
+
+            if ($producto) {
+                $productos[] = $producto;
+            }
+        }
+        $productos = array_unique($productos);
+
+        return view('lotes.index', compact('lotes', 'productos'));
     }
 
     /**
@@ -36,9 +47,10 @@ class LoteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Lote $lote)
+    public function show(Producto $producto)
     {
-        //
+        $lotes = Lote::where('producto_id', $producto->id)->get();
+        return view('lotes.show', compact('lotes'));
     }
 
     /**
