@@ -32,6 +32,7 @@
     @vite('resources/js/components/reportes/MainReportes.jsx')
     @vite('resources/js/components/productos/MainProductos.jsx')
     @vite('resources/js/components/productos_base/MainProductosBase.jsx')
+    @vite('resources/js/components/compras/MainCompras.jsx')
     @vite('resources/js/components/productos_stock/MainProductosActualizarStock.jsx')
 </head>
 

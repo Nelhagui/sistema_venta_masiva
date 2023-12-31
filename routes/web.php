@@ -12,6 +12,7 @@ use App\Http\Controllers\MetodoController;
 use App\Http\Controllers\InversorController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\LoteController;
+use App\Http\Controllers\CompraController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,6 +54,10 @@ Route::middleware('auth')->group(function () {
 
         //PRODUCTOS BASE
         Route::get('/productos/base', [ProductoController::class, 'indexProductosBase'])->name('index.productosBase');
+
+
+        //COMPRAS
+        Route::get('/compras', [CompraController::class, 'index'])->name('index.compras');
 
         //CLIENTES
         Route::get('/clientes', [ClienteController::class, 'index'])->name('index.clientes');

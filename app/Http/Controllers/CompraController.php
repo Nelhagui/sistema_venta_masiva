@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Compra;
+use App\Models\Proveedor;
+use App\Models\Inversor;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 
 class CompraController extends Controller
@@ -12,7 +15,10 @@ class CompraController extends Controller
      */
     public function index()
     {
-        //
+        $productos = Producto::all();
+        $proveedores = Proveedor::all();
+        $inversores = Inversor::all();
+        return view('compras.index', compact('productos', 'proveedores', 'inversores'));
     }
 
     /**

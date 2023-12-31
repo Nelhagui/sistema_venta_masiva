@@ -13,13 +13,19 @@ return new class extends Migration
     {
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('proveedor_id');
-            $table->decimal('monto_total', 8, 2);
-            $table->string('detalle');
+            $table->unsignedBigInteger('producto_id');
+            $table->unsignedBigInteger('proveedor_id')->nullable();
+            $table->decimal('precio_unitario', 8, 2);
+            $table->string('cantidad');
+            $table->decimal('precio_total', 8, 2);
+            $table->date('fecha_compra');
+            $table->date('fecha_carga');
+            $table->string('numero_factura')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
             // Llave foránea
+            $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
             $table->foreign('proveedor_id')->references('id')->on('proveedores')->onDelete('cascade');
         });
     }
