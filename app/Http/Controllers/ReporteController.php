@@ -10,9 +10,8 @@ class ReporteController extends Controller
 {
     public function index()
     {
-        $producto = Producto::find(267);
-        $lotes = $producto->lotes;
+        $compras = Compra::all();
 
-        return view('reportes.index', compact('producto', 'lotes'));
+        return view('reportes.index', compact('compras'));
     }
 }
