@@ -7,8 +7,8 @@ const highlightedStyle = {
     transition: 'background-color 2s ease', // Animación de transición
 };
 
-const TablaListCompras = ({proovedores, inversores, productosIniciales}) => {
-    const [productosIniciales, setProductosIniciales] = useState([])
+const TablaListCompras = ({productos}) => {
+    const [productosIniciales, setProductosIniciales] = useState(productos)
     const [proveedores, setProveedores] = useState([])
     const [inversores, setInversores] = useState([])
     const [isLoading, setIsLoading] = useState(false)
@@ -17,6 +17,11 @@ const TablaListCompras = ({proovedores, inversores, productosIniciales}) => {
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
+
+    useEffect(() => {
+        setProductosIniciales(productos);
+        focusInput()
+    }, [productos]);
 
     useEffect(() => {
         if (inputRef.current) {
@@ -32,14 +37,6 @@ const TablaListCompras = ({proovedores, inversores, productosIniciales}) => {
             });
         };
     
-        const fetchProductos = () => {
-            return fetch('/api/productos').then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response for productos was not ok');
-                }
-                return response.json();
-            });
-        };
     
         const fetchInversores = () => {
             return fetch('/api/inversores').then((response) => {
@@ -50,13 +47,11 @@ const TablaListCompras = ({proovedores, inversores, productosIniciales}) => {
             });
         };
     
-        Promise.all([fetchProveedores(), fetchProductos(), fetchInversores()])
-            .then(([proveedoresData, productosData, inversoresData]) => {
+        Promise.all([fetchProveedores(), fetchInversores()])
+            .then(([proveedoresData, inversoresData]) => {
                 // Actualizar el estado con los datos obtenidos
                 setProveedores(proveedoresData);
-                setProductosIniciales(productosData);
                 setInversores(inversoresData);
-                console.log(productosData);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);

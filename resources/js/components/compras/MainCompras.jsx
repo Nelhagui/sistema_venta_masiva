@@ -1,63 +1,31 @@
 import { createRoot } from 'react-dom/client';
 import TablaListCompras from './TablaListCompras';
+import React, { useState, useEffect } from 'react'
 
 export default function MainCompras() {
-    const [productosIniciales, setProductosIniciales] = useState([])
-    const [proveedores, setProveedores] = useState([])
-    const [inversores, setInversores] = useState([])
-    
+    const [productos, setProductos] = useState([])
+
     useEffect(() => {
-    
-        const fetchProveedores = () => {
-            return fetch('/api/proveedores').then((response) => {
+        // Realizar la solicitud GET a la API de productos
+        fetch('/api/productos')
+            .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Network response for proveedores was not ok');
+                    throw new Error('Network response was not ok');
                 }
                 return response.json();
-            });
-        };
-    
-        const fetchProductos = () => {
-            return fetch('/api/productos').then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response for productos was not ok');
-                }
-                return response.json();
-            });
-        };
-    
-        const fetchInversores = () => {
-            return fetch('/api/inversores').then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response for inversores was not ok');
-                }
-                return response.json();
-            });
-        };
-    
-        Promise.all([fetchProveedores(), fetchProductos(), fetchInversores()])
-            .then(([proveedoresData, productosData, inversoresData]) => {
-                // Actualizar el estado con los datos obtenidos
-                setProveedores(proveedoresData);
-                setProductosIniciales(productosData);
-                setInversores(inversoresData);
-                console.log(productosData);
+            })
+            .then((data) => {
+                // Actualizar el estado con la lista de productos
+                setProductos(data);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
             })
-            .finally(() => {
-                // Actualizar el estado de carga si es necesario
-                setIsLoading(false); // Puedes definir este estado si es necesario
-            });
     }, []);
 
     return (
         <>
-            <TablaListCompras 
-                proveedores={proveedores} 
-                inversores={inversores} 
-                productosIniciales={productosIniciales}/>
+            <TablaListCompras productos={productos}/>
         </>
     )
 }
