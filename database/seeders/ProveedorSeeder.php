@@ -50,6 +50,15 @@ class ProveedorSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'nombre' => 'El Rayo SRL',
+                'direccion' => 'Av. Eva Perón 9593, Loma Hermosa',
+                'telefono' => null,
+                'whatsapp' => null,
+                'nota' => 'Nota para Proveedor 2',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

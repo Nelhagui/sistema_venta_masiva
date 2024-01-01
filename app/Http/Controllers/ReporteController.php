@@ -8,14 +8,15 @@ use App\Models\Producto;
 use App\Models\Compra;
 use App\Models\CompraDetalle;
 use Carbon\Carbon;
+use Illuminate\Pagination\Paginator;
+
 
 class ReporteController extends Controller
 {
     public function index()
     {
-        $compras = Compra::all();
-        dd($compras);
-        return view('reportes.index', compact('compras'));
+        $productos = Producto::orderBy('titulo')->paginate(50);
+        return view('reportes.index', compact('productos'));
     }
     public function showProducto($id, $anio, $mes)
     {
