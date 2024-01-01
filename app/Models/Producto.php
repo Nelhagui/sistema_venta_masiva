@@ -32,4 +32,9 @@ class Producto extends Model
     {
         return $this->morphMany(InversorProducto::class, 'model', 'model_type', 'model_id');
     }
+
+    public function compraDetalles()
+    {
+        return $this->hasMany(CompraDetalle::class, 'producto_id');
+    }
 }

@@ -39,9 +39,9 @@
                     <x-nav-link :href="route('index.inversores')" :active="request()->routeIs(['index.inversores'])">
                         {{ __('Inversores') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('index.reportes')" :active="request()->routeIs(['index.reportes'])">
+                    {{-- <x-nav-link :href="route('index.reportes')" :active="request()->routeIs(['index.reportes'])">
                         {{ __('Reportes') }}
-                    </x-nav-link>
+                    </x-nav-link> --}}
                 </div>
             </div>
 

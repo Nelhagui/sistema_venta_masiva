@@ -28,6 +28,8 @@
                         value="{{ $year }}-{{ str_pad($month, 2, '0', STR_PAD_LEFT) }}">
                     <canvas id="myChart"></canvas>
                 </div>
+                <div id="mainReportes"></div>
+
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                 <script>
@@ -45,11 +47,9 @@
                     var comprasDelMes = {!! json_encode($comprasDelMes) !!};
                     var proveedores = {!! json_encode($proveedores) !!};
                     var diasDelMes = {!! json_encode($fechasDelMes) !!};
-                    console.warn('diaaaas de contro', diasDelMes)
 
                     const diasDelMesFormat = diasDelMes.map((dia) => formatearFecha(dia));
                     const diasDelMesFormatOrdenados = diasDelMesFormat.sort((a, b) => parseInt(a) - parseInt(b));
-                    console.log('format', diasDelMesFormatOrdenados);
 
                     let comprasDelProveedor = {};
 
@@ -59,14 +59,8 @@
                     });
 
                     for (let iprove = 0; iprove < proveedores.length; iprove++) {
-                        console.log("-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -")
-                        console.warn('proveedor: ', proveedores[iprove])
-                        console.log("-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -")
                         let valorEnFechaActualEncontrada = 0;
                         for (let iddm = 0; iddm < diasDelMes.length; iddm++) {
-                            console.log("-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -")
-                            console.log('dia del mes: ', diasDelMes[iddm])
-                            console.log("-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -")
                             let compraEnFechaActualEncontrada = false;
                             for (let icompdm = 0; icompdm < comprasDelMes.length; icompdm++) {
 
@@ -79,10 +73,6 @@
                                     valorEnFechaActualEncontrada = comprasDelProveedor[proveedores[iprove]].push(comprasDelMes[icompdm][
                                         'precio_unitario'
                                     ]);
-                                    
-                                    console.log("-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -")
-                                    console.log('compra del mes: ', comprasDelMes[icompdm])
-                                    console.log("-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -")
                                     break;
                                 }
                             }
@@ -149,17 +139,12 @@
                         var selectedDate = this.value; // Obtener la fecha seleccionada
                         // Separar la fecha en año y mes
                         var year = selectedDate.split('-')[0];
-                        console.log(year);
                         var month = selectedDate.split('-')[1];
-
                         var currentUrl = window.location.href; // Obtener la URL actual
-
                         // Extraer el ID del producto de la URL
-                        var productId = currentUrl.match(/\/producto\/(\d+)/)[1];
-
+                        var productId = currentUrl.match(/\/costo\/(\d+)/)[1];
                         // Construir la nueva URL con la fecha seleccionada y el ID del producto
-                        var newUrl = "/reportes/producto/" + productId + "/" + year + "/" + month;
-
+                        var newUrl = "/reportes/productos/costo/" + productId + "/" + year + "/" + month;
                         // Redirigir a la nueva URL
                         window.location.href = newUrl;
                     });

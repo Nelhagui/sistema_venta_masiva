@@ -32,6 +32,24 @@ class ProveedorSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'nombre' => 'Día',
+                'direccion' => 'sin direccion',
+                'telefono' => null,
+                'whatsapp' => null,
+                'nota' => 'Nota para Proveedor 2',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nombre' => 'Carrefourd',
+                'direccion' => 'sin direccion',
+                'telefono' => null,
+                'whatsapp' => null,
+                'nota' => 'Nota para Proveedor 2',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

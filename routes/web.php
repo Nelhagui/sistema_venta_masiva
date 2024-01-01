@@ -119,7 +119,8 @@ Route::middleware('auth')->group(function () {
 
 
         // REPORTES
-        Route::get('/reportes', [ReporteController::class, 'index'])->name('index.reportes');
+        Route::get('/reportes/productos', [ReporteController::class, 'showProducto'])->name('index.reportes');
+        Route::get('/reportes/productos/costo/{id}/{anio}/{mes}', [ReporteController::class, 'showProducto'])->name('show.reportes');
     });
 
 

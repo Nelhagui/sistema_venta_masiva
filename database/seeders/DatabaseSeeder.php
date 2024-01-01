@@ -35,6 +35,8 @@ class DatabaseSeeder extends Seeder
         // \App\Models\Producto::factory()->count(100)->create();
         \App\Models\SesionCaja::factory()->count(100)->create();
         \App\Models\CajaMovimiento::factory()->count(100)->create();
+        \App\Models\Compra::factory()->count(100)->create();
+        \App\Models\CompraDetalle::factory()->count(1000)->create();
         // \App\Models\StockMovimiento::factory()->count(100)->create();
         // \App\Models\Venta::factory(10)->create(); // Crear 10 ventas para el ejemplo
         // \App\Models\DetalleVenta::factory(50)->create(); // Crear 50 detal

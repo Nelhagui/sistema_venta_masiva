@@ -9,4 +9,9 @@ class Proveedor extends Model
 {
     use HasFactory;
     protected $table = 'proveedores';
+
+    public function compras()
+    {
+        return $this->hasMany(Compra::class);
+    }
 }
