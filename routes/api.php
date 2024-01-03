@@ -8,6 +8,7 @@ use App\Models\Proveedor;
 use App\Models\Inversor;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MetodoPagoController;
+use App\Http\Controllers\CompraController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,5 +48,7 @@ Route::get('/inversores', function () {
 
 Route::post('/productos/base/agregar', [ProductoController::class, 'storeDesdeBase']);
 Route::post('/productos/actualizar/stock', [ProductoController::class, 'updateStockProductos']);
+
+Route::post('/compras/agregar', [CompraController::class, 'store']);
 
 Route::post('/ventas/crear', [VentaController::class, 'storeApi']);

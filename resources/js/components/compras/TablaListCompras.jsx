@@ -7,8 +7,14 @@ const highlightedStyle = {
     transition: 'background-color 2s ease', // Animación de transición
 };
 
-const TablaListCompras = ({productos}) => {
-    const [productosIniciales, setProductosIniciales] = useState(productos)
+const TablaListCompras = () => {
+    const [productosIniciales, setProductosIniciales] = useState([])
+    const productosInicialesRef = useRef([]);
+
+    useEffect(() => {
+        productosInicialesRef.current = productosIniciales;
+    }, [productosIniciales]);
+
     const [proveedores, setProveedores] = useState([])
     const [inversores, setInversores] = useState([])
     const [isLoading, setIsLoading] = useState(false)
@@ -18,49 +24,61 @@ const TablaListCompras = ({productos}) => {
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
 
-    useEffect(() => {
-        setProductosIniciales(productos);
-        focusInput()
-    }, [productos]);
 
     useEffect(() => {
         if (inputRef.current) {
             focusInput();
         }
     
-        const fetchProveedores = () => {
-            return fetch('/api/proveedores').then((response) => {
+        fetch('/api/proveedores')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            // Actualizar el estado con la lista de productos
+            setProveedores(data);
+        })
+        .finally(() => {
+            setIsLoadingProveedores(false);
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        });
+
+        fetch('/api/productos')
+            .then((response) => {
                 if (!response.ok) {
-                    throw new Error('Network response for proveedores was not ok');
+                    throw new Error('Network response was not ok');
                 }
                 return response.json();
-            });
-        };
-    
-    
-        const fetchInversores = () => {
-            return fetch('/api/inversores').then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response for inversores was not ok');
-                }
-                return response.json();
-            });
-        };
-    
-        Promise.all([fetchProveedores(), fetchInversores()])
-            .then(([proveedoresData, inversoresData]) => {
-                // Actualizar el estado con los datos obtenidos
-                setProveedores(proveedoresData);
-                setInversores(inversoresData);
+            })
+            .then((data) => {
+                // Actualizar el estado con la lista de productos
+                setProductosIniciales(data);
             })
             .catch((error) => {
                 console.error('Error fetching data:', error);
             })
-            .finally(() => {
-                // Actualizar el estado de carga si es necesario
-                setIsLoading(false); // Puedes definir este estado si es necesario
-            });
-    }, []);
+
+        fetch('/api/inversores')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // Actualizar el estado con la lista de productos
+                setInversores(data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            })
+
+        }, []);
 
 
     const focusInput = () => inputRef.current.focus();
@@ -88,13 +106,14 @@ const TablaListCompras = ({productos}) => {
     const realizarBusqueda = (textoBusqueda) => {
         console.log('busco', textoBusqueda)
         console.log(textoBusqueda)
+        const productosActuales = productosInicialesRef.current;
 
         const MAX_PRODUCTOS = 30;
         if (textoBusqueda === '') {
             setObjetosBuscados([]);
         } else {
             if (/^\d+$/.test(textoBusqueda)) {
-                const productoEncontrado = productosIniciales.find((producto) => Number(producto.codigo_barra) === Number(textoBusqueda));
+                const productoEncontrado = productosActuales.find((producto) => Number(producto.codigo_barra) === Number(textoBusqueda));
                 if (productoEncontrado) {
                     addProducto(productoEncontrado)
                 } else {
@@ -102,8 +121,8 @@ const TablaListCompras = ({productos}) => {
                     handleInputFocus();
                 }
             } else {
-                console.log(productosIniciales)
-                const productosCoincidentes = productosIniciales
+                console.log(productosActuales)
+                const productosCoincidentes = productosActuales
                     .filter((producto) => producto.titulo.toLowerCase().includes(textoBusqueda.toLowerCase()))
                     .slice(0, MAX_PRODUCTOS);
                 setObjetosBuscados(productosCoincidentes);
@@ -209,7 +228,7 @@ const TablaListCompras = ({productos}) => {
     const changeSubmit = () => {
         console.log(productosSeleccionados);
         // Realizar la solicitud GET a la API de productos
-        fetch('/api/productos/base/agregar', {
+        fetch('/api/compras/agregar', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -256,7 +275,6 @@ const TablaListCompras = ({productos}) => {
             <div style={styles.listContainer}>
                 <div className='flex justify-between'>
                     <div>
-
                         <input
                             type="text"
                             value={inputText}
@@ -279,7 +297,7 @@ const TablaListCompras = ({productos}) => {
                         objetosBuscados.length > 0
                             ? (
                                 objetosBuscados.map((producto) => (
-                                    <li key={producto.codigo_barra} style={styles.containerRowProducto} className='border-t border-b' onClick={() => { addProducto(producto) }}>
+                                    <li key={producto.titulo} style={styles.containerRowProducto} className='border-t border-b' onClick={() => { addProducto(producto) }}>
                                         <p style={styles.productoTitulo}>{producto.titulo}</p>
                                         <p style={styles.productoPrecioVenta}>{producto.precio_venta ? `$${producto.precio_venta}` : ''}</p>
                                     </li>
@@ -301,8 +319,10 @@ const TablaListCompras = ({productos}) => {
                         <th className="text-left p-2 border border-slate-600">Precio Venta</th>
                         <th className="text-left p-2 border border-slate-600 ">Stock</th>
                         <th className="text-left p-2 border border-slate-600">Control por lote</th>
+                        <th className="text-left p-2 border border-slate-600">Fecha compra</th>
                         <th className="text-left p-2 border border-slate-600">Fecha vencimiento</th>
                         <th className="text-left p-2 border border-slate-600">Proveedor</th>
+                        <th className="text-left p-2 border border-slate-600">Inversor</th>
                         <th className="text-left p-2 border border-slate-600">Factura</th>
                     </tr>
                 </thead>
@@ -310,7 +330,7 @@ const TablaListCompras = ({productos}) => {
                     {
                         productosSeleccionados.map((producto) =>
                         (
-                            <tr key={producto.codigo_barra} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
+                            <tr key={producto.titulo} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
                                 <td className="p-2 border border-slate-700">
                                     {capitalizeFirstLetterOfEachWord(producto.titulo)}
                                 </td>
@@ -355,6 +375,14 @@ const TablaListCompras = ({productos}) => {
                                     <input
                                         className='text-sm'
                                         type="date"
+                                        value={producto.fecha_compra || ''}
+                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'fecha_compra', e.target.value)}
+                                    />
+                                </td>
+                                <td className="p-2 border border-slate-700">
+                                    <input
+                                        className='text-sm'
+                                        type="date"
                                         value={producto.fecha_vencimiento || ''}
                                         disabled={!producto.usar_control_por_lote}  // Añadir esta línea para deshabilitar el input si usar_control_por_lote es false
                                         onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'fecha_vencimiento', e.target.value)}
@@ -364,7 +392,6 @@ const TablaListCompras = ({productos}) => {
                                     <select
                                         className='text-sm'
                                         value={producto.proveedor_id || ''}
-                                        disabled={!producto.usar_control_por_lote && !isLoadingProveedores}  // Deshabilitar el select si usar_control_por_lote es false
                                         onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'proveedor_id', e.target.value)}
                                     >
                                         <option value="">Seleccione un proveedor</option>
@@ -374,14 +401,26 @@ const TablaListCompras = ({productos}) => {
                                             })
                                         }
                                     </select>
-
+                                </td>
+                                <td className="p-2 border border-slate-700">
+                                    <select
+                                        className='text-sm'
+                                        value={producto.inversor_id || ''}
+                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'inversor_id', e.target.value)}
+                                    >
+                                        <option value="">Seleccione un inversor</option>
+                                        {
+                                            inversores.map((inversor) => {
+                                                return <option value={inversor.id}>{inversor.nombre}</option>
+                                            })
+                                        }
+                                    </select>
                                 </td>
                                 <td className="p-2 border border-slate-700">
                                     <input
                                         className='text-sm'
                                         type="text"
                                         value={producto.numero_factura || ''}
-                                        disabled={!producto.usar_control_por_lote}  // Añadir esta línea para deshabilitar el input si usar_control_por_lote es false
                                         onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'numero_factura', e.target.value)}
                                     />
                                 </td>
