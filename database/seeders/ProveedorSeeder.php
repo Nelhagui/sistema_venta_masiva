@@ -59,6 +59,15 @@ class ProveedorSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'nombre' => 'JN Distribuidora',
+                'direccion' => '1657 Ruta 8 10084',
+                'telefono' => null,
+                'whatsapp' => null,
+                'nota' => 'Nota para Proveedor 2',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

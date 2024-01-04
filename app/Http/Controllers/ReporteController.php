@@ -5,15 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Producto;
-use App\Models\Compra;
-use App\Models\CompraDetalle;
 use Carbon\Carbon;
+use App\Models\Proveedor;
+use App\Models\Compra;
 use Illuminate\Pagination\Paginator;
 
 
 class ReporteController extends Controller
 {
-    public function index()
+    public function indexProductos()
     {
         $productos = Producto::orderBy('titulo')->paginate(50);
         return view('reportes.index', compact('productos'));
@@ -65,4 +65,17 @@ class ReporteController extends Controller
 
         return view('reportes.show', compact('comprasDelMes', 'fechasDelMes', 'proveedores', 'producto'));
     }
+
+    public function indexProveedores()
+    {
+        $proveedores = Proveedor::orderBy('nombre')->paginate(50);
+        return view('reportes.proveedores.compras.index', compact('proveedores'));
+    }
+    public function showProveedorCompras($id)
+    {
+        $compras = Compra::where('proveedor_id', $id)->orderBy('fecha_compra')->paginate(10);
+        $proveedor = Proveedor::find($id);
+        return view('reportes.proveedores.compras.show', compact('compras', 'proveedor'));
+    }
+    
 }
