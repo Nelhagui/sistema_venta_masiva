@@ -9,6 +9,7 @@ use App\Models\CompraDetalle;
 use App\Models\Proveedor;
 use App\Models\Inversor;
 use App\Models\Producto;
+use App\Models\InversorProducto;
 use App\Models\Lote;
 use Illuminate\Http\Request;
 
@@ -39,6 +40,7 @@ class CompraController extends Controller
     public function store(Request $request)
     {
         $productos = $request->productos;
+        $datosCompra = $request->datosCompra;
 
         $messages = [
             'precio_venta.required' => 'El campo Precio de venta es obligatorio.',
@@ -74,14 +76,15 @@ class CompraController extends Controller
         }
 
         $compra = new Compra;
-        $compra->fecha_compra = $producto['fecha_compra'] ?? now();;
+        $compra->fecha_compra = $datosCompra['fechaCompra'] ?? now();;
         $compra->fecha_carga = date('Y-m-d H:i:s');
         $compra->precio_total = $totalCompra;
-        $compra->numero_factura = $producto['numero_factura'];
-        $compra->proveedor_id = $producto['proveedor_id'];
+        $compra->numero_factura = $datosCompra['nroFactura'] ?? "";
+        $compra->proveedor_id = $datosCompra['proveedor'] ?? "";
         $compra->save();
 
-        DB::transaction(function () use ($productos) {
+
+        DB::transaction(function () use ($productos, $compra) {
             foreach ($productos as $producto) {
 
                 $productoDB = Producto::find($producto['id']);
@@ -104,6 +107,14 @@ class CompraController extends Controller
                     $newLoteProducto->cantidad_restante = $producto['stock'];
                     $newLoteProducto->save();
 
+                }
+
+                if($producto['inversor_id'] !== null && $producto['inversor_id'] !== "") {
+                    $inversorProducto = new InversorProducto;
+                    $inversorProducto->model()->associate($productoDB);
+                    $inversorProducto->cantidad_producto_invertido = $producto['stock'];
+                    $inversorProducto->inversor_id = $producto['inversor_id'];
+                    $inversorProducto->save();
                 }
 
                 $detalleCompra = new CompraDetalle;

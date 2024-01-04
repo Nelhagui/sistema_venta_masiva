@@ -23,7 +23,11 @@ const TablaListCompras = () => {
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
-
+    const [datosCompra, setDatosCompra] = useState({
+        fechaCompra: "",
+        proveedor: "",
+        nroFactura: ""
+    })
 
     useEffect(() => {
         if (inputRef.current) {
@@ -78,7 +82,7 @@ const TablaListCompras = () => {
                 console.error('Error fetching data:', error);
             })
 
-        }, []);
+    }, []);
 
 
     const focusInput = () => inputRef.current.focus();
@@ -103,9 +107,12 @@ const TablaListCompras = () => {
         debouncedSearchRef.current(value);
     }
 
+    const handleChangeDatosCompra = (e) => {
+        const { name, value } = e.target
+        setDatosCompra({ ...datosCompra, [name]: value })
+    }
+
     const realizarBusqueda = (textoBusqueda) => {
-        console.log('busco', textoBusqueda)
-        console.log(textoBusqueda)
         const productosActuales = productosInicialesRef.current;
 
         const MAX_PRODUCTOS = 30;
@@ -121,7 +128,6 @@ const TablaListCompras = () => {
                     handleInputFocus();
                 }
             } else {
-                console.log(productosActuales)
                 const productosCoincidentes = productosActuales
                     .filter((producto) => producto.titulo.toLowerCase().includes(textoBusqueda.toLowerCase()))
                     .slice(0, MAX_PRODUCTOS);
@@ -135,7 +141,7 @@ const TablaListCompras = () => {
 
     const addProducto = (producto) => {
         setProductosSeleccionados(prevProductos => {
-            const productoExistente = prevProductos.find(p => Number(p.codigo_barra) === Number(producto.codigo_barra));
+            const productoExistente = prevProductos.find(p => p.titulo === producto.titulo);
 
             if (productoExistente) {
                 // Si el producto ya existe, incrementamos su stock en 1 y le agregamos el efecto highlighted
@@ -149,7 +155,7 @@ const TablaListCompras = () => {
                     );
                 }, 1000);
                 return prevProductos.map(p => {
-                    if (p.codigo_barra === productoExistente.codigo_barra) {
+                    if (p.titulo === productoExistente.titulo) {
                         return {
                             ...p,
                             stock: p.stock + 1,
@@ -182,7 +188,7 @@ const TablaListCompras = () => {
                 setTimeout(() => {
                     setProductosSeleccionados((prevProductos) =>
                         prevProductos.map((p) =>
-                            p.codigo_barra === producto.codigo_barra
+                            p.titulo === producto.titulo
                                 ? { ...p, highlighted: false }
                                 : p
                         )
@@ -195,10 +201,10 @@ const TablaListCompras = () => {
         reset();
     };
 
-    const handleInputChangeProducto = (codigo_barra, campo, valor) => {
+    const handleInputChangeProducto = (titulo, campo, valor) => {
         setProductosSeleccionados(prevProductos => {
             return prevProductos.map(producto => {
-                if (producto.codigo_barra === codigo_barra) {
+                if (producto.titulo === titulo) {
                     let updatedProducto = {
                         ...producto,
                         [campo]: valor
@@ -234,7 +240,10 @@ const TablaListCompras = () => {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
             },
-            body: JSON.stringify({ productos: productosSeleccionados }),
+            body: JSON.stringify({ 
+                productos: productosSeleccionados, 
+                datosCompra: datosCompra
+            }),
         })
             .then(response => {
                 if (response.status === 422) {
@@ -286,6 +295,41 @@ const TablaListCompras = () => {
                         />
                         <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span>
                     </div>
+                    <div style={{display: 'flex'}}>
+                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                            <label>Fecha de compra</label>
+                            <input
+                                className='text-sm'
+                                type="date"
+                                name='fechaCompra'
+                                onChange={handleChangeDatosCompra}
+                            />
+                        </div>
+                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                            <label>Proveedor</label>
+                            <select
+                                className='text-sm'
+                                name="proveedor"
+                                onChange={handleChangeDatosCompra}
+                            >
+                                <option value="">Seleccione un proveedor</option>
+                                {
+                                    proveedores.map((proveedor) => {
+                                        return <option key={proveedor.id} value={proveedor.id}>{proveedor.nombre}</option>
+                                    })
+                                }
+                            </select>
+                        </div>
+                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                            <label>Nro Factura</label>
+                            <input
+                                className='text-sm'
+                                type="text"
+                                name='nroFactura'
+                                onChange={handleChangeDatosCompra}
+                            />
+                        </div>
+                    </div>
                     <div>
                         <button onClick={() => { changeSubmit() }}>GUARDAR</button>
                     </div>
@@ -319,11 +363,8 @@ const TablaListCompras = () => {
                         <th className="text-left p-2 border border-slate-600">Precio Venta</th>
                         <th className="text-left p-2 border border-slate-600 ">Stock</th>
                         <th className="text-left p-2 border border-slate-600">Control por lote</th>
-                        <th className="text-left p-2 border border-slate-600">Fecha compra</th>
                         <th className="text-left p-2 border border-slate-600">Fecha vencimiento</th>
-                        <th className="text-left p-2 border border-slate-600">Proveedor</th>
                         <th className="text-left p-2 border border-slate-600">Inversor</th>
-                        <th className="text-left p-2 border border-slate-600">Factura</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -341,7 +382,7 @@ const TablaListCompras = () => {
                                         style={{ maxWidth: '5rem', padding: 2 }}
                                         type="number"
                                         value={producto.precio_costo || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'precio_costo', e.target.value)}
+                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_costo', e.target.value)}
                                     />
                                 </td>
                                 <td className="p-2 border border-slate-700">
@@ -350,7 +391,7 @@ const TablaListCompras = () => {
                                         style={{ maxWidth: '5rem', padding: 2 }}
                                         type="number"
                                         value={producto.precio_venta || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'precio_venta', e.target.value)}
+                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_venta', e.target.value)}
                                     />
                                 </td>
                                 <td className="p-2 border border-slate-700">
@@ -359,7 +400,7 @@ const TablaListCompras = () => {
                                         style={{ maxWidth: '4rem', padding: 2 }}
                                         type="text"
                                         value={producto.stock || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'stock', e.target.value)}
+                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'stock', e.target.value)}
                                     />
                                 </td>
                                 <td className="p-2 border border-slate-700">
@@ -368,15 +409,7 @@ const TablaListCompras = () => {
                                         type="checkbox"
                                         checked={producto.usar_control_por_lote}
                                         value={producto.usar_control_por_lote}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'usar_control_por_lote', e.target.checked)}
-                                    />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        type="date"
-                                        value={producto.fecha_compra || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'fecha_compra', e.target.value)}
+                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
                                     />
                                 </td>
                                 <td className="p-2 border border-slate-700">
@@ -385,44 +418,22 @@ const TablaListCompras = () => {
                                         type="date"
                                         value={producto.fecha_vencimiento || ''}
                                         disabled={!producto.usar_control_por_lote}  // Añadir esta línea para deshabilitar el input si usar_control_por_lote es false
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'fecha_vencimiento', e.target.value)}
+                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'fecha_vencimiento', e.target.value)}
                                     />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <select
-                                        className='text-sm'
-                                        value={producto.proveedor_id || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'proveedor_id', e.target.value)}
-                                    >
-                                        <option value="">Seleccione un proveedor</option>
-                                        {
-                                            proveedores.map((proveedor) => {
-                                                return <option value={proveedor.id}>{proveedor.nombre}</option>
-                                            })
-                                        }
-                                    </select>
                                 </td>
                                 <td className="p-2 border border-slate-700">
                                     <select
                                         className='text-sm'
                                         value={producto.inversor_id || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'inversor_id', e.target.value)}
+                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
                                     >
                                         <option value="">Seleccione un inversor</option>
                                         {
                                             inversores.map((inversor) => {
-                                                return <option value={inversor.id}>{inversor.nombre}</option>
+                                                return <option key={inversor.id} value={inversor.id}>{inversor.nombre} {inversor.apellido}</option>
                                             })
                                         }
                                     </select>
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        type="text"
-                                        value={producto.numero_factura || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.codigo_barra, 'numero_factura', e.target.value)}
-                                    />
                                 </td>
                             </tr>
                         )
