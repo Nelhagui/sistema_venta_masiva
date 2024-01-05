@@ -233,7 +233,6 @@ const TablaListCompras = () => {
 
     const changeSubmit = () => {
         console.log(productosSeleccionados);
-        // Realizar la solicitud GET a la API de productos
         fetch('/api/compras/agregar', {
             method: 'POST',
             headers: {
@@ -295,41 +294,44 @@ const TablaListCompras = () => {
                         />
                         <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span>
                     </div>
-                    <div style={{display: 'flex'}}>
-                        <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <label>Fecha de compra</label>
-                            <input
-                                className='text-sm'
-                                type="date"
-                                name='fechaCompra'
-                                onChange={handleChangeDatosCompra}
-                            />
+                    {
+                        productosSeleccionados.length > 0 &&
+                        <div style={{display: 'flex'}}>
+                            <div style={{display: 'flex', flexDirection: 'column'}}>
+                                <label>Fecha de compra</label>
+                                <input
+                                    className='text-sm'
+                                    type="date"
+                                    name='fechaCompra'
+                                    onChange={handleChangeDatosCompra}
+                                />
+                            </div>
+                            <div style={{display: 'flex', flexDirection: 'column'}}>
+                                <label>Proveedor</label>
+                                <select
+                                    className='text-sm'
+                                    name="proveedor"
+                                    onChange={handleChangeDatosCompra}
+                                >
+                                    <option value="">Seleccione un proveedor</option>
+                                    {
+                                        proveedores.map((proveedor) => {
+                                            return <option key={proveedor.id} value={proveedor.id}>{proveedor.nombre}</option>
+                                        })
+                                    }
+                                </select>
+                            </div>
+                            <div style={{display: 'flex', flexDirection: 'column'}}>
+                                <label>Nro Factura</label>
+                                <input
+                                    className='text-sm'
+                                    type="text"
+                                    name='nroFactura'
+                                    onChange={handleChangeDatosCompra}
+                                />
+                            </div>
                         </div>
-                        <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <label>Proveedor</label>
-                            <select
-                                className='text-sm'
-                                name="proveedor"
-                                onChange={handleChangeDatosCompra}
-                            >
-                                <option value="">Seleccione un proveedor</option>
-                                {
-                                    proveedores.map((proveedor) => {
-                                        return <option key={proveedor.id} value={proveedor.id}>{proveedor.nombre}</option>
-                                    })
-                                }
-                            </select>
-                        </div>
-                        <div style={{display: 'flex', flexDirection: 'column'}}>
-                            <label>Nro Factura</label>
-                            <input
-                                className='text-sm'
-                                type="text"
-                                name='nroFactura'
-                                onChange={handleChangeDatosCompra}
-                            />
-                        </div>
-                    </div>
+                    }
                     <div>
                         <button onClick={() => { changeSubmit() }}>GUARDAR</button>
                     </div>
@@ -354,93 +356,96 @@ const TablaListCompras = () => {
             {/* FIN BUSCADOR */}
 
 
-            <table className="table-auto border-collapse border border-slate-500 text-sm" style={{ width: '100%' }}>
-                <thead>
-                    <tr>
-                        <th className="text-left p-2 border border-slate-600">Titulo</th>
-                        <th className="text-left p-2 border border-slate-600">Código Barra</th>
-                        <th className="text-left p-2 border border-slate-600">Precio Costo</th>
-                        <th className="text-left p-2 border border-slate-600">Precio Venta</th>
-                        <th className="text-left p-2 border border-slate-600 ">Stock</th>
-                        <th className="text-left p-2 border border-slate-600">Control por lote</th>
-                        <th className="text-left p-2 border border-slate-600">Fecha vencimiento</th>
-                        <th className="text-left p-2 border border-slate-600">Inversor</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        productosSeleccionados.map((producto) =>
-                        (
-                            <tr key={producto.titulo} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
-                                <td className="p-2 border border-slate-700">
-                                    {capitalizeFirstLetterOfEachWord(producto.titulo)}
-                                </td>
-                                <td className="p-2 border border-slate-700">{producto.codigo_barra}</td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        style={{ maxWidth: '5rem', padding: 2 }}
-                                        type="number"
-                                        value={producto.precio_costo || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_costo', e.target.value)}
-                                    />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        style={{ maxWidth: '5rem', padding: 2 }}
-                                        type="number"
-                                        value={producto.precio_venta || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_venta', e.target.value)}
-                                    />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        style={{ maxWidth: '4rem', padding: 2 }}
-                                        type="text"
-                                        value={producto.stock || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'stock', e.target.value)}
-                                    />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        type="checkbox"
-                                        checked={producto.usar_control_por_lote}
-                                        value={producto.usar_control_por_lote}
-                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
-                                    />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <input
-                                        className='text-sm'
-                                        type="date"
-                                        value={producto.fecha_vencimiento || ''}
-                                        disabled={!producto.usar_control_por_lote}  // Añadir esta línea para deshabilitar el input si usar_control_por_lote es false
-                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'fecha_vencimiento', e.target.value)}
-                                    />
-                                </td>
-                                <td className="p-2 border border-slate-700">
-                                    <select
-                                        className='text-sm'
-                                        value={producto.inversor_id || ''}
-                                        onChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
-                                    >
-                                        <option value="">Seleccione un inversor</option>
-                                        {
-                                            inversores.map((inversor) => {
-                                                return <option key={inversor.id} value={inversor.id}>{inversor.nombre} {inversor.apellido}</option>
-                                            })
-                                        }
-                                    </select>
-                                </td>
-                            </tr>
-                        )
-                        )
-                    }
-                </tbody>
-            </table >
+            {
+                productosSeleccionados.length > 0 &&
+                <table className="table-auto border-collapse border border-slate-500 text-sm" style={{ width: '100%' }}>
+                    <thead>
+                        <tr>
+                            <th className="text-left p-2 border border-slate-600">Titulo</th>
+                            <th className="text-left p-2 border border-slate-600">Código Barra</th>
+                            <th className="text-left p-2 border border-slate-600">Precio Costo</th>
+                            <th className="text-left p-2 border border-slate-600">Precio Venta</th>
+                            <th className="text-left p-2 border border-slate-600 ">Stock</th>
+                            <th className="text-left p-2 border border-slate-600">Control por lote</th>
+                            <th className="text-left p-2 border border-slate-600">Fecha vencimiento</th>
+                            <th className="text-left p-2 border border-slate-600">Inversor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            productosSeleccionados.map((producto) =>
+                            (
+                                <tr key={producto.titulo} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
+                                    <td className="p-2 border border-slate-700">
+                                        {capitalizeFirstLetterOfEachWord(producto.titulo)}
+                                    </td>
+                                    <td className="p-2 border border-slate-700">{producto.codigo_barra}</td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            style={{ maxWidth: '5rem', padding: 2 }}
+                                            type="number"
+                                            value={producto.precio_costo || ''}
+                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_costo', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            style={{ maxWidth: '5rem', padding: 2 }}
+                                            type="number"
+                                            value={producto.precio_venta || ''}
+                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_venta', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            style={{ maxWidth: '4rem', padding: 2 }}
+                                            type="text"
+                                            value={producto.stock || ''}
+                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'stock', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            type="checkbox"
+                                            checked={producto.usar_control_por_lote}
+                                            value={producto.usar_control_por_lote}
+                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            type="date"
+                                            value={producto.fecha_vencimiento || ''}
+                                            disabled={!producto.usar_control_por_lote}  // Añadir esta línea para deshabilitar el input si usar_control_por_lote es false
+                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'fecha_vencimiento', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <select
+                                            className='text-sm'
+                                            value={producto.inversor_id || ''}
+                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
+                                        >
+                                            <option value="">Seleccione un inversor</option>
+                                            {
+                                                inversores.map((inversor) => {
+                                                    return <option key={inversor.id} value={inversor.id}>{inversor.nombre} {inversor.apellido}</option>
+                                                })
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            )
+                            )
+                        }
+                    </tbody>
+                </table >
+            }
         </>
     )
 }

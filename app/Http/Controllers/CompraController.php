@@ -12,6 +12,8 @@ use App\Models\Producto;
 use App\Models\InversorProducto;
 use App\Models\Lote;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
+
 
 class CompraController extends Controller
 {
@@ -20,10 +22,8 @@ class CompraController extends Controller
      */
     public function index()
     {
-        $productos = Producto::all();
-        $proveedores = Proveedor::all();
-        $inversores = Inversor::all();
-        return view('compras.index', compact('productos', 'proveedores', 'inversores'));
+        $compras = Compra::orderBy('id', 'desc')->paginate(50);
+        return view('compras.index', compact('compras'));
     }
 
     /**
@@ -31,7 +31,10 @@ class CompraController extends Controller
      */
     public function create()
     {
-        //
+        $productos = Producto::all();
+        $proveedores = Proveedor::all();
+        $inversores = Inversor::all();
+        return view('compras.create', compact('productos', 'proveedores', 'inversores'));
     }
 
     /**
@@ -137,7 +140,7 @@ class CompraController extends Controller
      */
     public function show(Compra $compra)
     {
-        //
+        return view('compras.show', compact('compra'));
     }
 
     /**

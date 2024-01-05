@@ -58,6 +58,8 @@ Route::middleware('auth')->group(function () {
 
         //COMPRAS
         Route::get('/compras', [CompraController::class, 'index'])->name('index.compras');
+        Route::get('/compras/agregar', [CompraController::class, 'create'])->name('create.compras');
+        Route::get('/compras/{compra}', [CompraController::class, 'show'])->name('show.compras');
 
         //CLIENTES
         Route::get('/clientes', [ClienteController::class, 'index'])->name('index.clientes');
