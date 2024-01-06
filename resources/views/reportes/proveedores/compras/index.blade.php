@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Productos') }}
+            {{ __('Proveedores (Reportes)') }}
         </h2>
     </x-slot>
 
@@ -11,9 +11,10 @@
                 <table className="table-auto ">
                     <thead>
                         <tr>
-                            <th className="text-left p-2 border border-slate-600">ID</th>
-                            <th className="text-left p-2 border border-slate-600">Nombre</th>
-                            <th className="text-left p-2 border border-slate-600">Acción</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">ID</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">Nombre</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">Dirección</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -21,8 +22,9 @@
                             <tr key={producto.id}>
                                 <td className="p-2 border border-slate-700">{{ $proveedor->id }}</td>
                                 <td className="p-2 border border-slate-700">{{ $proveedor->nombre }} </td>
-                                <td className="p-2 border border-slate-700"> <a
-                                        href={{ route('show.reportesComprasProveedores', ['id' => $proveedor->id]) }}>Ver</a>
+                                <td className="p-2 border border-slate-700">{{ $proveedor->direccion }} </td>
+                                <td className="p-2 border border-slate-700"> 
+                                    <a href={{ route('show.reportesComprasProveedores', ['id' => $proveedor->id]) }}>Ver</a>
                                 </td>
                             </tr>
                         @endforeach

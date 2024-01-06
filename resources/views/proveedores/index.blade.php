@@ -13,12 +13,12 @@
                 <table class="table-auto border-collapse border border-slate-500">
                     <thead>
                         <tr>
-                            <th class="text-left p-2 border border-slate-600">Nombre</th>
-                            <th class="text-left p-2 border border-slate-600">Dirección</th>
-                            <th class="text-left p-2 border border-slate-600">Teléfono</th>
-                            <th class="text-left p-2 border border-slate-600">Whatsapp</th>
-                            <th class="text-left p-2 border border-slate-600">Nota</th>
-                            <th class="text-left p-2 border border-slate-600">Acción</th>
+                            <th class="p-2 border border-slate-600" style="text-align: start">Nombre</th>
+                            <th class="p-2 border border-slate-600" style="text-align: start">Dirección</th>
+                            <th class="p-2 border border-slate-600" style="text-align: start">Teléfono</th>
+                            <th class="p-2 border border-slate-600" style="text-align: start">Whatsapp</th>
+                            <th class="p-2 border border-slate-600" style="text-align: start">Nota</th>
+                            <th class="p-2 border border-slate-600" style="text-align: start">Acción</th>
                         </tr>
                     </thead>
                     <tbody>

@@ -42,9 +42,19 @@ class ProductoController extends Controller
         return view('productos.create', compact('proveedores', 'inversores'));
     }
 
+    public function busquedaProductosBase($busqueda)
+    {
+        $productos = ProductoBase::where('titulo', 'LIKE', '%' . $busqueda . '%')
+            ->orWhere('codigo_barra', '=', $busqueda)
+            ->orderBy('titulo', 'ASC')
+            ->get();
+        return $productos;
+    }
+
+    
     public function busqueda($busqueda)
     {
-        $productos = ProductosBase::where('titulo', 'LIKE', '%' . $busqueda . '%')
+        $productos = Producto::where('titulo', 'LIKE', '%' . $busqueda . '%')
             ->orWhere('codigo_barra', '=', $busqueda)
             ->orderBy('titulo', 'ASC')
             ->get();

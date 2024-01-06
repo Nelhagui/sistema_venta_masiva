@@ -33,6 +33,7 @@ Route::get('/productos', function () {
 
 Route::get('/metodos-pago', [MetodoPagoController::class, 'index']);
 
+Route::get('/productos-base/busqueda/{busqueda}', [ProductoController::class, 'busquedaProductosBase']);
 Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busqueda']);
  
 

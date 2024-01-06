@@ -74,7 +74,7 @@
         }
     </style>
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-100 flex flex-col">
                 <div class="flex flex-row justify-between">
                     <div>
@@ -109,7 +109,7 @@
                                 <th class="text-left p-2 border border-slate-600">Control por lote</th>
                                 <th class="text-left p-2 border border-slate-600">Fecha vencimiento</th>
                                 <th class="text-left p-2 border border-slate-600">Proveedor</th>
-                                <th class="text-left p-2 border border-slate-600">Factura</th>                                <th class="text-left p-2 border border-slate-600">Inversor</th>
+                                <th class="text-left p-2 border border-slate-600">Factura</th>                                
                                 <th class="text-left p-2 border border-slate-600">Inversor</th>
                             </tr>
                         </thead>

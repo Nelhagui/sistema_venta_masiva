@@ -20,11 +20,11 @@
                 <table className="table-auto ">
                     <thead>
                         <tr>
-                            <th className="text-left p-2 border border-slate-600">ID</th>
-                            <th className="text-left p-2 border border-slate-600">Fecha</th>
-                            <th className="text-left p-2 border border-slate-600">Total</th>
-                            <th className="text-left p-2 border border-slate-600">Factura</th>
-                            <th className="text-left p-2 border border-slate-600">Acción</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">ID</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">Fecha</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">Total</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">Factura</th>
+                            <th className="p-2 border border-slate-600" style="text-align: start">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,8 +34,8 @@
                                 <td className="p-2 border border-slate-700">{{ $compra->fecha_compra }} </td>
                                 <td className="p-2 border border-slate-700">{{ $compra->precio_total }} </td>
                                 <td className="p-2 border border-slate-700">{{ $compra->numero_factura }} </td>
-                                <td className="p-2 border border-slate-700"> <a
-                                        href={{ route('show.reportesComprasProveedores', ['id' => $compra->id]) }}>Ver</a>
+                                <td className="p-2 border border-slate-700"> 
+                                    <a href={{ route('show.reportesComprasProveedores', ['id' => $compra->id]) }}>Ver</a>
                                 </td>
                             </tr>
                         @endforeach
