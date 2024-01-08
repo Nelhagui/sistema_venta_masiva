@@ -296,7 +296,7 @@ const TablaListCompras = () => {
                     </div>
                     {
                         productosSeleccionados.length > 0 &&
-                        <div style={{display: 'flex'}}>
+                        <div style={{display: 'flex', marginTop: '-1.5em', gap: '.5em'}}>
                             <div style={{display: 'flex', flexDirection: 'column'}}>
                                 <label>Fecha de compra</label>
                                 <input
