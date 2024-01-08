@@ -33,9 +33,9 @@
                     <x-nav-link :href="route('show.cajas')" :active="request()->routeIs(['show.cajas', 'index.cajas', 'create.cajaIngreso', 'create.aperturaCaja', 'showDetalle.cajas'])">
                         {{ __('Caja') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('index.gastos')" :active="request()->routeIs(['index.gastos'])">
+                    <!-- <x-nav-link :href="route('index.gastos')" :active="request()->routeIs(['index.gastos'])">
                         {{ __('Gastos') }}
-                    </x-nav-link>
+                    </x-nav-link> -->
                     <x-nav-link :href="route('index.proveedores')" :active="request()->routeIs(['index.proveedores'])">
                         {{ __('Proveedores') }}
                     </x-nav-link>

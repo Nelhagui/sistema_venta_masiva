@@ -80,9 +80,9 @@
                     <div>
                         <a href="{{ route('index.productos') }}" class="button-link">Ver lista de productos</a>
                     </div>
-                    <div>
+                    <!-- <div>
                         <a href="{{route('index.productosBase')}}">Agregar producto desde "lista de productos base"</a>
-                    </div>
+                    </div> -->
                 </div>
                 <div style="position: relative; margin-bottom: 20px">
                     <div class="flex justify-between">
@@ -187,6 +187,7 @@
                             name="productos[${contadorFilas}][precio_costo]" 
                             required
                             style="max-width: 5rem; padding: 2px"  
+                            onchange="actualizarPrecioVenta(${contadorFilas})"
                             type="number"
                         />
                     </td>
@@ -290,127 +291,136 @@
                 agregarFila();
             });
 
-        function deshabilitarCamposAdicionales(valor) {
-            let checkbox = document.getElementById(`control_por_lote_${valor}`);
-            let fechaVencimiento = document.getElementById(`fecha_vencimiento_${valor}`);
-            let proveedor = document.getElementById(`proveedor_id_${valor}`);
-            let factura = document.getElementById(`numero_factura_${valor}`);
+            function actualizarPrecioVenta(index) {
+                let precioCostoInput = document.querySelector(`input[name="productos[${index}][precio_costo]"]`);
+                let precioVentaInput = document.querySelector(`input[name="productos[${index}][precio_venta]"]`);
 
-            fechaVencimiento.disabled = !checkbox.checked;
-            proveedor.disabled = !checkbox.checked;
-            factura.disabled = !checkbox.checked;
-        }
+                const porcentaje = 1.50; // Aumentamos en un 10%
+                let nuevoPrecio = precioCostoInput.value * porcentaje;
 
-        const path_p = "{{ asset('/') }}";
-        let tiempo = 0;
-        function buscaProducto(entrada) 
-        {
-            if(entrada.value.length > 0)
+                precioVentaInput.value = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
+            }
+
+            function deshabilitarCamposAdicionales(valor) {
+                let checkbox = document.getElementById(`control_por_lote_${valor}`);
+                let fechaVencimiento = document.getElementById(`fecha_vencimiento_${valor}`);
+                let proveedor = document.getElementById(`proveedor_id_${valor}`);
+                let factura = document.getElementById(`numero_factura_${valor}`);
+
+                fechaVencimiento.disabled = !checkbox.checked;
+                proveedor.disabled = !checkbox.checked;
+                factura.disabled = !checkbox.checked;
+            }
+
+            const path_p = "{{ asset('/') }}";
+            let tiempo = 0;
+            function buscaProducto(entrada) 
             {
-    
-                clearTimeout(tiempo);
-                tiempo = setTimeout(function(entrada)
+                if(entrada.value.length > 0)
                 {
-                    document.getElementById('resultado_busqueda_mag').innerHTML = '';
-                    document.getElementById('resultado_busqueda_mag').classList.remove('dinone');
-
-                    let li = document.createElement('span');
-                        li.innerHTML = "Buscando...";
-                    document.getElementById('resultado_busqueda_mag').appendChild(li);
-
-                    let url = path_p + 'api/productos/busqueda/'+ encodeURIComponent(entrada.value);
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById('resultado_busqueda_mag').innerHTML = '';
-                            if (data.length > 0)
-                            {                                
-                                if(/^\d+$/.test(entrada.value)) {
-                                    agregarFila(data[0])
-                                    document.getElementById('buscador_producto').value = '';
-                                } else {
-                                    data.forEach(producto => {    
-                                    let li = document.createElement('li');
-                                        li.innerHTML = producto.titulo
-                                        li.classList.add('border-t', 'border-b', 'containerRowProducto');
-                                        li.onclick = function()
-                                        {
-                                            document.getElementById('producto_id').value = producto.id;
-                                            document.getElementById('buscador_producto').value = producto.titulo;
-                                            document.getElementById('resultado_busqueda_mag').innerHTML = '';
-                                            document.getElementById('resultado_busqueda_mag').classList.add('dinone');
-                                            agregarFila(producto)   
-                                        }
-                                        document.getElementById('resultado_busqueda_mag').appendChild(li);
-                                    });
-                                }
-                            }
-                            else {
-                                let span = document.createElement('span');
-                                span.innerHTML = "Sin resultados";
-                                document.getElementById('resultado_busqueda_mag').appendChild(span);
-                            }
-                        })
-                        .catch(error => console.log(error));
-                
-                }, 400, entrada);
-            }
-            else {
-                document.getElementById('resultado_busqueda_mag').innerHTML = ''; 
-                document.getElementById('resultado_busqueda_mag').classList.add('dinone');
-            }
-        }
         
+                    clearTimeout(tiempo);
+                    tiempo = setTimeout(function(entrada)
+                    {
+                        document.getElementById('resultado_busqueda_mag').innerHTML = '';
+                        document.getElementById('resultado_busqueda_mag').classList.remove('dinone');
 
-        // Obtener la lista, para recorrer cada elemento
-        let listGroup = document.querySelector('ul.cont-resul-busca');
-        // Asignar evento al campo de texto
-        document.querySelector('#buscador_producto').addEventListener('keydown', e => {
-            if(!listGroup) {
-                return; // No existe la lista
+                        let li = document.createElement('span');
+                            li.innerHTML = "Buscando...";
+                        document.getElementById('resultado_busqueda_mag').appendChild(li);
+
+                        let url = path_p + 'api/productos-base/busqueda/'+ encodeURIComponent(entrada.value);
+                        fetch(url)
+                            .then(response => response.json())
+                            .then(data => {
+                                document.getElementById('resultado_busqueda_mag').innerHTML = '';
+                                if (data.length > 0)
+                                {                                
+                                    if(/^\d+$/.test(entrada.value)) {
+                                        agregarFila(data[0])
+                                        document.getElementById('buscador_producto').value = '';
+                                    } else {
+                                        data.forEach(producto => {    
+                                        let li = document.createElement('li');
+                                            li.innerHTML = producto.titulo
+                                            li.classList.add('border-t', 'border-b', 'containerRowProducto');
+                                            li.onclick = function()
+                                            {
+                                                document.getElementById('producto_id').value = producto.id;
+                                                document.getElementById('buscador_producto').value = producto.titulo;
+                                                document.getElementById('resultado_busqueda_mag').innerHTML = '';
+                                                document.getElementById('resultado_busqueda_mag').classList.add('dinone');
+                                                agregarFila(producto)   
+                                            }
+                                            document.getElementById('resultado_busqueda_mag').appendChild(li);
+                                        });
+                                    }
+                                }
+                                else {
+                                    let span = document.createElement('span');
+                                    span.innerHTML = "Sin resultados";
+                                    document.getElementById('resultado_busqueda_mag').appendChild(span);
+                                }
+                            })
+                            .catch(error => console.log(error));
+                    
+                    }, 400, entrada);
+                }
+                else {
+                    document.getElementById('resultado_busqueda_mag').innerHTML = ''; 
+                    document.getElementById('resultado_busqueda_mag').classList.add('dinone');
+                }
             }
-            // Obtener todos los elementos
-            let items = listGroup.querySelectorAll('li');
-            // Saber si alguno está activo
-            let actual = Array.from(items).findIndex(item => item.classList.contains('active'));
-  
-            // Analizar tecla pulsada
-            if(e.keyCode == 13) {
-                // Tecla Enter, evitar que se procese el formulario
-                e.preventDefault();
-                // ¿Hay un elemento activo?
-                if(items[actual]) {
-                    // Hacer clic
-                    items[actual].click();
+            
+
+            // Obtener la lista, para recorrer cada elemento
+            let listGroup = document.querySelector('ul.cont-resul-busca');
+            // Asignar evento al campo de texto
+            document.querySelector('#buscador_producto').addEventListener('keydown', e => {
+                if(!listGroup) {
+                    return; // No existe la lista
                 }
-            } if(e.keyCode == 38 || e.keyCode == 40) {
-                // Flecha arriba (restar) o abajo (sumar)
-                if(items[actual]) {
-                    // Solo si hay un elemento activo, eliminar clase
-                    items[actual].classList.remove('active');
+                // Obtener todos los elementos
+                let items = listGroup.querySelectorAll('li');
+                // Saber si alguno está activo
+                let actual = Array.from(items).findIndex(item => item.classList.contains('active'));
+    
+                // Analizar tecla pulsada
+                if(e.keyCode == 13) {
+                    // Tecla Enter, evitar que se procese el formulario
+                    e.preventDefault();
+                    // ¿Hay un elemento activo?
+                    if(items[actual]) {
+                        // Hacer clic
+                        items[actual].click();
+                    }
+                } if(e.keyCode == 38 || e.keyCode == 40) {
+                    // Flecha arriba (restar) o abajo (sumar)
+                    if(items[actual]) {
+                        // Solo si hay un elemento activo, eliminar clase
+                        items[actual].classList.remove('active');
+                    }
+                    // Calcular posición del siguiente
+                    actual += (e.keyCode == 38) ? -1 : 1;
+                    // Asegurar que está dentro de los límites
+                    if(actual < 0) {
+                        actual = 0;
+                    } else if(actual >= items.length) {
+                        actual = items.length - 1;
+                    }
+                    // Asignar clase activa
+                    items[actual].classList.add('active');
                 }
-                // Calcular posición del siguiente
-                actual += (e.keyCode == 38) ? -1 : 1;
-                // Asegurar que está dentro de los límites
-                if(actual < 0) {
-                    actual = 0;
-                } else if(actual >= items.length) {
-                    actual = items.length - 1;
-                }
-                // Asignar clase activa
-                items[actual].classList.add('active');
-            }
-        });
-        // En la función donde generas la lista debes activar evento clic para cada elemento
-        // Para este ejemplo se hace manual
-        listGroup.querySelectorAll('li').forEach(li => {
-            li.addEventListener('click', e => {
-                // Asignar valor al campo
-                document.querySelector('#buscador_producto').value = e.currentTarget.textContent;
-                // Aquí deberías cerrar la lista y/o eliminar el contenido
             });
-        });
-
+            // En la función donde generas la lista debes activar evento clic para cada elemento
+            // Para este ejemplo se hace manual
+            listGroup.querySelectorAll('li').forEach(li => {
+                li.addEventListener('click', e => {
+                    // Asignar valor al campo
+                    document.querySelector('#buscador_producto').value = e.currentTarget.textContent;
+                    // Aquí deberías cerrar la lista y/o eliminar el contenido
+                });
+            });
 
     </script>
     

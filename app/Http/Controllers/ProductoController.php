@@ -44,7 +44,7 @@ class ProductoController extends Controller
 
     public function busquedaProductosBase($busqueda)
     {
-        $productos = ProductoBase::where('titulo', 'LIKE', '%' . $busqueda . '%')
+        $productos = ProductosBase::where('titulo', 'LIKE', '%' . $busqueda . '%')
             ->orWhere('codigo_barra', '=', $busqueda)
             ->orderBy('titulo', 'ASC')
             ->get();
