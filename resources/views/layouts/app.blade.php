@@ -8,6 +8,7 @@
             background-color: rgb(131, 206, 131) !important;
             transition: background-color 0.5s ease;
         }
+
         .highlighted-none {
             background-color: rgba(255, 255, 255, 0);
             transition: background-color 0.5s ease;
@@ -24,10 +25,11 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     <!-- Scripts -->
-    {{-- @vite(['resources/css/app.css']) --}}
+    @vite('resources/css/app.css')
     @viteReactRefresh
+    @vite('resources/js/app.js')
     @vite('resources/js/components/lector/MainLector.jsx')
     @vite('resources/js/components/reportes/MainReportes.jsx')
     @vite('resources/js/components/productos/MainProductos.jsx')

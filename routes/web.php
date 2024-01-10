@@ -14,6 +14,7 @@ use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\LoteController;
 use App\Http\Controllers\CompraController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 
 /*
 |--------------------------------------------------------------------------
@@ -128,6 +129,13 @@ Route::middleware('auth')->group(function () {
     });
 
 
+});
+
+
+Route::get('/limpiar-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    return 'Caché limpiada correctamente';
 });
 
 require __DIR__ . '/auth.php';
