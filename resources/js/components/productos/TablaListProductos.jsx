@@ -12,30 +12,41 @@ const TablaListProductos = ({ productos }) => {
     const numeroPaginas = Math.ceil(productos.length / productosPorPagina);
     return (
         <>
-            <table className="table-auto border-collapse border border-slate-500" style={{ width: '100%' }}>
+        
+            <table className="table-auto border-collapse customized-table" style={{ width: '100%' }}>
                 <thead>
                     <tr>
-                        <th className="text-left p-2 border border-slate-600">ID</th>
-                        <th className="text-left p-2 border border-slate-600">Nombre</th>
-                        <th className="text-left p-2 border border-slate-600">Precio Costo</th>
-                        <th className="text-left p-2 border border-slate-600">Precio Venta</th>
-                        <th className="text-left p-2 border border-slate-600">Stock</th>
-                        <th className="text-left p-2 border border-slate-600">Código Barra</th>
-                        <th className="text-left p-2 border border-slate-600">Acción</th>
+                        <th className="text-left p-2">
+                            <input type="checkbox" id="selectAll" />
+                        </th>
+                        <th className="text-left p-2">ID</th>
+                        <th className="text-left p-2">Nombre</th>
+                        <th className="text-left p-2">Precio Costo</th>
+                        <th className="text-left p-2">Precio Venta</th>
+                        <th className="text-left p-2">Stock</th>
+                        <th className="text-left p-2">Código Barra</th>
+                        <th className="text-left p-2">Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                         productosActuales.map((producto) =>
                         (
-                            <tr key={producto.id}>
-                                <td className="p-2 border border-slate-700">{producto.id}</td>
-                                <td className="p-2 border border-slate-700">{producto.titulo} </td>
-                                <td className="p-2 border border-slate-700">{producto.precio_costo}</td>
-                                <td className="p-2 border border-slate-700">{producto.precio_venta}</td>
-                                <td className="p-2 border border-slate-700">{producto.stock_actual}</td>
-                                <td className="p-2 border border-slate-700">{producto.codigo_barra}</td>
-                                <td className="p-2 border border-slate-700"> <a href={`productos/editar/${producto.id}`}>Editar</a></td>
+                            <tr key={producto.id} >
+                                <td className="p-2">
+                                    <input 
+                                        type="checkbox" 
+                                        className="selectItem"
+                                        name="productos[]"
+                                    />
+                                </td>
+                                <td className="p-2">{producto.id}</td>
+                                <td className="p-2">{producto.titulo} </td>
+                                <td className="p-2">{producto.precio_costo}</td>
+                                <td className="p-2">{producto.precio_venta}</td>
+                                <td className="p-2">{producto.stock_actual}</td>
+                                <td className="p-2">{producto.codigo_barra}</td>
+                                <td className="p-2"> <a href={`productos/editar/${producto.id}`}>Editar</a></td>
                             </tr>
                         )
                         )

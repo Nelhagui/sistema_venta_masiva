@@ -23,6 +23,8 @@ const TablaListCompras = () => {
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
+    const [cantidadFilas, setCantidadFilas] = useState(1);
+    const [nuevosProductos, setNuevosProductos] = useState([]);
     const [datosCompra, setDatosCompra] = useState({
         fechaCompra: "",
         proveedor: "",
@@ -231,6 +233,24 @@ const TablaListCompras = () => {
         });
     };
 
+    const handleInputChangeNuevoProducto = (index, campo, valor) => {
+        setNuevosProductos(prevProductos => {
+          return prevProductos.map((producto, i) => {
+            // Si el índice coincide con el índice actual del producto en el array
+            if (i === index) {
+              // Actualiza solo el campo específico para ese producto
+              return {
+                ...producto,
+                [campo]: valor
+              };
+            }
+            // Si no es el producto actual, devuelve el producto sin cambios
+            return producto;
+          });
+        });
+      };
+      
+
     const changeSubmit = () => {
         console.log(productosSeleccionados);
         fetch('/api/compras/agregar', {
@@ -241,7 +261,8 @@ const TablaListCompras = () => {
             },
             body: JSON.stringify({ 
                 productos: productosSeleccionados, 
-                datosCompra: datosCompra
+                datosCompra: datosCompra,
+                nuevosProductos: nuevosProductos
             }),
         })
             .then(response => {
@@ -276,6 +297,25 @@ const TablaListCompras = () => {
             });
     }
 
+    const agregarProductoNuevo = () => {
+        
+        // Crea un nuevo producto con valores iniciales o vacíos
+        const nuevoProducto = {
+          titulo: '',
+          codigo_barra: '',
+          precio_costo: '',
+          precio_venta: '',
+          stock: '',
+          usar_control_por_lote: false,
+          fecha_vencimiento: '',
+          inversor_id: '',
+          highlighted: false,
+        };
+    
+        // Agrega el nuevo producto a la lista de productos seleccionados
+        setNuevosProductos([...nuevosProductos, nuevoProducto]);
+        console.log(nuevosProductos)
+    }
 
     return (
         <>
@@ -365,8 +405,8 @@ const TablaListCompras = () => {
                             <th className="text-left p-2 border border-slate-600">Código Barra</th>
                             <th className="text-left p-2 border border-slate-600">Precio Costo</th>
                             <th className="text-left p-2 border border-slate-600">Precio Venta</th>
-                            <th className="text-left p-2 border border-slate-600 ">Stock</th>
-                            <th className="text-left p-2 border border-slate-600">Control por lote</th>
+                            <th className="text-left p-2 border border-slate-600">Stock</th>
+                            <th className="text-left py-2 px-1 border border-slate-600">Control por lote</th>
                             <th className="text-left p-2 border border-slate-600">Fecha vencimiento</th>
                             <th className="text-left p-2 border border-slate-600">Inversor</th>
                         </tr>
@@ -443,9 +483,96 @@ const TablaListCompras = () => {
                             )
                             )
                         }
+                        {
+                            nuevosProductos.map((producto, index) => 
+                            (
+                                <tr key={index} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            style={{ minWidth: '250px', padding: 2 }}
+                                            type="text"
+                                            name={ `titulo_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'titulo', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            style={{ minWidth: '150px', padding: 2 }}
+                                            type="number"
+                                            name={ `codigo_barra_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'codigo_barra', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            style={{ maxWidth: '5rem', padding: 2 }}
+                                            type="number"
+                                            name={ `precio_costo_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_costo', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            style={{ maxWidth: '5rem', padding: 2 }}
+                                            type="number"
+                                            name={ `precio_venta_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_venta', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            style={{ maxWidth: '4rem', padding: 2 }}
+                                            type="text"
+                                            name={ `stock_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'stock', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            type="checkbox"
+                                            name={ `usar_control_por_lote_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'usar_control_por_lote', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <input
+                                            className='text-sm'
+                                            type="date"
+                                            name={ `fecha_vencimiento_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'fecha_vencimiento', e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2 border border-slate-700">
+                                        <select
+                                            className='text-sm'
+                                            name={ `inversor_id_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'inversor_id', e.target.value)}
+                                        >
+                                            <option value="">Seleccione un inversor</option>
+                                            {
+                                                inversores.map((inversor) => {
+                                                    return <option key={inversor.id} value={inversor.id}>{inversor.nombre} {inversor.apellido}</option>
+                                                })
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                            )
+                            )
+                        }
                     </tbody>
                 </table >
             }
+
+            <div className='mt-4'>
+                <button onClick={agregarProductoNuevo}>Agregar Nuevo Producto</button>
+            </div>
         </>
     )
 }

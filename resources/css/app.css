@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.customized-table {
+    min-width: 100%;
+    height: auto;
+    border-color: gray;
+}
+
+.customized-table thead tr{
+    box-sizing: border-box;
+    border: 0 solid #e5e7eb;
+}
+
+.customized-table thead tr th:last-child {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem
+}
+
+.customized-table thead tr th:first-child {
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem
+}
+
+.customized-table thead tr th {
+    background-color: hsl(240 4% 16% / 0.4);
+}

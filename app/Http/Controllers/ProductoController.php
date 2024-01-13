@@ -69,65 +69,21 @@ class ProductoController extends Controller
         $messages = [
             'productos.*.titulo.required' => 'El campo Título es obligatorio.',
             'productos.*.titulo.unique' => 'El título ya está en uso.',
-            'productos.*.precio_venta.required' => 'El campo Precio de venta es obligatorio.',
-            'productos.*.precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
-            'productos.*.precio_costo.required' => 'El campo Precio de costo es obligatorio.',
-            'productos.*.precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
-            'productos.*.stock.required' => 'El campo Stock es obligatorio.',
-            'productos.*.stock.numeric' => 'El campo Stock debe ser un valor numérico.',
             'productos.*.codigo_barra.numeric' => 'El campo requiere números.',
             'productos.*.codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
         ];
 
         $request->validate([
             'productos.*.titulo' => 'required|unique:productos,titulo,',
-            'productos.*.precio_venta' => 'required|numeric',
-            'productos.*.precio_costo' => 'required|numeric',
-            'productos.*.stock' => 'required|numeric',
             'productos.*.codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
         ], $messages);
 
         foreach ($request->input('productos') as $productoData) {
             $producto = new Producto;
             $producto->titulo = $productoData['titulo'];
-            $producto->precio_venta = $productoData['precio_venta'];
-            $producto->precio_costo = $productoData['precio_costo'];
-            $producto->stock_actual = $productoData['stock'];
             $producto->codigo_barra = $productoData['codigo_barra'];
-            $producto->usar_control_por_lote = isset($productoData['control_por_lote']);
             $producto->save();
 
-            if(!isset($productoData['control_por_lote']) && $productoData['inversor_id'] !== null && $productoData['inversor_id'] !== '') {
-                $inversorProducto = new InversorProducto;
-                $inversorProducto->model()->associate($producto);
-                $inversorProducto->cantidad_producto_invertido = $productoData['stock'];
-                $inversorProducto->inversor_id = $productoData['inversor_id'];
-                $inversorProducto->save();
-            }
-    
-            // Agrega lógica adicional si es necesario, por ejemplo, para lotes
-            if (isset($productoData['control_por_lote'])) {
-                $newLoteProducto = new Lote;
-                $newLoteProducto->producto_id = $producto->id;
-                $newLoteProducto->fecha_compra = $productoData['fecha_compra'] ?? now();
-                $newLoteProducto->fecha_vencimiento = $productoData['fecha_vencimiento'] ?? null;
-                $newLoteProducto->numero_factura = $productoData['numero_factura'] ?? null;
-                $newLoteProducto->proveedor_id = $productoData['proveedor_id'] ?? null;
-                $newLoteProducto->precio_costo = $productoData['precio_costo']; // Asegúrate de ajustar esto según tu estructura
-                $newLoteProducto->precio_venta = $productoData['precio_venta']; // Asegúrate de ajustar esto según tu estructura
-                $newLoteProducto->precio_dolar = $productoData['precio_dolar'] ?? null;
-                $newLoteProducto->cantidad_inicial = $productoData['stock']; // Asegúrate de ajustar esto según tu estructura
-                $newLoteProducto->cantidad_restante = $productoData['stock']; // Asegúrate de ajustar esto según tu estructura
-                $newLoteProducto->save();
-
-                if($productoData['inversor_id'] !== null && $productoData['inversor_id'] !== '') {
-                    $newInversorProducto = new InversorProducto;
-                    $newInversorProducto->model()->associate($newLoteProducto);
-                    $newInversorProducto->cantidad_producto_invertido = $productoData['stock'];
-                    $newInversorProducto->inversor_id = $productoData['inversor_id'];
-                    $newInversorProducto->save();
-                }
-            }
         }
 
         return redirect()->route('create.productos');
@@ -245,13 +201,13 @@ class ProductoController extends Controller
             'precio_venta' => 'required|numeric',
             'precio_costo' => 'required|numeric',
             'stock' => 'required|numeric',
-            'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'size:13', 'unique:productos,codigo_barra,'],
+            'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
         ], $messages);
 
         $producto->titulo = $request->titulo;
         $producto->precio_venta = $request->precio_venta;
         $producto->precio_costo = $request->precio_costo;
-        $producto->stock = $request->stock;
+        $producto->stock_actual = $request->stock;
         $producto->codigo_barra = $request->codigo_barra;
         $producto->save();
 

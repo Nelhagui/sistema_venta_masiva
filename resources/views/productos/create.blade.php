@@ -103,14 +103,6 @@
                             <tr>
                                 <th class="text-left p-2 border border-slate-600">Titulo</th>
                                 <th class="text-left p-2 border border-slate-600">Código Barra</th>
-                                <th class="text-left p-2 border border-slate-600">Precio Costo</th>
-                                <th class="text-left p-2 border border-slate-600">Precio Venta</th>
-                                <th class="text-left p-2 border border-slate-600 ">Stock</th>
-                                <th class="text-left p-2 border border-slate-600">Control por lote</th>
-                                <th class="text-left p-2 border border-slate-600">Fecha vencimiento</th>
-                                <th class="text-left p-2 border border-slate-600">Proveedor</th>
-                                <th class="text-left p-2 border border-slate-600">Factura</th>                                
-                                <th class="text-left p-2 border border-slate-600">Inversor</th>
                             </tr>
                         </thead>
                         <tbody id="cuerpoTabla">
@@ -168,7 +160,7 @@
                             type="text" 
                             name="productos[${contadorFilas}][titulo]"  
                             required 
-                            style="padding: 2px"   
+                            style="width: 450px"   
                             value="${data ? data.titulo : ""}"
                         >
                     </td>
@@ -178,96 +170,10 @@
                             name="productos[${contadorFilas}][codigo_barra]" 
                             required 
                             value="${data ? data.codigo_barra : ""}"
-                            style="max-width: 7.8em; padding: 2px" 
+                            style="width: 300px" 
                         >
                     </td>
-                    <td class="p-2 border border-slate-700">
-                        <input
-                            class='text-sm'
-                            name="productos[${contadorFilas}][precio_costo]" 
-                            required
-                            style="max-width: 5rem; padding: 2px"  
-                            onchange="actualizarPrecioVenta(${contadorFilas})"
-                            type="number"
-                        />
-                    </td>
-                    <td class="p-2 border border-slate-700">
-                        <input
-                            class='text-sm'
-                            name="productos[${contadorFilas}][precio_venta]" 
-                            required
-                            style="max-width: 5rem; padding: 2px"  
-                            type="number"
-                        />
-                    </td>
-                    <td class="p-2 border border-slate-700">
-                        <input
-                            class='text-sm'
-                            style="max-width: 3rem; padding: 2px"
-                            name="productos[${contadorFilas}][stock]" 
-                            value='1'
-                            required
-                            type="text"
-                        />
-                    </td>
-                    <td class="p-2 border border-slate-700">
-                        <input
-                            class='text-sm'
-                            type="checkbox"
-                            name="productos[${contadorFilas}][control_por_lote]" 
-                            id="control_por_lote_${contadorFilas}"
-                            onclick="deshabilitarCamposAdicionales(${contadorFilas})"
-                        />
-                    </td>
-                    <td class="p-2 border border-slate-700">
-                        <input
-                            class='text-sm'
-                            type="date"
-                            name="productos[${contadorFilas}][fecha_vencimiento]" 
-                            id="fecha_vencimiento_${contadorFilas}"
-                            value="{{old('fecha_vencimiento')}}"
-                            disabled
-                        />
-                    </td>
-                    <td class="p-2 border border-slate-700">
-                        <select
-                            class='text-sm'
-                            name="productos[${contadorFilas}][proveedor_id]" 
-                            id="proveedor_id_${contadorFilas}"
-                            value="{{old('proveedor_id')}}"
-                            disabled
-                        >
-                            <option value="">Seleccione un proveedor</option>
-                            @foreach ($proveedores as $proveedor)
-                                <option value="{{$proveedor->id}}">{{$proveedor->nombre}}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td class="p-2 border border-slate-700">
-                        <input
-                            class='text-sm'
-                            type="text"
-                            name="productos[${contadorFilas}][numero_factura]" 
-                            value="{{old('numero_factura')}}"
-                            style="padding: 2px"  
-                            id="numero_factura_${contadorFilas}" 
-                        />
-                    </td>
-                    
-                    <td class="p-2 border border-slate-700">
-                        <select
-                            class='text-sm'
-                            name="productos[${contadorFilas}][inversor_id]" 
-                            id="inversor_id_${contadorFilas}"
-                            value="{{old('inversor_id')}}"
-                            
-                        >
-                            <option value="">Seleccione un inversor</option>
-                            @foreach ($inversores as $inversor)
-                                <option value="{{$inversor->id}}">{{$inversor->nombre}} {{$inversor->apellido}}</option>
-                            @endforeach
-                        </select>
-                    </td>`
+                    `
 
                 cuerpoTabla.appendChild(nuevaFila)
                 contadorFilas++
@@ -291,26 +197,7 @@
                 agregarFila();
             });
 
-            function actualizarPrecioVenta(index) {
-                let precioCostoInput = document.querySelector(`input[name="productos[${index}][precio_costo]"]`);
-                let precioVentaInput = document.querySelector(`input[name="productos[${index}][precio_venta]"]`);
 
-                const porcentaje = 1.50; // Aumentamos en un 10%
-                let nuevoPrecio = precioCostoInput.value * porcentaje;
-
-                precioVentaInput.value = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
-            }
-
-            function deshabilitarCamposAdicionales(valor) {
-                let checkbox = document.getElementById(`control_por_lote_${valor}`);
-                let fechaVencimiento = document.getElementById(`fecha_vencimiento_${valor}`);
-                let proveedor = document.getElementById(`proveedor_id_${valor}`);
-                let factura = document.getElementById(`numero_factura_${valor}`);
-
-                fechaVencimiento.disabled = !checkbox.checked;
-                proveedor.disabled = !checkbox.checked;
-                factura.disabled = !checkbox.checked;
-            }
 
             const path_p = "{{ asset('/') }}";
             let tiempo = 0;

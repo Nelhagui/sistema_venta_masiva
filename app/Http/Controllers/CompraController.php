@@ -42,9 +42,16 @@ class CompraController extends Controller
      */
     public function store(Request $request)
     {
-        $productos = $request->productos;
+        $productosSeleccionados = $request->productos;
+        $nuevosProductos = $request->nuevosProductos;
         $datosCompra = $request->datosCompra;
 
+        // Convierte los datos a colecciones si no lo están
+        $coleccionProductos = collect($productosSeleccionados);
+        $coleccionNuevosProductos = collect($nuevosProductos);
+
+        // Fusiona las colecciones
+        $productos = $coleccionProductos->merge($coleccionNuevosProductos)->all();
         $messages = [
             'precio_venta.required' => 'El campo Precio de venta es obligatorio.',
             'precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
@@ -90,17 +97,23 @@ class CompraController extends Controller
         DB::transaction(function () use ($productos, $compra) {
             foreach ($productos as $producto) {
 
-                $productoDB = Producto::find($producto['id']);
+                if(isset($producto['id'])) {
+                    $productoDB = Producto::find($producto['id']);
+                } else {
+                    $productoDB = new Producto;
+                    $productoDB->titulo = $producto['titulo'];
+                    $productoDB->codigo_barra = $producto['codigo_barra'];
+                    $productoDB->save();
+                }
                 $productoDB->precio_venta = $producto['precio_venta'];
                 $productoDB->precio_costo = $producto['precio_costo'];
                 $productoDB->stock_actual = $productoDB->stock_actual + $producto['stock'];
-                $productoDB->usar_control_por_lote = $producto['usar_control_por_lote'];
+                $productoDB->usar_control_por_lote = $producto['usar_control_por_lote'] == "on" ? 1 : 0;
                 $productoDB->update();
-
 
                 if ($producto['usar_control_por_lote']) {
                     $newLoteProducto = new Lote;
-                    $newLoteProducto->producto_id = $producto['id'];
+                    $newLoteProducto->producto_id = $productoDB->id;
                     $newLoteProducto->compra_id = $compra->id;
                     $newLoteProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
                     $newLoteProducto->precio_costo = $producto['precio_costo'];
@@ -112,7 +125,7 @@ class CompraController extends Controller
 
                 }
 
-                if($producto['inversor_id'] !== null && $producto['inversor_id'] !== "") {
+                if(isset($producto['inversor_id'])) {
                     $inversorProducto = new InversorProducto;
                     $inversorProducto->model()->associate($productoDB);
                     $inversorProducto->cantidad_producto_invertido = $producto['stock'];
@@ -122,7 +135,7 @@ class CompraController extends Controller
 
                 $detalleCompra = new CompraDetalle;
                 $detalleCompra->compra_id = $compra->id;
-                $detalleCompra->producto_id = $producto['id'];
+                $detalleCompra->producto_id = $productoDB->id;
                 $detalleCompra->precio_unitario = $producto['precio_costo'];
                 $detalleCompra->cantidad = $producto['stock'];
                 $detalleCompra->precio_total = $compra->precio_total;
