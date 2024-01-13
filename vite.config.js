@@ -13,6 +13,7 @@ export default defineConfig({
             'resources/js/components/productos/MainProductos.jsx',
             'resources/js/components/productos_base/MainProductosBase.jsx',
             'resources/js/components/compras/MainCompras.jsx',
+            'resources/js/components/clientes/MainClientes.jsx',
             'resources/js/components/productos_stock/MainProductosActualizarStock.jsx',
         ]),
         react(),

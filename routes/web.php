@@ -69,7 +69,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/clientes/editar/{id}', [ClienteController::class, 'edit'])->name('edit.clientes');
         Route::post('/clientes/editar/{id}', [ClienteController::class, 'update'])->name('update.clientes');
 
-        //CLIENTES
+        //INVERSORES
         Route::get('/inversores', [InversorController::class, 'index'])->name('index.inversores');
         Route::get('/inversores/agregar', [InversorController::class, 'create'])->name('create.inversores');
         Route::post('/inversores/agregar', [InversorController::class, 'store'])->name('store.inversores');

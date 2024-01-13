@@ -4,6 +4,7 @@ use App\Http\Controllers\VentaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Producto;
+use App\Models\Cliente;
 use App\Models\Proveedor;
 use App\Models\Inversor;
 use App\Http\Controllers\ProductoController;
@@ -29,6 +30,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/productos', function () {
     $productos = Producto::all();
     return $productos;
+});
+
+Route::get('/clientes', function () {
+    $clientes = Cliente::all();
+    return $clientes;
 });
 
 Route::get('/metodos-pago', [MetodoPagoController::class, 'index']);

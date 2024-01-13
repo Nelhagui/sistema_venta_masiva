@@ -13,34 +13,31 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
-} from "@nextui-org/react";import { SearchIcon } from '../icons/SearchIcon';
+} from "@nextui-org/react";
+import { SearchIcon } from '../icons/SearchIcon';
 import { VerticalDotsIcon } from '../icons/VerticalDotsIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 
 const columns = [
     {
-      key: "id",
-      label: "ID",
+        key: "id",
+        label: "ID",
     },
     {
-      key: "titulo",
-      label: "NOMBRE",
+        key: "nombre",
+        label: "NOMBRE",
     },
     {
-        key: "precio_costo",
-        label: "PRECIO COSTO",
+        key: "telefono",
+        label: "TELÉFONO",
     },
     {
-        key: "precio_venta",
-        label: "PRECIO VENTA",
+        key: "whatsapp",
+        label: "WHATSAPP",
     },
     {
-        key: "stock_actual",
-        label: "STOCK",
-    },
-    {
-        key: "codigo_barra",
-        label: "CÓDIGO BARRA",
+        key: "nota",
+        label: "NOTA",
     },
     {
         key: "actions",
@@ -48,28 +45,29 @@ const columns = [
     },
 ];
 
-const TablaListProductos = ({ productos }) => {
+const TablaListClientes = ({ clientes }) => {
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [page, setPage] = React.useState(1);
     
     const rowsPerPage = 30;
-    const pages = Math.ceil(productos.length / rowsPerPage);
+    const pages = Math.ceil(clientes.length / rowsPerPage);
 
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
-        let filteredProducts = [...productos];
+        let filteredClients = [...clientes];
 
         if (hasSearchFilter) {
-            filteredProducts = filteredProducts.filter((producto) =>
-                producto.titulo.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredClients = filteredClients.filter((cliente) =>
+                cliente.nombre.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
 
-        return filteredProducts;
-    }, [productos, filterValue]);
-  
+        return filteredClients;
+    }, [clientes, filterValue]);
+
+
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -77,33 +75,29 @@ const TablaListProductos = ({ productos }) => {
         return filteredItems.slice(start, end);
     }, [page, filteredItems]);
 
-    const renderCell = React.useCallback((producto, columnKey) => {
-        const cellValue = producto[columnKey];
+    const renderCell = React.useCallback((cliente, columnKey) => {
+        const cellValue = cliente[columnKey];
 
         switch (columnKey) {
             case "id":
                 return (
-                    <span>{producto.id}</span>
+                    <span>{cliente.id}</span>
                 );
-            case "titulo":
+            case "nombre":
                 return (
-                    <span>{producto.titulo}</span>
+                    <span>{cliente.nombre}</span>
                 );
-            case "precio_costo":
+            case "telefono":
                 return (
-                    <span>{producto.precio_costo || "-"}</span>
+                    <span>{cliente.telefono || "-"}</span>
                 );
-            case "precio_venta":
+            case "whatsapp":
                 return (
-                    <span>{producto.precio_venta || "-"}</span>
+                    <span>{cliente.whatsapp || "-"}</span>
                 );
-            case "stock_actual":
+            case "nota":
                 return (
-                    <span>{producto.stock_actual || "-"}</span>
-                );
-            case "codigo_barra":
-                return (
-                    <span>{producto.codigo_barra || "-"}</span>
+                    <span>{cliente.nota || "-"}</span>
                 );
             case "actions":
                 return (
@@ -116,7 +110,7 @@ const TablaListProductos = ({ productos }) => {
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem> 
-                                    <a href={`/productos/editar/${producto.id}`}>
+                                    <a href={`/clientes/editar/${cliente.id}`}>
                                         Editar
                                     </a>
                                 </DropdownItem>
@@ -147,20 +141,15 @@ const TablaListProductos = ({ productos }) => {
                         isClearable
                         className="w-full sm:max-w-[44%]"
                         style={{ border: '0' }}
-                        placeholder="Escriba nombre del producto..."
+                        placeholder="Escriba nombre del cliente..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
-                    <a href={"/productos/agregar"}>
+                    <a href={"/clientes/agregar"}>
                         <Button color="primary" endContent={<PlusIcon />}>
-                            Agregar Producto
-                        </Button>
-                    </a>
-                    <a href={"/productos/update/stock"}>
-                        <Button color="danger" endContent={<PlusIcon />}>
-                            Cargar Stock de Productos
+                            Agregar Cliente
                         </Button>
                     </a>
                 </div>
@@ -172,10 +161,9 @@ const TablaListProductos = ({ productos }) => {
         hasSearchFilter,
     ]);
 
-
     return (
-        <Table 
-            aria-label="Lista de Productos"
+        <Table
+            aria-label="Lista de Clientes"
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
@@ -193,7 +181,7 @@ const TablaListProductos = ({ productos }) => {
                         onChange={(page) => setPage(page)}
                     />
                 </div>
-        }
+            }
         >
             <TableHeader columns={columns}>
                 {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
@@ -209,4 +197,4 @@ const TablaListProductos = ({ productos }) => {
     )
 }
 
-export default TablaListProductos
+export default TablaListClientes
