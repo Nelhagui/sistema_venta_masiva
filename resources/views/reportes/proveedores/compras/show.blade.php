@@ -16,7 +16,7 @@
             <div class="title-section">
                 <h1 style="font-size: 44">{{ $proveedor->nombre }}</h1>
             </div>
-            <div class="bg-gray-100 flex flex-col">
+            <div class="flex flex-col">
                 <table className="table-auto ">
                     <thead>
                         <tr>

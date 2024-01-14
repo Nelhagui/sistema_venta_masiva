@@ -131,6 +131,7 @@ const TablaListInversores = ({ inversores }) => {
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
+                        variant="bordered"
                         onValueChange={onSearchChange}
                     />
                     <a href={"/inversores/agregar"}>

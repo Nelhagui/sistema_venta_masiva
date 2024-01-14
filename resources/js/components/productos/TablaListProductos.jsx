@@ -126,6 +126,7 @@ const TablaListProductos = ({ productos }) => {
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
+                        variant="bordered"
                         className="w-full sm:max-w-[44%]"
                         placeholder="Escriba nombre del producto..."
                         startContent={<SearchIcon />}

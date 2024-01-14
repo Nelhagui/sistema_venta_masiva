@@ -4,6 +4,8 @@ import { debounce } from '../../utils/debounce';
 import InputMetodoPago from './InputMetodoPago';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Input } from "@nextui-org/react";
+import { SearchIcon } from '../icons/SearchIcon';
 
 function ListProductos({ productos, metodosDePago }) {
     const [metodosAgregados, setMetodosAgregados] = useState([]);
@@ -272,16 +274,19 @@ function ListProductos({ productos, metodosDePago }) {
                 <div style={styles.listContainer}>
                     <div className='flex justify-between'>
                         <div>
-                            <input
-                                type="text"
+                            <Input
+                                isClearable
+                                variant="bordered"
+                                className="w-full sm:max-w-[44%]"
+                                placeholder="Ingrese el código de barras o título"
+                                startContent={<SearchIcon />}
                                 value={inputText}
                                 ref={inputRef}
                                 onChange={handleInputChange}
                                 onFocus={handleInputFocus}
-                                placeholder="Ingrese el código de barras o título"
-                                style={{ minWidth: '450px' }}
+                                style={{minWidth: '450px'}}
                             />
-                            <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span>
+                            {/* <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span> */}
                         </div>
                     </div>
 
