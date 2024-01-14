@@ -13,7 +13,8 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
-} from "@nextui-org/react";import { SearchIcon } from '../icons/SearchIcon';
+} from "@nextui-org/react";
+import { SearchIcon } from '../icons/SearchIcon';
 import { VerticalDotsIcon } from '../icons/VerticalDotsIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 
