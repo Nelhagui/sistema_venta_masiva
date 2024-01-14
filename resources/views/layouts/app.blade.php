@@ -36,6 +36,7 @@
     @vite('resources/js/components/productos_base/MainProductosBase.jsx')
     @vite('resources/js/components/compras/MainCompras.jsx')
     @vite('resources/js/components/clientes/MainClientes.jsx')
+    @vite('resources/js/components/compras/IndexCompras.jsx')
     @vite('resources/js/components/icons/SearchIcon.jsx')
     @vite('resources/js/components/icons/VerticalDotsIcon.jsx')
     @vite('resources/js/components/productos_stock/MainProductosActualizarStock.jsx')

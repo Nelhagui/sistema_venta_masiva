@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import TablaListProductos from './TablaListProductos';
+import TablaListVentas from './TablaListProductos';
 
-export default function MainProductos() {
+export default function MainVentas() {
     const [productos, setProductos] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
@@ -30,14 +30,14 @@ export default function MainProductos() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <TablaListProductos productos={productos} />
+                    : <TablaListVentas productos={productos} />
             }
         </>
     )
 }
 
-if (document.getElementById('mainProductos')) {
-    const domNode = document.getElementById('mainProductos');
+if (document.getElementById('mainVentas')) {
+    const domNode = document.getElementById('mainVentas');
     const root = createRoot(domNode);
-    root.render(<MainProductos />);
+    root.render(<MainVentas />);
 }

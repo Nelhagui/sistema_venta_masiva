@@ -36,9 +36,6 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-2">
-                {{ $ventas->links() }}
-            </div>
         </div>
     </div>
 </x-app-layout>
