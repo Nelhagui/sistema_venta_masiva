@@ -8,6 +8,7 @@ use App\Models\Cliente;
 use App\Models\Compra;
 use App\Models\Proveedor;
 use App\Models\Inversor;
+use App\Models\Venta;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MetodoPagoController;
 use App\Http\Controllers\CompraController;
@@ -64,5 +65,10 @@ Route::get('/compras', function () {
 });
 
 Route::post('/compras/agregar', [CompraController::class, 'store']);
+
+Route::get('/ventas', function () {
+    $ventas = Venta::with('user')->get();
+    return $ventas;
+});
 
 Route::post('/ventas/crear', [VentaController::class, 'storeApi']);

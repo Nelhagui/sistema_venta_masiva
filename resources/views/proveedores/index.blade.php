@@ -10,6 +10,7 @@
                 <div class="flex flex-row">
                     <a href="{{ route('create.proveedores') }}" class="button-link"> Agregar Proveedor</a>
                 </div>
+                <div id="mainProveedores"></div>
                 <table class="table-auto border-collapse border border-slate-500">
                     <thead>
                         <tr>

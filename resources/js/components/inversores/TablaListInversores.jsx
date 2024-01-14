@@ -8,6 +8,7 @@ import {
     TableCell,
     Input,
     Button,
+    Chip,
     DropdownTrigger,
     Dropdown,
     DropdownMenu,
@@ -24,24 +25,16 @@ const columns = [
       label: "ID",
     },
     {
-      key: "titulo",
+      key: "nombre",
       label: "NOMBRE",
     },
     {
-        key: "precio_costo",
-        label: "PRECIO COSTO",
+        key: "apellido",
+        label: "APELLIDO",
     },
     {
-        key: "precio_venta",
-        label: "PRECIO VENTA",
-    },
-    {
-        key: "stock_actual",
-        label: "STOCK",
-    },
-    {
-        key: "codigo_barra",
-        label: "CÓDIGO BARRA",
+        key: "estado",
+        label: "ESTADO",
     },
     {
         key: "actions",
@@ -49,27 +42,32 @@ const columns = [
     },
 ];
 
-const TablaListProductos = ({ productos }) => {
+const statusColorMap = {
+    1: "success",
+    0: "danger",
+  };
+
+const TablaListInversores = ({ inversores }) => {
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [page, setPage] = React.useState(1);
     
     const rowsPerPage = 30;
-    const pages = Math.ceil(productos.length / rowsPerPage);
+    const pages = Math.ceil(inversores.length / rowsPerPage);
 
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
-        let filteredProducts = [...productos];
+        let filteredProducts = [...inversores];
 
         if (hasSearchFilter) {
             filteredProducts = filteredProducts.filter((producto) =>
-                producto.titulo.toLowerCase().includes(filterValue.toLowerCase()),
+                producto.nombre.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
 
         return filteredProducts;
-    }, [productos, filterValue]);
+    }, [inversores, filterValue]);
   
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
@@ -78,13 +76,15 @@ const TablaListProductos = ({ productos }) => {
         return filteredItems.slice(start, end);
     }, [page, filteredItems]);
 
-    const renderCell = React.useCallback((producto, columnKey) => {
-        const cellValue = producto[columnKey];
+    const renderCell = React.useCallback((inversor, columnKey) => {
+        const cellValue = inversor[columnKey];
 
         switch (columnKey) {
-            case "codigo_barra":
+            case "estado":
                 return (
-                    <span>{producto.codigo_barra || "-"}</span>
+                    <Chip className="capitalize" color={statusColorMap[inversor.estado]} size="sm" variant="flat">
+                        {cellValue == 1 ? "Activo" : "Inactivo"}
+                    </Chip>
                 );
             case "actions":
                 return (
@@ -97,7 +97,7 @@ const TablaListProductos = ({ productos }) => {
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem> 
-                                    <a href={`/productos/editar/${producto.id}`}>
+                                    <a href={`/inversores/editar/${inversor.id}`}>
                                         Editar
                                     </a>
                                 </DropdownItem>
@@ -127,20 +127,15 @@ const TablaListProductos = ({ productos }) => {
                     <Input
                         isClearable
                         className="w-full sm:max-w-[44%]"
-                        placeholder="Escriba nombre del producto..."
+                        placeholder="Escriba nombre del Inversor..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
-                    <a href={"/productos/agregar"}>
+                    <a href={"/inversores/agregar"}>
                         <Button color="primary" endContent={<PlusIcon />}>
-                            Agregar Producto
-                        </Button>
-                    </a>
-                    <a href={"/productos/update/stock"}>
-                        <Button color="danger" endContent={<PlusIcon />}>
-                            Cargar Stock de Productos
+                            Agregar Inversor
                         </Button>
                     </a>
                 </div>
@@ -155,7 +150,7 @@ const TablaListProductos = ({ productos }) => {
 
     return (
         <Table 
-            aria-label="Lista de Productos"
+            aria-label="Lista de Inversores"
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
@@ -189,4 +184,4 @@ const TablaListProductos = ({ productos }) => {
     )
 }
 
-export default TablaListProductos
+export default TablaListInversores

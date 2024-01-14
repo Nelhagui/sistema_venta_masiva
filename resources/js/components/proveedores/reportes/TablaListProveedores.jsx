@@ -14,9 +14,9 @@ import {
     DropdownItem,
     Pagination,
 } from "@nextui-org/react";
-import { SearchIcon } from "../icons/SearchIcon";
-import { VerticalDotsIcon } from "../icons/VerticalDotsIcon";
-import { PlusIcon } from "../icons/PlusIcon";
+import { VerticalDotsIcon } from "../../icons/VerticalDotsIcon";
+import { PlusIcon } from "../../icons/PlusIcon";
+import { SearchIcon } from "../../icons/SearchIcon";
 
 const columns = [
     {
@@ -24,48 +24,38 @@ const columns = [
         label: "ID",
     },
     {
-        key: "fecha_venta",
-        label: "FECHA",
+        key: "nombre",
+        label: "NOMBRE",
     },
     {
-        key: "created_at",
-        label: "HORA",
+        key: "direccion",
+        label: "DIRECCIÓN",
     },
     {
-        key: "monto_total_venta",
-        label: "TOTAL",
-    },
-    {
-        key: "user",
-        label: "CAJERO",
-    },
-    {
-        key: "detalle",
-        label: "DETALLE",
+        key: "actions",
+        label: "ACCIONES",
     },
 ];
 
-const TablaListVentas = ({ ventas }) => {
+const TablaListProveedores = ({ proveedores }) => {
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [page, setPage] = React.useState(1);
 
     const rowsPerPage = 30;
-    const pages = Math.ceil(ventas.length / rowsPerPage);
+    const pages = Math.ceil(proveedores.length / rowsPerPage);
 
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
-        return ventas.slice(start, end);
-    }, [page, ventas]);
+        return proveedores.slice(start, end);
+    }, [page, proveedores]);
 
-    const renderCell = React.useCallback((venta, columnKey) => {
-        const cellValue = venta[columnKey];
+    const renderCell = React.useCallback((proveedor, columnKey) => {
+        const cellValue = proveedor[columnKey];
 
         switch (columnKey) {
-            case "user":
-                return <span>{venta.user.nombre}</span>;
-            case "detalle":
+            case "actions":
                 return (
                     <div className="relative flex justify-end items-center gap-2">
                         <Dropdown>
@@ -76,7 +66,7 @@ const TablaListVentas = ({ ventas }) => {
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem>
-                                    <a href={`/ventas/${venta.id}`}>Ver</a>
+                                    <a href={`/reportes/proveedores/compras/${proveedor.id}`}>Ver</a>
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -87,6 +77,20 @@ const TablaListVentas = ({ ventas }) => {
         }
     }, []);
 
+    const topContent = React.useMemo(() => {
+        return (
+            <div className="flex flex-col gap-4">
+                <div className="flex justify-between gap-3 items-end">
+                    <a href={"/proveedores/agregar"}>
+                        <Button color="primary" endContent={<PlusIcon />}>
+                            Agregar Proveedor
+                        </Button>
+                    </a>
+                </div>
+            </div>
+        );
+    }, []);
+
 
     return (
         <Table
@@ -94,6 +98,8 @@ const TablaListVentas = ({ ventas }) => {
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
+            topContent={topContent}
+            topContentPlacement="outside"
             bottomContent={
                 <div className="flex w-full justify-center">
                     <Pagination
@@ -126,4 +132,4 @@ const TablaListVentas = ({ ventas }) => {
     );
 };
 
-export default TablaListVentas;
+export default TablaListProveedores;
