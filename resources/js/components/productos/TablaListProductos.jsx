@@ -135,12 +135,12 @@ const TablaListProductos = ({ productos }) => {
                         onValueChange={onSearchChange}
                     />
                     <a href={"/productos/agregar"}>
-                        <Button color="primary" endContent={<PlusIcon />}>
-                            Agregar Producto
+                        <Button color="primary" startContent={<PlusIcon />}>
+                            Crear Producto
                         </Button>
                     </a>
                     <a href={"/productos/update/stock"}>
-                        <Button color="danger" endContent={<PlusIcon />}>
+                        <Button color="danger" startContent={<PlusIcon />}>
                             Cargar Stock de Productos
                         </Button>
                     </a>
