@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import TablaListProductos from './TablaListProductos';
+import TablaListVentas from './TablaListVentas';
 
-export default function MainProductos() {
-    const [productos, setProductos] = useState([])
+export default function MainVentas() {
+    const [ventas, setVentas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
-        // Realizar la solicitud GET a la API de productos
-        fetch('/api/productos')
+        // Realizar la solicitud GET a la API de ventas
+        fetch('/api/ventas')
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -15,8 +15,8 @@ export default function MainProductos() {
                 return response.json();
             })
             .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setProductos(data);
+                // Actualizar el estado con la lista de ventas
+                setVentas(data);
             })
             .finally(() => {
                 setIsLoading(false);
@@ -30,14 +30,14 @@ export default function MainProductos() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <TablaListProductos productos={productos} />
+                    : <TablaListVentas ventas={ventas} />
             }
         </>
     )
 }
 
-if (document.getElementById('mainProductos')) {
-    const domNode = document.getElementById('mainProductos');
+if (document.getElementById('mainVentas')) {
+    const domNode = document.getElementById('mainVentas');
     const root = createRoot(domNode);
-    root.render(<MainProductos />);
+    root.render(<MainVentas />);
 }

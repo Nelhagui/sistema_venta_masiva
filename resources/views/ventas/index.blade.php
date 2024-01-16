@@ -5,39 +5,10 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-gray-100 flex flex-col">
-                <div class="flex flex-row">
-                    {{-- <a href="{{ route('create.clientes') }}" class="button-link"> Agregar Cliente</a> --}}
-                </div>
-                <table class="table-auto border-collapse border border-slate-500">
-                    <thead>
-                        <tr>
-                            <th class="text-left p-2 border border-slate-600">ID</th>
-                            <th class="text-left p-2 border border-slate-600">Fecha</th>
-                            <th class="text-left p-2 border border-slate-600">Hora</th>
-                            <th class="text-left p-2 border border-slate-600">Total</th>
-                            <th class="text-left p-2 border border-slate-600">Cajero</th>
-                            <th class="text-left p-2 border border-slate-600">Detalle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($ventas as $venta)
-                            <tr>
-                                <td class="p-2 border border-slate-600">{{ $venta->id }}</td>
-                                <td class="p-2 border border-slate-600">{{ \Carbon\Carbon::parse($venta->created_at)->format('d/m/Y') }}</td>
-                                <td class="p-2 border border-slate-600">{{ \Carbon\Carbon::parse($venta->created_at)->format('H:i') }}</td>
-                                <td class="p-2 border border-slate-600">${{ $venta->monto_total_venta }}</td>
-                                <td class="p-2 border border-slate-600">{{ $venta->user->nombre }}</td>
-                                <td class="p-2 border border-slate-600"><a href='{{route('show.ventas', $venta->id)}}'>ver detalle</a></td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="mt-2">
-                {{ $ventas->links() }}
+            <div class="flex flex-col">
+                <div id="mainVentas"></div>
             </div>
         </div>
     </div>

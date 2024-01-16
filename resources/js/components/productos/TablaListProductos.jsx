@@ -82,26 +82,6 @@ const TablaListProductos = ({ productos }) => {
         const cellValue = producto[columnKey];
 
         switch (columnKey) {
-            case "id":
-                return (
-                    <span>{producto.id}</span>
-                );
-            case "titulo":
-                return (
-                    <span>{producto.titulo}</span>
-                );
-            case "precio_costo":
-                return (
-                    <span>{producto.precio_costo || "-"}</span>
-                );
-            case "precio_venta":
-                return (
-                    <span>{producto.precio_venta || "-"}</span>
-                );
-            case "stock_actual":
-                return (
-                    <span>{producto.stock_actual || "-"}</span>
-                );
             case "codigo_barra":
                 return (
                     <span>{producto.codigo_barra || "-"}</span>
@@ -146,8 +126,8 @@ const TablaListProductos = ({ productos }) => {
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
+                        variant="bordered"
                         className="w-full sm:max-w-[44%]"
-                        style={{ border: '0' }}
                         placeholder="Escriba nombre del producto..."
                         startContent={<SearchIcon />}
                         value={filterValue}

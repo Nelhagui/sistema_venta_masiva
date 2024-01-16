@@ -13,31 +13,34 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
-} from "@nextui-org/react";
-import { SearchIcon } from '../icons/SearchIcon';
+} from "@nextui-org/react";import { SearchIcon } from '../icons/SearchIcon';
 import { VerticalDotsIcon } from '../icons/VerticalDotsIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 
 const columns = [
     {
-        key: "id",
-        label: "ID",
+      key: "id",
+      label: "ID",
     },
     {
-        key: "nombre",
-        label: "NOMBRE",
+      key: "proveedor_id",
+      label: "PROVEEDOR",
     },
     {
-        key: "telefono",
-        label: "TELÉFONO",
+        key: "precio_total",
+        label: "PRECIO TOTAL",
     },
     {
-        key: "whatsapp",
-        label: "WHATSAPP",
+        key: "fecha_compra",
+        label: "FECHA DE COMPRA",
     },
     {
-        key: "nota",
-        label: "NOTA",
+        key: "fecha_carga",
+        label: "FECHA DE CARGA",
+    },
+    {
+        key: "numero_factura",
+        label: "NRO FACTURA",
     },
     {
         key: "actions",
@@ -45,51 +48,28 @@ const columns = [
     },
 ];
 
-const TablaListClientes = ({ clientes }) => {
-    const [filterValue, setFilterValue] = React.useState("");
+const TablaIndexCompras = ({ compras }) => {
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [page, setPage] = React.useState(1);
     
     const rowsPerPage = 30;
-    const pages = Math.ceil(clientes.length / rowsPerPage);
+    const pages = Math.ceil(compras.length / rowsPerPage);
 
-    const hasSearchFilter = Boolean(filterValue);
-
-    const filteredItems = React.useMemo(() => {
-        let filteredClients = [...clientes];
-
-        if (hasSearchFilter) {
-            filteredClients = filteredClients.filter((cliente) =>
-                cliente.nombre.toLowerCase().includes(filterValue.toLowerCase()),
-            );
-        }
-
-        return filteredClients;
-    }, [clientes, filterValue]);
-
-
+  
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
-        return filteredItems.slice(start, end);
-    }, [page, filteredItems]);
+        return compras.slice(start, end);
+    }, [page, compras]);
 
-    const renderCell = React.useCallback((cliente, columnKey) => {
-        const cellValue = cliente[columnKey];
+    const renderCell = React.useCallback((compra, columnKey) => {
+        const cellValue = compra[columnKey];
 
         switch (columnKey) {
-            case "telefono":
+            case "proveedor_id" :
                 return (
-                    <span>{cliente.telefono || "-"}</span>
-                );
-            case "whatsapp":
-                return (
-                    <span>{cliente.whatsapp || "-"}</span>
-                );
-            case "nota":
-                return (
-                    <span>{cliente.nota || "-"}</span>
+                    <span>{compra.proveedor.nombre}</span>
                 );
             case "actions":
                 return (
@@ -102,11 +82,10 @@ const TablaListClientes = ({ clientes }) => {
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem> 
-                                    <a href={`/clientes/editar/${cliente.id}`}>
-                                        Editar
+                                    <a href={`/compras/${compra.id}`}>
+                                        Ver
                                     </a>
                                 </DropdownItem>
-                                <DropdownItem>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -116,47 +95,25 @@ const TablaListClientes = ({ clientes }) => {
         }
     }, []);
 
-    const onSearchChange = React.useCallback((value) => {
-        if (value) {
-            setFilterValue(value);
-            setPage(1);
-        } else {
-            setFilterValue("");
-        }
-    }, []);
 
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        variant="bordered"
-                        className="w-full sm:max-w-[44%]"
-                        style={{ border: '0' }}
-                        placeholder="Escriba nombre del cliente..."
-                        startContent={<SearchIcon />}
-                        value={filterValue}
-                        onClear={() => onClear()}
-                        onValueChange={onSearchChange}
-                    />
-                    <a href={"/clientes/agregar"}>
+                    <a href={"/compras/agregar"}>
                         <Button color="primary" endContent={<PlusIcon />}>
-                            Agregar Cliente
+                            Agregar compra
                         </Button>
                     </a>
                 </div>
             </div>
         );
-    }, [
-        filterValue,
-        onSearchChange,
-        hasSearchFilter,
-    ]);
+    }, []);
+
 
     return (
-        <Table
-            aria-label="Lista de Clientes"
+        <Table 
+            aria-label="Listado de Compras"
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
@@ -174,7 +131,7 @@ const TablaListClientes = ({ clientes }) => {
                         onChange={(page) => setPage(page)}
                     />
                 </div>
-            }
+        }
         >
             <TableHeader columns={columns}>
                 {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
@@ -190,4 +147,4 @@ const TablaListClientes = ({ clientes }) => {
     )
 }
 
-export default TablaListClientes
+export default TablaIndexCompras

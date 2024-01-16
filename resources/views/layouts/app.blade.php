@@ -36,14 +36,18 @@
     @vite('resources/js/components/productos/MainProductos.jsx')
     @vite('resources/js/components/productos_base/MainProductosBase.jsx')
     @vite('resources/js/components/compras/MainCompras.jsx')
+    @vite('resources/js/components/ventas/MainVentas.jsx')
     @vite('resources/js/components/clientes/MainClientes.jsx')
+    @vite('resources/js/components/compras/IndexCompras.jsx')
+    @vite('resources/js/components/inversores/MainInversores.jsx')
+    @vite('resources/js/components/proveedores/reportes/MainProveedores.jsx')
     @vite('resources/js/components/icons/SearchIcon.jsx')
     @vite('resources/js/components/icons/VerticalDotsIcon.jsx')
     @vite('resources/js/components/productos_stock/MainProductosActualizarStock.jsx')
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen">
         @include('layouts.navigation')
 
         <!-- Page Heading -->

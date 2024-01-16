@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { capitalizeFirstLetterOfEachWord } from '../../utils/capitalizeFirstLetterOfEachWord';
 import { debounce } from '../../utils/debounce';
+import { Input, Switch } from "@nextui-org/react";
+import { SearchIcon } from '../icons/SearchIcon';
+
 // Estilo de resaltado
 const highlightedStyle = {
     backgroundColor: 'green',
@@ -323,16 +326,19 @@ const TablaListCompras = () => {
             <div style={styles.listContainer}>
                 <div className='flex justify-between'>
                     <div>
-                        <input
-                            type="text"
+                        <Input
+                            isClearable
+                            variant="bordered"
+                            className="w-full sm:max-w-[44%]"
+                            placeholder="Ingrese el código de barras o título"
+                            startContent={<SearchIcon />}
                             value={inputText}
                             ref={inputRef}
                             onChange={handleInputChange}
                             onFocus={handleInputFocus}
-                            placeholder="Ingrese el código de barras o título"
-                            style={{ minWidth: '450px' }}
+                            style={{minWidth: '450px'}}
                         />
-                        <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span>
+                        {/* <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span> */}
                     </div>
                     {
                         productosSeleccionados.length > 0 &&
@@ -488,63 +494,70 @@ const TablaListCompras = () => {
                             (
                                 <tr key={index} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
                                     <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            style={{ minWidth: '250px', padding: 2 }}
+                                        <Input
+                                            variant="faded"
                                             type="text"
                                             name={ `titulo_${index}` }
+                                            labelPlacement="outside"
                                             onChange={(e) => handleInputChangeNuevoProducto(index, 'titulo', e.target.value)}
                                         />
                                     </td>
                                     <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            style={{ minWidth: '150px', padding: 2 }}
+                                        <Input
+                                            variant="faded"
                                             type="number"
                                             name={ `codigo_barra_${index}` }
+                                            labelPlacement="outside"
                                             onChange={(e) => handleInputChangeNuevoProducto(index, 'codigo_barra', e.target.value)}
                                         />
                                     </td>
                                     <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            style={{ maxWidth: '5rem', padding: 2 }}
+                                        <Input
+                                            variant="faded"
                                             type="number"
+                                            labelPlacement="outside"
                                             name={ `precio_costo_${index}` }
                                             onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_costo', e.target.value)}
                                         />
                                     </td>
                                     <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            style={{ maxWidth: '5rem', padding: 2 }}
+                                        <Input
+                                            variant="faded"
                                             type="number"
+                                            labelPlacement="outside"
                                             name={ `precio_venta_${index}` }
                                             onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_venta', e.target.value)}
                                         />
                                     </td>
                                     <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            style={{ maxWidth: '4rem', padding: 2 }}
+                                        <Input
+                                            variant="faded"
                                             type="text"
                                             name={ `stock_${index}` }
+                                            labelPlacement="outside"
                                             onChange={(e) => handleInputChangeNuevoProducto(index, 'stock', e.target.value)}
                                         />
                                     </td>
                                     <td className="p-2 border border-slate-700">
-                                        <input
+                                        <Switch 
+                                            defaultSelected 
+                                            aria-label="Automatic updates"
+                                            name={ `usar_control_por_lote_${index}` }
+                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'usar_control_por_lote', e.target.value)}
+                                        />
+                                        {/* <input
                                             className='text-sm'
                                             type="checkbox"
                                             name={ `usar_control_por_lote_${index}` }
                                             onChange={(e) => handleInputChangeNuevoProducto(index, 'usar_control_por_lote', e.target.value)}
-                                        />
+                                        /> */}
                                     </td>
                                     <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
+                                        <Input
+                                            variant="faded"
                                             type="date"
                                             name={ `fecha_vencimiento_${index}` }
+                                            labelPlacement="outside"
                                             onChange={(e) => handleInputChangeNuevoProducto(index, 'fecha_vencimiento', e.target.value)}
                                         />
                                     </td>

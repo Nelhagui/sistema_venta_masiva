@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import TablaListProductos from './TablaListProductos';
+import TablaIndexCompras from './TablaIndexCompras';
 
-export default function MainProductos() {
-    const [productos, setProductos] = useState([])
+export default function IndexCompras() {
+    const [compras, setCompras] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+
     useEffect(() => {
-        // Realizar la solicitud GET a la API de productos
-        fetch('/api/productos')
+        // Realizar la solicitud GET a la API de compras
+        fetch('/api/compras')
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -15,8 +16,8 @@ export default function MainProductos() {
                 return response.json();
             })
             .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setProductos(data);
+                // Actualizar el estado con la lista de compras
+                setCompras(data);
             })
             .finally(() => {
                 setIsLoading(false);
@@ -25,19 +26,20 @@ export default function MainProductos() {
                 console.error('Error fetching data:', error);
             });
     }, []);
+
     return (
         <>
             {
                 isLoading
                     ? "Cargando..."
-                    : <TablaListProductos productos={productos} />
+                    : <TablaIndexCompras compras={compras} />
             }
         </>
     )
 }
 
-if (document.getElementById('mainProductos')) {
-    const domNode = document.getElementById('mainProductos');
+if (document.getElementById('indexCompras')) {
+    const domNode = document.getElementById('indexCompras');
     const root = createRoot(domNode);
-    root.render(<MainProductos />);
+    root.render(<IndexCompras />);
 }

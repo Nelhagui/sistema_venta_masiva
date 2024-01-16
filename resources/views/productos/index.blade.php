@@ -7,7 +7,7 @@
 
     <div class="py-4">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-gray-100 flex flex-col">
+            <div class="flex flex-col">
                 <div id="mainProductos"></div>
             </div>
         </div>

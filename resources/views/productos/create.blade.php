@@ -75,7 +75,7 @@
     </style>
     <div class="py-12">
         <div class="mx-auto sm:px-6 lg:px-8">
-            <div class="bg-gray-100 flex flex-col">
+            <div class="flex flex-col">
                 <div class="flex flex-row justify-between">
                     <div>
                         <a href="{{ route('index.productos') }}" class="button-link">Ver lista de productos</a>

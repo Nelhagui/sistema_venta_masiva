@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import TablaListProductos from './TablaListProductos';
+import TablaListInversores from './TablaListInversores';
 
-export default function MainProductos() {
-    const [productos, setProductos] = useState([])
+export default function MainInversores() {
+    const [inversores, setInversores] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     useEffect(() => {
-        // Realizar la solicitud GET a la API de productos
-        fetch('/api/productos')
+        // Realizar la solicitud GET a la API de inversores
+        fetch('/api/inversores')
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -15,8 +15,8 @@ export default function MainProductos() {
                 return response.json();
             })
             .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setProductos(data);
+                // Actualizar el estado con la lista de inversores
+                setInversores(data);
             })
             .finally(() => {
                 setIsLoading(false);
@@ -30,14 +30,14 @@ export default function MainProductos() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <TablaListProductos productos={productos} />
+                    : <TablaListInversores inversores={inversores} />
             }
         </>
     )
 }
 
-if (document.getElementById('mainProductos')) {
-    const domNode = document.getElementById('mainProductos');
+if (document.getElementById('mainInversores')) {
+    const domNode = document.getElementById('mainInversores');
     const root = createRoot(domNode);
-    root.render(<MainProductos />);
+    root.render(<MainInversores />);
 }

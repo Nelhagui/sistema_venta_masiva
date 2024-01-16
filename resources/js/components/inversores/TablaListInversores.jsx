@@ -8,6 +8,7 @@ import {
     TableCell,
     Input,
     Button,
+    Chip,
     DropdownTrigger,
     Dropdown,
     DropdownMenu,
@@ -20,24 +21,20 @@ import { PlusIcon } from '../icons/PlusIcon';
 
 const columns = [
     {
-        key: "id",
-        label: "ID",
+      key: "id",
+      label: "ID",
     },
     {
-        key: "nombre",
-        label: "NOMBRE",
+      key: "nombre",
+      label: "NOMBRE",
     },
     {
-        key: "telefono",
-        label: "TELÉFONO",
+        key: "apellido",
+        label: "APELLIDO",
     },
     {
-        key: "whatsapp",
-        label: "WHATSAPP",
-    },
-    {
-        key: "nota",
-        label: "NOTA",
+        key: "estado",
+        label: "ESTADO",
     },
     {
         key: "actions",
@@ -45,29 +42,33 @@ const columns = [
     },
 ];
 
-const TablaListClientes = ({ clientes }) => {
+const statusColorMap = {
+    1: "success",
+    0: "danger",
+  };
+
+const TablaListInversores = ({ inversores }) => {
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [page, setPage] = React.useState(1);
     
     const rowsPerPage = 30;
-    const pages = Math.ceil(clientes.length / rowsPerPage);
+    const pages = Math.ceil(inversores.length / rowsPerPage);
 
     const hasSearchFilter = Boolean(filterValue);
 
     const filteredItems = React.useMemo(() => {
-        let filteredClients = [...clientes];
+        let filteredProducts = [...inversores];
 
         if (hasSearchFilter) {
-            filteredClients = filteredClients.filter((cliente) =>
-                cliente.nombre.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredProducts = filteredProducts.filter((producto) =>
+                producto.nombre.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
 
-        return filteredClients;
-    }, [clientes, filterValue]);
-
-
+        return filteredProducts;
+    }, [inversores, filterValue]);
+  
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -75,21 +76,15 @@ const TablaListClientes = ({ clientes }) => {
         return filteredItems.slice(start, end);
     }, [page, filteredItems]);
 
-    const renderCell = React.useCallback((cliente, columnKey) => {
-        const cellValue = cliente[columnKey];
+    const renderCell = React.useCallback((inversor, columnKey) => {
+        const cellValue = inversor[columnKey];
 
         switch (columnKey) {
-            case "telefono":
+            case "estado":
                 return (
-                    <span>{cliente.telefono || "-"}</span>
-                );
-            case "whatsapp":
-                return (
-                    <span>{cliente.whatsapp || "-"}</span>
-                );
-            case "nota":
-                return (
-                    <span>{cliente.nota || "-"}</span>
+                    <Chip className="capitalize" color={statusColorMap[inversor.estado]} size="sm" variant="flat">
+                        {cellValue == 1 ? "Activo" : "Inactivo"}
+                    </Chip>
                 );
             case "actions":
                 return (
@@ -102,7 +97,7 @@ const TablaListClientes = ({ clientes }) => {
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem> 
-                                    <a href={`/clientes/editar/${cliente.id}`}>
+                                    <a href={`/inversores/editar/${inversor.id}`}>
                                         Editar
                                     </a>
                                 </DropdownItem>
@@ -131,18 +126,17 @@ const TablaListClientes = ({ clientes }) => {
                 <div className="flex justify-between gap-3 items-end">
                     <Input
                         isClearable
-                        variant="bordered"
                         className="w-full sm:max-w-[44%]"
-                        style={{ border: '0' }}
-                        placeholder="Escriba nombre del cliente..."
+                        placeholder="Escriba nombre del Inversor..."
                         startContent={<SearchIcon />}
                         value={filterValue}
                         onClear={() => onClear()}
+                        variant="bordered"
                         onValueChange={onSearchChange}
                     />
-                    <a href={"/clientes/agregar"}>
+                    <a href={"/inversores/agregar"}>
                         <Button color="primary" endContent={<PlusIcon />}>
-                            Agregar Cliente
+                            Agregar Inversor
                         </Button>
                     </a>
                 </div>
@@ -154,9 +148,10 @@ const TablaListClientes = ({ clientes }) => {
         hasSearchFilter,
     ]);
 
+
     return (
-        <Table
-            aria-label="Lista de Clientes"
+        <Table 
+            aria-label="Lista de Inversores"
             selectionMode="multiple"
             selectedKeys={selectedKeys}
             onSelectionChange={setSelectedKeys}
@@ -174,7 +169,7 @@ const TablaListClientes = ({ clientes }) => {
                         onChange={(page) => setPage(page)}
                     />
                 </div>
-            }
+        }
         >
             <TableHeader columns={columns}>
                 {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
@@ -190,4 +185,4 @@ const TablaListClientes = ({ clientes }) => {
     )
 }
 
-export default TablaListClientes
+export default TablaListInversores
