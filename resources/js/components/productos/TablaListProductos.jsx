@@ -13,19 +13,22 @@ import {
     DropdownMenu,
     DropdownItem,
     Pagination,
+    Tooltip
 } from "@nextui-org/react";
 import { SearchIcon } from '../icons/SearchIcon';
 import { VerticalDotsIcon } from '../icons/VerticalDotsIcon';
 import { PlusIcon } from '../icons/PlusIcon';
+import { InventoryIcon } from '../icons/InventoryIcon';
+import { UploadFileIcon } from '../icons/UploadFileIcon';
 
 const columns = [
     {
-      key: "id",
-      label: "ID",
+        key: "id",
+        label: "ID",
     },
     {
-      key: "titulo",
-      label: "NOMBRE",
+        key: "titulo",
+        label: "NOMBRE",
     },
     {
         key: "precio_costo",
@@ -53,7 +56,7 @@ const TablaListProductos = ({ productos }) => {
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [page, setPage] = React.useState(1);
-    
+
     const rowsPerPage = 30;
     const pages = Math.ceil(productos.length / rowsPerPage);
 
@@ -70,7 +73,7 @@ const TablaListProductos = ({ productos }) => {
 
         return filteredProducts;
     }, [productos, filterValue]);
-  
+
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -96,7 +99,7 @@ const TablaListProductos = ({ productos }) => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem> 
+                                <DropdownItem>
                                     <a href={`/productos/editar/${producto.id}`}>
                                         Editar
                                     </a>
@@ -134,14 +137,43 @@ const TablaListProductos = ({ productos }) => {
                         onClear={() => onClear()}
                         onValueChange={onSearchChange}
                     />
-                    <a href={"/productos/agregar"}>
-                        <Button color="primary" startContent={<PlusIcon />}>
-                            Crear Producto
+
+                    <Tooltip
+                        delay={500}
+                        content={
+                            <div className="px-1 py-2">
+                                <div className="text-small font-extrabold">Crear Producto:</div>
+                                <div className="text-tiny">Puedes crear uno o varios productos manualmente o </div>
+                                <div className="text-tiny">desde nuestra lista de "Productos Referencia"</div>
+                            </div>
+                        }
+                    >
+                        <a href={"/productos/agregar"}>
+                            <Button
+                                className="bg-foreground text-background"
+                                // color="primary" 
+                                endContent={<PlusIcon />}
+                            >
+                                Crear Producto
+                            </Button>
+                        </a>
+                    </Tooltip>
+                    <a href={"/productos/update/stock"}>
+                        <Button
+                            className="bg-foreground text-background"
+                            // color="danger"
+                            endContent={<InventoryIcon />}
+                        >
+                            Cargar Stock
                         </Button>
                     </a>
-                    <a href={"/productos/update/stock"}>
-                        <Button color="danger" startContent={<PlusIcon />}>
-                            Cargar Stock de Productos
+                    <a href={"/productos/importar"}>
+                        <Button
+                            className="bg-foreground text-background"
+                            // color="danger"
+                            endContent={<UploadFileIcon />}
+                        >
+                            Subir Productos
                         </Button>
                     </a>
                 </div>
@@ -155,7 +187,7 @@ const TablaListProductos = ({ productos }) => {
 
 
     return (
-        <Table 
+        <Table
             aria-label="Lista de Productos"
             selectionMode="multiple"
             selectedKeys={selectedKeys}
@@ -168,13 +200,16 @@ const TablaListProductos = ({ productos }) => {
                         isCompact
                         showControls
                         showShadow
-                        color="secondary"
+                        classNames={{
+                            cursor: "bg-foreground text-background",
+                        }}
+                        color="default"
                         page={page}
                         total={pages}
                         onChange={(page) => setPage(page)}
                     />
                 </div>
-        }
+            }
         >
             <TableHeader columns={columns}>
                 {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}

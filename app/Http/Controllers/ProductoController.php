@@ -290,6 +290,12 @@ class ProductoController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Productos insertados con éxito.']);
     }
 
+
+    public function updateFileView()
+    {
+        return view('productos.importador.create');
+    }
+
     /**
      * Remove the specified resource from storage.
      */

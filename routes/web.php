@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/productos/editar/{id}', [ProductoController::class, 'update'])->name('update.productos');
         Route::get('/productos/update/stock', [ProductoController::class, 'createStock'])->name('create.productosStock');
         Route::get('productos/actualizar-stock', [ProductoController::class, 'actualizarStock'])->name('create.actualizarStock');
+        Route::get('productos/importar', [ProductoController::class, 'updateFileView'])->name('create.productos.fileUpdate');
 
 
         //PRODUCTOS BASE
