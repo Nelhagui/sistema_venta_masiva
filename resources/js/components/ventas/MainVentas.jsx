@@ -36,7 +36,7 @@ export default function MainVentas() {
     )
 }
 
-if (document.getElementById('mainVentas')) {
+if (document.getElementById('detalleVenta')) {
     const domNode = document.getElementById('mainVentas');
     const root = createRoot(domNode);
     root.render(<MainVentas />);
