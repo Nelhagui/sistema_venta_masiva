@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { capitalizeFirstLetterOfEachWord } from '../../utils/capitalizeFirstLetterOfEachWord';
 import { debounce } from '../../utils/debounce';
+import { Input } from "@nextui-org/react";
+import { SearchIcon } from '../icons/SearchIcon';
+
 // Estilo de resaltado
 const highlightedStyle = {
     backgroundColor: 'green',
@@ -231,13 +234,16 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
             <div style={styles.listContainer}>
                 <div className='flex justify-between'>
                     <div>
-                        <input
-                            type="text"
+                         <Input
+                            isClearable
+                            variant="bordered"
+                            className="w-full sm:max-w-[44%]"
+                            placeholder="Ingrese el código de barras o título"
+                            startContent={<SearchIcon />}
                             value={inputText}
                             ref={inputRef}
                             onChange={handleInputChange}
                             onFocus={handleInputFocus}
-                            placeholder="Ingrese el código de barras o título"
                             style={{ minWidth: '450px' }}
                         />
                         <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span>

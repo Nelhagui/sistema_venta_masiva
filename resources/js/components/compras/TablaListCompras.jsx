@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { capitalizeFirstLetterOfEachWord } from '../../utils/capitalizeFirstLetterOfEachWord';
 import { debounce } from '../../utils/debounce';
-import { Input, Switch } from "@nextui-org/react";
+import { Input, Select, SelectItem, Checkbox, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
 import { SearchIcon } from '../icons/SearchIcon';
 
 // Estilo de resaltado
@@ -34,28 +34,63 @@ const TablaListCompras = () => {
         nroFactura: ""
     })
 
+    const columns = [
+        {
+            key: "name",
+            label: "TÍTULO",
+        },
+        {
+            key: "codigo_barra",
+            label: "CÓDIGO BARRA",
+        },
+        {
+            key: "precio_costo",
+            label: "PRECIO COSTO",
+        },
+        {
+            key: "precio_venta",
+            label: "PRECIO VENTA",
+        },
+        {
+            key: "stock",
+            label: "STOCK",
+        },
+        {
+            key: "control_por_lote",
+            label: "CONTROL POR LOTE",
+        },
+        {
+            key: "fecha_vencimiento",
+            label: "FECHA VENCIMIENTO",
+        },
+        {
+            key: "inversor",
+            label: "INVERSOR",
+        },
+    ];
+
     useEffect(() => {
         if (inputRef.current) {
             focusInput();
         }
-    
+
         fetch('/api/proveedores')
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then((data) => {
-            // Actualizar el estado con la lista de productos
-            setProveedores(data);
-        })
-        .finally(() => {
-            setIsLoadingProveedores(false);
-        })
-        .catch((error) => {
-            console.error('Error fetching data:', error);
-        });
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                // Actualizar el estado con la lista de productos
+                setProveedores(data);
+            })
+            .finally(() => {
+                setIsLoadingProveedores(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            });
 
         fetch('/api/productos')
             .then((response) => {
@@ -238,21 +273,21 @@ const TablaListCompras = () => {
 
     const handleInputChangeNuevoProducto = (index, campo, valor) => {
         setNuevosProductos(prevProductos => {
-          return prevProductos.map((producto, i) => {
-            // Si el índice coincide con el índice actual del producto en el array
-            if (i === index) {
-              // Actualiza solo el campo específico para ese producto
-              return {
-                ...producto,
-                [campo]: valor
-              };
-            }
-            // Si no es el producto actual, devuelve el producto sin cambios
-            return producto;
-          });
+            return prevProductos.map((producto, i) => {
+                // Si el índice coincide con el índice actual del producto en el array
+                if (i === index) {
+                    // Actualiza solo el campo específico para ese producto
+                    return {
+                        ...producto,
+                        [campo]: valor
+                    };
+                }
+                // Si no es el producto actual, devuelve el producto sin cambios
+                return producto;
+            });
         });
-      };
-      
+    };
+
 
     const changeSubmit = () => {
         console.log(productosSeleccionados);
@@ -262,8 +297,8 @@ const TablaListCompras = () => {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
             },
-            body: JSON.stringify({ 
-                productos: productosSeleccionados, 
+            body: JSON.stringify({
+                productos: productosSeleccionados,
                 datosCompra: datosCompra,
                 nuevosProductos: nuevosProductos
             }),
@@ -301,20 +336,20 @@ const TablaListCompras = () => {
     }
 
     const agregarProductoNuevo = () => {
-        
+
         // Crea un nuevo producto con valores iniciales o vacíos
         const nuevoProducto = {
-          titulo: '',
-          codigo_barra: '',
-          precio_costo: '',
-          precio_venta: '',
-          stock: '',
-          usar_control_por_lote: false,
-          fecha_vencimiento: '',
-          inversor_id: '',
-          highlighted: false,
+            titulo: '',
+            codigo_barra: '',
+            precio_costo: '',
+            precio_venta: '',
+            stock: '',
+            usar_control_por_lote: false,
+            fecha_vencimiento: '',
+            inversor_id: '',
+            highlighted: false,
         };
-    
+
         // Agrega el nuevo producto a la lista de productos seleccionados
         setNuevosProductos([...nuevosProductos, nuevoProducto]);
         console.log(nuevosProductos)
@@ -336,52 +371,60 @@ const TablaListCompras = () => {
                             ref={inputRef}
                             onChange={handleInputChange}
                             onFocus={handleInputFocus}
-                            style={{minWidth: '450px'}}
+                            style={{ minWidth: '450px' }}
                         />
                         {/* <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span> */}
                     </div>
                     {
-                        productosSeleccionados.length > 0 &&
-                        <div style={{display: 'flex', marginTop: '-1.5em', gap: '.5em'}}>
-                            <div style={{display: 'flex', flexDirection: 'column'}}>
-                                <label>Fecha de compra</label>
-                                <input
-                                    className='text-sm'
-                                    type="date"
-                                    name='fechaCompra'
-                                    onChange={handleChangeDatosCompra}
-                                />
-                            </div>
-                            <div style={{display: 'flex', flexDirection: 'column'}}>
-                                <label>Proveedor</label>
-                                <select
-                                    className='text-sm'
-                                    name="proveedor"
-                                    onChange={handleChangeDatosCompra}
-                                >
-                                    <option value="">Seleccione un proveedor</option>
-                                    {
-                                        proveedores.map((proveedor) => {
-                                            return <option key={proveedor.id} value={proveedor.id}>{proveedor.nombre}</option>
-                                        })
-                                    }
-                                </select>
-                            </div>
-                            <div style={{display: 'flex', flexDirection: 'column'}}>
-                                <label>Nro Factura</label>
-                                <input
-                                    className='text-sm'
-                                    type="text"
-                                    name='nroFactura'
-                                    onChange={handleChangeDatosCompra}
-                                />
-                            </div>
-                        </div>
-                    }
-                    <div>
-                        <button onClick={() => { changeSubmit() }}>GUARDAR</button>
-                    </div>
+                        (productosSeleccionados.length > 0 || nuevosProductos.length > 0)  &&
+                        <>
+                            <div style={{ display: 'flex', marginTop: '-1.5em', gap: '.5em' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Input
+                                        variant="faded"
+                                        type="date"
+                                        name='fechaCompra'
+                                        label="Fecha de compra"
+                                        labelPlacement="outside"
+                                        placeholder="."
+                                        onChange={handleChangeDatosCompra}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Select
+                                        label="Proveedor"
+                                        labelPlacement="outside"
+                                        placeholder="Seleccione proveedor"
+                                        style={{ minWidth: '150px' }}
+                                        onChange={handleChangeDatosCompra}
+                                    >
+                                        {proveedores.map((proveedor) => (
+                                            <SelectItem key={proveedor.id} value={proveedor.id}>
+                                                {proveedor.nombre}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
 
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <Input
+                                        variant="faded"
+                                        type="text"
+                                        name='nroFactura'
+                                        label="Número de Factura"
+                                        labelPlacement="outside"
+                                        placeholder="Nro de Factura"
+                                        onChange={handleChangeDatosCompra}
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <Button className="bg-foreground text-background" onClick={() => { changeSubmit() }}>Cargar Compra</Button>
+                            </div>
+                        </>
+                    }
+                    
                 </div>
 
                 <ul style={inputText ? styles.productosListWithBorder : styles.productosList}>
@@ -403,187 +446,179 @@ const TablaListCompras = () => {
 
 
             {
-                productosSeleccionados.length > 0 &&
-                <table className="table-auto border-collapse border border-slate-500 text-sm" style={{ width: '100%' }}>
-                    <thead>
-                        <tr>
-                            <th className="text-left p-2 border border-slate-600">Titulo</th>
-                            <th className="text-left p-2 border border-slate-600">Código Barra</th>
-                            <th className="text-left p-2 border border-slate-600">Precio Costo</th>
-                            <th className="text-left p-2 border border-slate-600">Precio Venta</th>
-                            <th className="text-left p-2 border border-slate-600">Stock</th>
-                            <th className="text-left py-2 px-1 border border-slate-600">Control por lote</th>
-                            <th className="text-left p-2 border border-slate-600">Fecha vencimiento</th>
-                            <th className="text-left p-2 border border-slate-600">Inversor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            productosSeleccionados.map((producto) =>
-                            (
-                                <tr key={producto.titulo} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
-                                    <td className="p-2 border border-slate-700">
+                (productosSeleccionados.length > 0 || nuevosProductos.length > 0) &&
+                <>
+                    <Table aria-label="Example table with dynamic content">
+                        <TableHeader columns={columns}>
+                            <TableColumn>TÍTULO</TableColumn>
+                            <TableColumn>CÓDIGO BARRA</TableColumn>
+                            <TableColumn>PRECIO COSTO</TableColumn>
+                            <TableColumn>PRECIO VENTA</TableColumn>
+                            <TableColumn>STOCK</TableColumn>
+                            <TableColumn>CONTROL POR LOTE</TableColumn>
+                            <TableColumn>FECHA VENCIMIENTO</TableColumn>
+                            <TableColumn>INVERSOR</TableColumn>
+                        </TableHeader>
+                        <TableBody>
+                            {productosSeleccionados.map(( producto ) => (
+                                <TableRow key={producto.id}>
+                                    <TableCell>
                                         {capitalizeFirstLetterOfEachWord(producto.titulo)}
-                                    </td>
-                                    <td className="p-2 border border-slate-700">{producto.codigo_barra}</td>
-                                    <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            style={{ maxWidth: '5rem', padding: 2 }}
+                                    </TableCell>
+                                    <TableCell>
+                                        {producto.codigo_barra}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input
+                                            variant="faded"
                                             type="number"
                                             value={producto.precio_costo || ''}
+                                            labelPlacement="outside"
                                             onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_costo', e.target.value)}
                                         />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            style={{ maxWidth: '5rem', padding: 2 }}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input
+                                            variant="faded"
                                             type="number"
-                                            value={producto.precio_venta || ''}
+                                            value={producto.venta || ''}
+                                            labelPlacement="outside"
                                             onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_venta', e.target.value)}
                                         />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            style={{ maxWidth: '4rem', padding: 2 }}
-                                            type="text"
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input
+                                            variant="faded"
+                                            type="number"
                                             value={producto.stock || ''}
+                                            labelPlacement="outside"
                                             onChange={(e) => handleInputChangeProducto(producto.titulo, 'stock', e.target.value)}
                                         />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
-                                            type="checkbox"
-                                            checked={producto.usar_control_por_lote}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Checkbox
                                             value={producto.usar_control_por_lote}
                                             onChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
-                                        />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <input
-                                            className='text-sm'
+                                        ></Checkbox>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Input
+                                            variant="faded"
                                             type="date"
                                             value={producto.fecha_vencimiento || ''}
-                                            disabled={!producto.usar_control_por_lote}  // Añadir esta línea para deshabilitar el input si usar_control_por_lote es false
+                                            labelPlacement="outside"
                                             onChange={(e) => handleInputChangeProducto(producto.titulo, 'fecha_vencimiento', e.target.value)}
                                         />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <select
-                                            className='text-sm'
+                                    </TableCell>
+                                    <TableCell>
+                                        <Select
+                                            label="Seleccione"
+                                            variant="faded"
+                                            size="sm"
                                             value={producto.inversor_id || ''}
+                                            style={{ minWidth: '150px' }}
                                             onChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
                                         >
-                                            <option value="">Seleccione un inversor</option>
-                                            {
-                                                inversores.map((inversor) => {
-                                                    return <option key={inversor.id} value={inversor.id}>{inversor.nombre} {inversor.apellido}</option>
-                                                })
-                                            }
-                                        </select>
-                                    </td>
-                                </tr>
-                            )
-                            )
-                        }
-                        {
-                            nuevosProductos.map((producto, index) => 
-                            (
-                                <tr key={index} className={producto.highlighted ? 'highlighted-row' : 'highlighted-none'}>
-                                    <td className="p-2 border border-slate-700">
-                                        <Input
-                                            variant="faded"
-                                            type="text"
-                                            name={ `titulo_${index}` }
-                                            labelPlacement="outside"
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'titulo', e.target.value)}
-                                        />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <Input
-                                            variant="faded"
-                                            type="number"
-                                            name={ `codigo_barra_${index}` }
-                                            labelPlacement="outside"
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'codigo_barra', e.target.value)}
-                                        />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <Input
-                                            variant="faded"
-                                            type="number"
-                                            labelPlacement="outside"
-                                            name={ `precio_costo_${index}` }
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_costo', e.target.value)}
-                                        />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <Input
-                                            variant="faded"
-                                            type="number"
-                                            labelPlacement="outside"
-                                            name={ `precio_venta_${index}` }
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_venta', e.target.value)}
-                                        />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <Input
-                                            variant="faded"
-                                            type="text"
-                                            name={ `stock_${index}` }
-                                            labelPlacement="outside"
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'stock', e.target.value)}
-                                        />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <Switch 
-                                            defaultSelected 
-                                            aria-label="Automatic updates"
-                                            name={ `usar_control_por_lote_${index}` }
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'usar_control_por_lote', e.target.value)}
-                                        />
-                                        {/* <input
-                                            className='text-sm'
-                                            type="checkbox"
-                                            name={ `usar_control_por_lote_${index}` }
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'usar_control_por_lote', e.target.value)}
-                                        /> */}
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <Input
-                                            variant="faded"
-                                            type="date"
-                                            name={ `fecha_vencimiento_${index}` }
-                                            labelPlacement="outside"
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'fecha_vencimiento', e.target.value)}
-                                        />
-                                    </td>
-                                    <td className="p-2 border border-slate-700">
-                                        <select
-                                            className='text-sm'
-                                            name={ `inversor_id_${index}` }
-                                            onChange={(e) => handleInputChangeNuevoProducto(index, 'inversor_id', e.target.value)}
-                                        >
-                                            <option value="">Seleccione un inversor</option>
-                                            {
-                                                inversores.map((inversor) => {
-                                                    return <option key={inversor.id} value={inversor.id}>{inversor.nombre} {inversor.apellido}</option>
-                                                })
-                                            }
-                                        </select>
-                                    </td>
-                                </tr>
-                            )
-                            )
-                        }
-                    </tbody>
-                </table >
+                                            {inversores.map((inversor) => (
+                                                <SelectItem key={inversor.id} value={inversor.id}>
+                                                    {inversor.nombre} {inversor.apellido}
+                                                </SelectItem>
+                                            ))}
+                                        </Select>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                            {
+                                nuevosProductos.map((producto, index) =>
+                                (
+                                    <TableRow key={producto.id}>
+                                        <TableCell>
+                                            <Input
+                                                variant="faded"
+                                                type="text"
+                                                name={`titulo_${index}`}
+                                                labelPlacement="outside"
+                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'titulo', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Input
+                                                variant="faded"
+                                                type="number"
+                                                name={`codigo_barra_${index}`}
+                                                labelPlacement="outside"
+                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'codigo_barra', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Input
+                                                variant="faded"
+                                                type="number"
+                                                labelPlacement="outside"
+                                                name={`precio_costo_${index}`}
+                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_costo', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Input
+                                                variant="faded"
+                                                type="number"
+                                                labelPlacement="outside"
+                                                name={`precio_venta_${index}`}
+                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_venta', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Input
+                                                variant="faded"
+                                                type="text"
+                                                name={`stock_${index}`}
+                                                labelPlacement="outside"
+                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'stock', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Checkbox
+                                                value={producto.usar_control_por_lote}
+                                                onChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
+                                            ></Checkbox>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Input
+                                                variant="faded"
+                                                type="date"
+                                                name={`fecha_vencimiento_${index}`}
+                                                labelPlacement="outside"
+                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'fecha_vencimiento', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Select
+                                                label="Seleccione"
+                                                variant="faded"
+                                                size="sm"
+                                                value={producto.inversor_id || ''}
+                                                style={{ minWidth: '150px' }}
+                                                onChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
+                                            >
+                                                {inversores.map((inversor) => (
+                                                    <SelectItem key={inversor.id} value={inversor.id}>
+                                                        {inversor.nombre} {inversor.apellido}
+                                                    </SelectItem>
+                                                ))}
+                                            </Select>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                                )
+                            }
+                        </TableBody>
+                    </Table>
+                </>
+
             }
 
-            <div className='mt-4'>
+            <div className='mt-4 text-center'>
                 <button onClick={agregarProductoNuevo}>Agregar Nuevo Producto</button>
             </div>
         </>
