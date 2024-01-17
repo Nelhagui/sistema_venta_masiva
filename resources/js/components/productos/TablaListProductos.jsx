@@ -167,7 +167,7 @@ const TablaListProductos = ({ productos }) => {
                             Cargar Stock
                         </Button>
                     </a>
-                    <a href={"/productos/importar"}>
+                    {/* <a href={"/productos/importar"}>
                         <Button
                             className="bg-foreground text-background"
                             // color="danger"
@@ -175,7 +175,7 @@ const TablaListProductos = ({ productos }) => {
                         >
                             Subir Productos
                         </Button>
-                    </a>
+                    </a> */}
                 </div>
             </div>
         );

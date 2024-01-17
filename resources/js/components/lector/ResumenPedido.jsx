@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 
 const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, montoTotalMarkups }) => {
     const [total, setTotal] = useState(0)
@@ -50,7 +51,7 @@ const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, mont
     return (
         <div style={{
             backgroundColor: "rgb(226 232 240)",
-            maxWidth: '90%',
+            maxWidth: '100%',
             margin: 'auto',
             padding: 35,
             display: 'flex',
@@ -79,7 +80,7 @@ const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, mont
                 <span onClick={borrarSeleccionados}>X {montoTotalMarkups}</span>
             </div>
             <div className='flex flex-col' style={{ padding: 20 }}>
-                <table className="table-auto border-collapse border border-slate-500">
+                {/* <table className="table-auto border-collapse border border-slate-500">
                     <thead>
                         <tr>
                             <th className="text-left p-2 border border-slate-600 bg-slate" style={{ background: '#c5d3e5' }}>Unidades</th>
@@ -114,7 +115,87 @@ const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, mont
                             ))
                         }
                     </tbody>
-                </table>
+                </table> */}
+                <Table isStriped aria-label="Example static collection table">
+                    <TableHeader>
+                        <TableColumn>CANT</TableColumn>
+                        <TableColumn>PRODUCTO</TableColumn>
+                        <TableColumn>UNITARIO</TableColumn>
+                        <TableColumn>SUBTOTAL</TableColumn>
+                        <TableColumn>ACCION</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                        {
+                            productosSeleccionados.map((productoSeleccionado) => (
+                                <TableRow key={Math.random()}>
+                                    <TableCell>
+                                        <input type="number"
+                                            value={productoSeleccionado?.cantidad}
+                                            style={{
+                                                backgroundColor: "#ebeef3",
+                                                textAlign: "center",
+                                                maxWidth: "6rem",
+                                            }}
+                                            onChange={(e) => handleInputChangeCantidad(e, productoSeleccionado.id)}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        {productoSeleccionado.titulo}
+                                    </TableCell>
+                                    <TableCell>
+                                        <p>${productoSeleccionado?.precio_venta}</p>
+                                    </TableCell>
+                                    <TableCell>
+                                        <p>${productoSeleccionado.precio_venta * (productoSeleccionado.cantidad)}</p>
+                                    </TableCell>
+                                    <TableCell>
+                                        <span style={{ cursor: 'pointer' }} onClick={() => sacarProducto(productoSeleccionado.id)}>x</span>
+                                    </TableCell>
+                                </TableRow>
+                                // <tr key={Math.random()}>
+                                //     <td className="p-2 border border-slate-700">
+                                //         <input type="number"
+                                //             value={productoSeleccionado?.cantidad}
+                                //             style={{
+                                //                 backgroundColor: "#ebeef3",
+                                //                 textAlign: "center",
+                                //                 maxWidth: "6rem",
+                                //             }}
+                                //             onChange={(e) => handleInputChangeCantidad(e, productoSeleccionado.id)}
+                                //         />
+                                //     </td>
+                                //     <td className="p-2 border border-slate-700">{productoSeleccionado.titulo}</td>
+                                //     <td className="p-2 border border-slate-700">${productoSeleccionado.precio_venta}</td>
+                                //     <td className="p-2 border border-slate-700">${productoSeleccionado.precio_venta * (productoSeleccionado.cantidad)}</td>
+                                //     <td className="p-2 border border-slate-700">
+                                //         <span style={{ cursor: 'pointer' }} onClick={() => sacarProducto(productoSeleccionado.id)}>x</span>
+                                //     </td>
+                                // </tr>
+                            ))
+                        }
+
+                        {/* <TableRow key="1">
+                            <TableCell>Tony Reichert</TableCell>
+                            <TableCell>CEO</TableCell>
+                            <TableCell>Active</TableCell>
+                        </TableRow>
+                        <TableRow key="2">
+                            <TableCell>Zoey Lang</TableCell>
+                            <TableCell>Technical Lead</TableCell>
+                            <TableCell>Paused</TableCell>
+                        </TableRow>
+                        <TableRow key="3">
+                            <TableCell>Jane Fisher</TableCell>
+                            <TableCell>Senior Developer</TableCell>
+                            <TableCell>Active</TableCell>
+                        </TableRow>
+                        <TableRow key="4">
+                            <TableCell>William Howard</TableCell>
+                            <TableCell>Community Manager</TableCell>
+                            <TableCell>Vacation</TableCell>
+                        </TableRow> */}
+                    </TableBody>
+                </Table>
             </div>
         </div>
     )
