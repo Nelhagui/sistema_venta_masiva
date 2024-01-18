@@ -4,10 +4,26 @@ import { debounce } from '../../utils/debounce';
 import InputMetodoPago from './InputMetodoPago';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Input } from "@nextui-org/react";
+import {
+    Input,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    useDisclosure,
+    Select,
+    SelectItem,
+    AutocompleteItem,
+    Autocomplete
+} from "@nextui-org/react";
 import { SearchIcon } from '../icons/SearchIcon';
 
-function ListProductos({ productos, metodosDePago }) {
+function ListProductos({ productos, metodosDePago, clientes }) {
+    const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
+    const [estadoDelPago, setEstadoDelPago] = useState(null)
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [metodosAgregados, setMetodosAgregados] = useState([]);
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
@@ -44,7 +60,7 @@ function ListProductos({ productos, metodosDePago }) {
                     metodo_pago_id: metodoEfectivo.id, // Asumiendo que el método tiene una propiedad 'id'
                     monto_abonado: 0, // Establece este valor según sea necesario
                     selectorName: nameFirstSelectorMetodoPago,
-                    markup: metodoEfectivo.markup, 
+                    markup: metodoEfectivo.markup,
                     tipo_markup: metodoEfectivo.tipo_markup
                 }]);
             }
@@ -65,7 +81,7 @@ function ListProductos({ productos, metodosDePago }) {
         setMetodosSeleccionados(prevMetodos => {
             // Buscar el índice del método de pago que coincida con el name del selector
             const indiceExistente = prevMetodos.findIndex(metodo => metodo.selectorName === name);
-            
+
 
             if (indiceExistente >= 0) {
                 // Crear un nuevo objeto de método con el monto existente
@@ -74,10 +90,10 @@ function ListProductos({ productos, metodosDePago }) {
                     nombre: nombreMetodo,
                     metodo_pago_id: value,
                     selectorName: name,
-                    markup: markup, 
+                    markup: markup,
                     tipo_markup: tipo_markup
                 };
-           
+
                 // Actualizar el método existente con el nuevo valor
                 return prevMetodos.map((metodo, indice) =>
                     indice === indiceExistente ? nuevoMetodo : metodo
@@ -89,7 +105,7 @@ function ListProductos({ productos, metodosDePago }) {
                     metodo_pago_id: value,
                     monto_abonado: '', // Puede inicializarse con un valor predeterminado
                     selectorName: name,
-                    markup: markup, 
+                    markup: markup,
                     tipo_markup: tipo_markup
                 };
                 console.log(nuevoMetodo)
@@ -145,7 +161,7 @@ function ListProductos({ productos, metodosDePago }) {
             draggable: true,
             progress: undefined,
             theme: "light",
-            });
+        });
     };
 
     const handleSubmit = () => {
@@ -251,31 +267,48 @@ function ListProductos({ productos, metodosDePago }) {
     };
 
     const agregarComponente = () => {
-        setMetodosAgregados(prev => 
-            [...prev, 
-                <InputMetodoPago key={prev.length} 
-                    metodos={metodosDePago} 
-                    name={Math.random()} 
-                    metodosSeleccionados={metodosSeleccionados} 
-                    handleChangeMetodoPago={handleChangeMetodoPago} 
-                    setMetodosSeleccionados={setMetodosSeleccionados} 
-                    setMontoTotalMarkups={setMontoTotalMarkups}
-                    metodosAgregados={metodosAgregados}
-                />
+        setMetodosAgregados(prev =>
+            [...prev,
+            <InputMetodoPago key={prev.length}
+                metodos={metodosDePago}
+                name={Math.random()}
+                metodosSeleccionados={metodosSeleccionados}
+                handleChangeMetodoPago={handleChangeMetodoPago}
+                setMetodosSeleccionados={setMetodosSeleccionados}
+                setMontoTotalMarkups={setMontoTotalMarkups}
+                metodosAgregados={metodosAgregados}
+            />
             ]
         );
     };
+
+    const onSelectionChange = (id) => {
+        setClienteSeleccionado(id);
+        setEstadoDelPago("3")
+    };
+
+    const handleSelectionChangeEstadoPago = (e) => {
+        setEstadoDelPago(e.target.value);
+    };
+
+    useEffect(() => {
+        if (!clienteSeleccionado && productosSeleccionados.length > 0)
+            setEstadoDelPago(null)
+        if(productosSeleccionados.length === 0 && clienteSeleccionado)
+            setClienteSeleccionado(null)
+    }, [clienteSeleccionado, productosSeleccionados])
 
 
     return (
         <>
             <div className='flex justify-between'>
                 {/* BUSCADOR */}
-                <div style={styles.listContainer}>
-                    <div className='flex justify-between'>
+                <div style={styles.listContainer} className=''>
+                    <div className=''>
                         <div>
                             <Input
                                 isClearable
+                                onClear={() => reset()}
                                 variant="bordered"
                                 className="w-full sm:max-w-[44%]"
                                 placeholder="Ingrese el código de barras o título"
@@ -284,8 +317,7 @@ function ListProductos({ productos, metodosDePago }) {
                                 ref={inputRef}
                                 onChange={handleInputChange}
                                 onFocus={handleInputFocus}
-                                style={{minWidth: '450px'}}
-                                onClear={() => reset()}
+                                style={{ minWidth: '450px' }}
                             />
                             {/* <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span> */}
                         </div>
@@ -308,47 +340,8 @@ function ListProductos({ productos, metodosDePago }) {
                     </ul>
                 </div>
                 {/* FIN BUSCADOR */}
-                <div style={{ visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible', maxWidth: '400px' }}>
 
-                    <div className='flex my-2'>
-                        <select name={nameFirstSelectorMetodoPago} onChange={handleChangeMetodoPago} className='text-sm'>
-                            {metodosDePago.map((metodo) => (
-                                <option key={metodo.id} value={metodo.id}>
-                                    {metodo.nombre}
-                                </option>
-                            ))}
-                        </select>
-                        <input
-                            name={nameFirstSelectorMetodoPago}
-                            type='number'
-                            value={valueMontoFirstSelector}
-                            onChange={handleChangeMonto}
-                            style={{maxWidth: "100px"}}
-                        />
-                         {
-                            firstMetodoTipoMarkup == 1 &&
-                            <div className='flex items-center px-2'>
-                                <p>+${firstMetodoMarkup}% (${Number(valueMontoFirstSelector)+Number(valueMontoFirstSelector*firstMetodoMarkup/100)})</p>
-                            </div>
-                        }
-                        {
-                            firstMetodoTipoMarkup == 2 &&
-                            <div className='flex items-center px-2'>
-                                <p>+${firstMetodoMarkup} (${Number(valueMontoFirstSelector)+Number(firstMetodoMarkup)})</p>
-                            </div>
-                        }
-                    </div>
-                    <div className='flex flex-col mb-6' style={{ maxWidth: '400px' }}>
-                        {metodosAgregados}
-                        <div>
-                            {
-                                metodosAgregados.length < (metodosDePago.length - 1)
-                                    ? <button onClick={agregarComponente} className='mt-2'>Agregar otro metodo</button>
-                                    : ""
-                            }
-                        </div>
-                    </div>
-                </div>
+
                 <div>
                     <button
                         type="button"
@@ -362,43 +355,124 @@ function ListProductos({ productos, metodosDePago }) {
                         }}
                         onClick={handleModalConfirmation}
                     >
-                        Cargar Venta (F12)
+                        Cargar Venta
                     </button>
                 </div>
             </div>
+
             {mostrarModalConfirmacionVenta && (
                 <div style={styles.modalVenta}>
                     <div style={styles.modalContent}>
                         <h2 className="font-semibold text-xl leading-tight pb-3">¿Estás seguro que deseas cargar la venta?</h2>
                         <div className='mt-3 flex justify-end'>
-                            <button 
-                                onClick={handleConfirmVenta} 
-                                className="hover:bg-gray-500 bg-gray-600 text-gray-200 px-3 py-1  cursor-pointer rounded" 
+                            <button
+                                onClick={handleConfirmVenta}
+                                className="hover:bg-gray-500 bg-gray-600 text-gray-200 px-3 py-1  cursor-pointer rounded"
                                 id="confirmarVentaToast">
-                                    Confirmar
+                                Confirmar
                             </button>
-                            <button 
-                                onClick={handleCloseModal} 
+                            <button
+                                onClick={handleCloseModal}
                                 className="hover:bg-gray-500 bg-gray-300 text-white px-3 py-1 cursor-pointer rounded">
-                                    Cancelar
+                                Cancelar
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-            <ToastContainer />
             {
                 productosSeleccionados.length > 0
                     ?
-                    <ResumenPedido
-                        productosSeleccionados={productosSeleccionados}
-                        setProductosSeleccionados={setProductosSeleccionados}
-                        montoTotalMarkups={montoTotalMarkups}
+                    <>
+                        <div className='flex gap-3 mb-4'>
+                            <div className="flex max-w-xs flex-wrap md:flex-nowrap gap-4">
+                                <Autocomplete
+                                    label="Cliente"
+                                    className="max-w-xs"
+                                    size='sm'
+                                    defaultSelectedKeys={["1"]}
+                                    onSelectionChange={onSelectionChange}
+                                >
+                                    {clientes.map((cliente) => (
+                                        <AutocompleteItem key={cliente.id} value={cliente.id}>
+                                            {cliente.nombre}
+                                        </AutocompleteItem>
+                                    ))}
+                                </Autocomplete>
+                            </div>
 
-                    />
+                            <Select
+                                isRequired
+                                label="Método de pago"
+                                defaultSelectedKeys={["1"]}
+                                className="max-w-xs"
+                                size='sm'
+                            >
+                                {metodosDePago.map((metodo) => (
+                                    <SelectItem key={metodo.id} value={metodo.id}>
+                                        {metodo.nombre}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+
+                            {
+                                clienteSeleccionado
+                                    ?
+                                    <>
+                                        <Select
+                                            isRequired
+                                            size='sm'
+                                            defaultSelectedKeys={["3"]}
+                                            className="max-w-xs"
+                                            onChange={handleSelectionChangeEstadoPago}
+                                        >
+                                            <SelectItem key="1" value="1">
+                                                Cobrada
+                                            </SelectItem>
+                                            <SelectItem key="2" value="2">
+                                                No Cobrada
+                                            </SelectItem>
+                                            <SelectItem key="3" value="4">
+                                                Parcialmente Cobrada
+                                            </SelectItem>
+
+                                        </Select>
+                                        {
+                                            estadoDelPago === "3"
+                                                ?
+                                                <Input
+                                                    className="max-w-xs"
+                                                    type="number"
+                                                    label="Importe"
+                                                    placeholder="0.00"
+                                                    size='sm'
+                                                    startContent={
+                                                        <div className="pointer-events-none flex items-center">
+                                                            <span className="text-default-400 text-small">$</span>
+                                                        </div>
+                                                    }
+                                                />
+                                                : ""
+                                        }
+                                    </>
+                                    : ''
+                            }
+
+                        </div>
+                        <ResumenPedido
+                            productosSeleccionados={productosSeleccionados}
+                            setProductosSeleccionados={setProductosSeleccionados}
+                            montoTotalMarkups={montoTotalMarkups}
+                            metodosDePago={metodosDePago}
+                        />
+
+
+                    </>
                     :
                     ""
             }
+
+            <ToastContainer />
         </>
     );
 }
