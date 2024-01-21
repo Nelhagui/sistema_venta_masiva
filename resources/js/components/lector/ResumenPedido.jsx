@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import { useLectorContext } from '../../context/LectorContext.jsx';
+import ExtraValueConfiguration from './ExtraValueConfiguration.jsx';
+import ViewTotalAumentoDescuento from './ViewTotalAumentoDescuento.jsx';
 import {
     Table,
     TableHeader, TableColumn,
@@ -6,31 +9,23 @@ import {
     TableRow,
     TableCell,
     Tooltip,
-    Input,
-    Select,
-    SelectItem,
-    Tabs,
-    Tab,
-    Card,
-    CardBody,
-    Accordion,
-    AccordionItem,
-    Button
 } from "@nextui-org/react";
 import { CloseIcon } from '../icons/CloseIcon.jsx';
 import { CloseIconCircle } from '../icons/CloseIconCircle.jsx';
-import { ChangesInPaymentIcon } from '../icons/ChangesInPaymentIcon.jsx';
 
-const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, montoTotalMarkups, metodosDePago }) => {
-    const [total, setTotal] = useState(0)
 
-    useEffect(() => {
-        if (productosSeleccionados.length > 0) {
-            obtenerTotal();
-        } else {
-            setTotal(0)
-        }
-    }, [productosSeleccionados])
+const ResumenPedido = () => {
+    const {
+        productosSeleccionados,
+        setProductosSeleccionados,
+        sacarProducto,
+        obtenerTotal,
+        cancelarCompra
+    } = useLectorContext()
+
+    const funCancelarCompra = () => {
+        cancelarCompra()
+    }
 
     const handleInputChangeCantidad = (e, productoId) => {
         const nuevaCantidad = e.target.value;
@@ -45,128 +40,9 @@ const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, mont
         }
     };
 
-    const sacarProducto = (productoId) => {
-        const filtrados = productosSeleccionados.filter((item) => item.id !== productoId)
-        setProductosSeleccionados(filtrados);
-    }
-    const borrarSeleccionados = () => {
-        setProductosSeleccionados([]);
-    }
-
-    const obtenerTotal = () => {
-        const total = productosSeleccionados.reduce((sum, producto) => sum + (producto.precio_venta * producto.cantidad), 0);
-        setTotal(total);
-    }
-
-    const [tipoVariablePrecio, setTipoVariablePrecio] = useState('$')
-
-    const cambioTipoAumento = (e) => {
-        const value = e.target.value;
-        if (value === '1') {
-            setTipoVariablePrecio('$')
-        } else {
-            setTipoVariablePrecio('%')
-        }
-    }
-
-
     return (
         <>
-            <Accordion
-                isCompact
-                variant="bordered"
-                className='mb-4'
-                selectionMode="multiple"
-            >
-                <AccordionItem
-                    key="1"
-                    aria-label="Accordion 1"
-                    // title="Aumento - Descuento - Vuelto"
-                    startContent={
-                        <ChangesInPaymentIcon />
-                    }
-                    subtitle="Vuelto, Aumentos y Descuentos"
-                >
-                    <div className='flex mb-4 justify-between'>
-                        <Input
-                            className='w-2/5'
-                            type="number"
-                            size='sm'
-                            label="Vuelto"
-                            placeholder="0.00"
-                            // labelPlacement="outside"
-                            startContent={
-                                <div className="pointer-events-none flex items-center">
-                                    <span className="text-default-400 text-small">$</span>
-                                </div>
-                            }
-                        />
-                        <div className='flex gap-4'>
-
-                            <Input
-                                label="Aumento"
-                                className='w-2/5'
-                                size='sm'
-                                placeholder="0.00"
-                                startContent={
-                                    <div className="pointer-events-none flex items-center">
-                                        <span className="text-default-400 text-small">{tipoVariablePrecio}</span>
-                                    </div>
-                                }
-                                endContent={
-                                    <div className="flex items-center">
-                                        <label className="sr-only" htmlFor="currency">
-                                            Currency
-                                        </label>
-                                        <select
-                                            className="outline-none border-0 bg-transparent text-default-400 text-small"
-                                            id="currency"
-                                            name="currency"
-                                            onChange={(e) => cambioTipoAumento(e)}
-                                        >
-                                            <option value="1">$</option>
-                                            <option value="2">%</option>
-                                        </select>
-                                    </div>
-                                }
-                                type="number"
-                            />
-                            <Input
-                                label="Descuento"
-                                className='w-2/5'
-                                size='sm'
-                                placeholder="0.00"
-                                startContent={
-                                    <div className="pointer-events-none flex items-center">
-                                        <span className="text-default-400 text-small">$</span>
-                                    </div>
-                                }
-                                endContent={
-                                    <div className="flex items-center">
-                                        <label className="sr-only" htmlFor="currency">
-                                            Currency
-                                        </label>
-                                        <select
-                                            className="outline-none border-0 bg-transparent text-default-400 text-small"
-                                            id="currency"
-                                            name="currency"
-                                        >
-                                            <option>%</option>
-                                            <option>ARS</option>
-                                        </select>
-                                    </div>
-                                }
-                                type="number"
-                            />
-                        </div>
-
-                    </div>
-                </AccordionItem>
-                {/* <AccordionItem key="2" aria-label="Accordion 2" title="Accordion 2">
-                    Este es el segundo
-                </AccordionItem> */}
-            </Accordion>
-
+            <ExtraValueConfiguration />
             <div style={{
                 backgroundColor: "rgb(226 232 240)",
                 maxWidth: '100%',
@@ -183,7 +59,7 @@ const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, mont
                     width: '100%'
                 }}>
                     <div className='flex items-center'>
-                        <p style={{ fontSize: 55 }}>${total}</p>
+                        <ViewTotalAumentoDescuento/>
                     </div>
                     <Tooltip
                         delay={500}
@@ -194,7 +70,7 @@ const ResumenPedido = ({ productosSeleccionados, setProductosSeleccionados, mont
                         }
                     >
 
-                        <span onClick={borrarSeleccionados}>
+                        <span onClick={funCancelarCompra}>
                             <CloseIconCircle style={{ cursor: 'pointer' }} />
                         </span>
                     </Tooltip>

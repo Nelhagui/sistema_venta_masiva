@@ -164,7 +164,7 @@ const TablaListProductos = ({ productos }) => {
                             // color="danger"
                             endContent={<InventoryIcon />}
                         >
-                            Cargar Stock
+                            Stock - Precio
                         </Button>
                     </a>
                     {/* <a href={"/productos/importar"}>

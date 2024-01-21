@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import ListProductos from './ListProductos';
+import { LectorContextProvider } from '../../context/LectorContext';
+
 export default function MainLector() {
     const [productos, setProductos] = useState([])
     const [metodosDePago, setMetodosDePago] = useState([])
@@ -62,5 +64,9 @@ export default function MainLector() {
 if (document.getElementById('mainLector')) {
     const domNode = document.getElementById('mainLector');
     const root = createRoot(domNode);
-    root.render(<MainLector />);
+    root.render(
+        <LectorContextProvider>
+            <MainLector />
+        </LectorContextProvider>
+    );
 }

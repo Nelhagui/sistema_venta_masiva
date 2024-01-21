@@ -1,143 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ResumenPedido from './ResumenPedido';
+import { useLectorContext } from '../../context/LectorContext';
 import { debounce } from '../../utils/debounce';
-import InputMetodoPago from './InputMetodoPago';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SearchIcon } from '../icons/SearchIcon';
 import {
     Input,
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-    useDisclosure,
     Select,
     SelectItem,
     AutocompleteItem,
     Autocomplete
 } from "@nextui-org/react";
-import { SearchIcon } from '../icons/SearchIcon';
 
 function ListProductos({ productos, metodosDePago, clientes }) {
+    const { setVuelto, productosSeleccionados, setProductosSeleccionados } = useLectorContext();
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
     const [estadoDelPago, setEstadoDelPago] = useState(null)
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
-    const [metodosAgregados, setMetodosAgregados] = useState([]);
     const [productosIniciales, setProductosIniciales] = useState(productos)
-    const [productosSeleccionados, setProductosSeleccionados] = useState([])
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
-    const [inputText, setInputText] = useState('');
-    const inputRef = useRef(null);
     const [mostrarModalConfirmacionVenta, setMostrarModalConfirmacionVenta] = useState(false);
-
-    const [metodosSeleccionados, setMetodosSeleccionados] = useState([]);
-    const nameFirstSelectorMetodoPago = "metodo_primero";
-    const [valueMontoFirstSelector, setValueMontoFirstSelector] = useState('')
-    const [firstMetodoValue, setFirstMetodoValue] = useState('')
-    const [firstMetodoNombre, setFirstMetodoNombre] = useState('')
-    const [firstMetodoMarkup, setFirstMetodoMarkup] = useState('')
-    const [firstMetodoTipoMarkup, setFirstMetodoTipoMarkup] = useState('')
-    const [montoTotalMarkups, setMontoTotalMarkups] = useState(0)
+    
+    const inputRef = useRef(null);
+    const selectedItemRef = useRef(null);
+    const listContainerRef = useRef(null);
+    const [inputText, setInputText] = useState('');
+    const [selectedItem, setSelectedItem] = useState(null);
 
 
     useEffect(() => {
         setProductosIniciales(productos);
         focusInput()
     }, [productos]);
-
-
-    useEffect(() => {
-        if (metodosDePago && metodosDePago.length > 0) {
-            // Encontrar el método de pago con el nombre "Efectivo"
-            const metodoEfectivo = metodosDePago.find(metodo => metodo.nombre === "Efectivo");
-            if (metodoEfectivo) {
-                // Establecer el método de pago "Efectivo" como el primer método seleccionado
-                setMetodosSeleccionados([{
-                    nombre: metodoEfectivo.nombre,
-                    metodo_pago_id: metodoEfectivo.id, // Asumiendo que el método tiene una propiedad 'id'
-                    monto_abonado: 0, // Establece este valor según sea necesario
-                    selectorName: nameFirstSelectorMetodoPago,
-                    markup: metodoEfectivo.markup,
-                    tipo_markup: metodoEfectivo.tipo_markup
-                }]);
-            }
-        }
-        setFirstMetodoNombre('Efectivo')
-    }, [metodosDePago])
-
-
-    const handleChangeMetodoPago = (e) => {
-        const { value, name } = e.target;
-        const nombreMetodo = e.target.options[e.target.selectedIndex].text;
-        // Aquí puedes obtener el markup del método de pago, por ejemplo, asumiendo que el markup está en la propiedad 'markup' del objeto de método de pago
-        const metodoSeleccionado = metodosDePago.find((metodo) => metodo.id == value);
-        console.log(metodoSeleccionado)
-        const markup = metodoSeleccionado ? metodoSeleccionado.markup : null;
-        const tipo_markup = metodoSeleccionado ? metodoSeleccionado.tipo_markup : null;
-
-        setMetodosSeleccionados(prevMetodos => {
-            // Buscar el índice del método de pago que coincida con el name del selector
-            const indiceExistente = prevMetodos.findIndex(metodo => metodo.selectorName === name);
-
-
-            if (indiceExistente >= 0) {
-                // Crear un nuevo objeto de método con el monto existente
-                const nuevoMetodo = {
-                    ...prevMetodos[indiceExistente], // Copia el objeto existente
-                    nombre: nombreMetodo,
-                    metodo_pago_id: value,
-                    selectorName: name,
-                    markup: markup,
-                    tipo_markup: tipo_markup
-                };
-
-                // Actualizar el método existente con el nuevo valor
-                return prevMetodos.map((metodo, indice) =>
-                    indice === indiceExistente ? nuevoMetodo : metodo
-                );
-            } else {
-                // Si no existe un método para este selector, agregar como nuevo elemento
-                const nuevoMetodo = {
-                    nombre: nombreMetodo,
-                    metodo_pago_id: value,
-                    monto_abonado: '', // Puede inicializarse con un valor predeterminado
-                    selectorName: name,
-                    markup: markup,
-                    tipo_markup: tipo_markup
-                };
-                console.log(nuevoMetodo)
-                return [...prevMetodos, nuevoMetodo];
-            }
-        });
-        if (name === nameFirstSelectorMetodoPago) {
-            setFirstMetodoValue(e.target.value)
-            setFirstMetodoNombre(e.target.options[e.target.selectedIndex].text)
-            setFirstMetodoTipoMarkup(tipo_markup)
-            setFirstMetodoMarkup(markup)
-        }
-    };
-
-    const handleChangeMonto = (e) => {
-        const { value, name } = e.target;
-        setValueMontoFirstSelector(value);
-        const nuevoMetodo = {
-            nombre: firstMetodoNombre,
-            metodo_pago_id: firstMetodoValue,
-            monto_abonado: value,
-            selectorName: name,
-        };
-        setMetodosSeleccionados(prevMetodos => {
-            const indiceExistente = prevMetodos?.findIndex(metodo => metodo?.selectorName === name);
-            if (indiceExistente >= 0) {
-                return prevMetodos.map((metodo, indice) =>
-                    indice === indiceExistente ? nuevoMetodo : metodo
-                );
-            }
-        });
-    };
+   
 
     const handleModalConfirmation = () => {
         setMostrarModalConfirmacionVenta(true);
@@ -151,7 +47,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         handleSubmit();
         setMostrarModalConfirmacionVenta(false);
         setProductosSeleccionados([])
-        setMetodosSeleccionados([])
         toast.success('Venta realizada con éxito', {
             position: "bottom-right",
             autoClose: 2000,
@@ -263,24 +158,8 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             }
         });
         reset();
-
     };
 
-    const agregarComponente = () => {
-        setMetodosAgregados(prev =>
-            [...prev,
-            <InputMetodoPago key={prev.length}
-                metodos={metodosDePago}
-                name={Math.random()}
-                metodosSeleccionados={metodosSeleccionados}
-                handleChangeMetodoPago={handleChangeMetodoPago}
-                setMetodosSeleccionados={setMetodosSeleccionados}
-                setMontoTotalMarkups={setMontoTotalMarkups}
-                metodosAgregados={metodosAgregados}
-            />
-            ]
-        );
-    };
 
     const onSelectionChange = (id) => {
         setClienteSeleccionado(id);
@@ -294,16 +173,57 @@ function ListProductos({ productos, metodosDePago, clientes }) {
     useEffect(() => {
         if (!clienteSeleccionado && productosSeleccionados.length > 0)
             setEstadoDelPago(null)
-        if(productosSeleccionados.length === 0 && clienteSeleccionado)
+        if (productosSeleccionados.length === 0 && clienteSeleccionado)
             setClienteSeleccionado(null)
     }, [clienteSeleccionado, productosSeleccionados])
 
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setSelectedItem((prevItem) => {
+                const newItem = prevItem > 0 ? prevItem - 1 : 0;
+                return newItem;
+            });
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setSelectedItem((prevItem) => {
+                const newItem = prevItem !== null ? (prevItem < objetosBuscados.length - 1 ? prevItem + 1 : prevItem) : 0;
+                return newItem;
+            });
+        } else if (e.key === 'Enter' && objetosBuscados[selectedItem]) {
+            addProducto(objetosBuscados[selectedItem]);
+        }
+    };
+
+    useEffect(() => {
+        setSelectedItem(null);
+    }, [inputText]);
+
+    useEffect(() => {
+        // Enfoque automático en el elemento seleccionado
+        if (selectedItem !== null && selectedItemRef.current) {
+            const listContainer = listContainerRef.current;
+            const selectedItemElement = selectedItemRef.current;
+
+            const containerTop = listContainer.offsetTop;
+            const itemTop = selectedItemElement.offsetTop;
+            // Calcular el desplazamiento necesario para que el elemento seleccionado esté centrado en el contenedor
+            const scrollOffset = itemTop - containerTop - (listContainer.clientHeight - selectedItemElement.clientHeight) / 2;
+
+            // Establecer el desplazamiento
+            listContainer.scrollTop = scrollOffset;
+        }
+    }, [selectedItem]);
 
     return (
         <>
             <div className='flex justify-between'>
                 {/* BUSCADOR */}
-                <div style={styles.listContainer} className=''>
+                <div
+                    style={styles.listContainer}
+                    onFocus={handleInputFocus}
+                >
                     <div className=''>
                         <div>
                             <Input
@@ -318,25 +238,43 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                                 onChange={handleInputChange}
                                 onFocus={handleInputFocus}
                                 style={{ minWidth: '450px' }}
+                                onKeyDown={handleKeyDown}
                             />
-                            {/* <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span> */}
                         </div>
                     </div>
 
-                    <ul style={inputText ? styles.productosListWithBorder : styles.productosList}>
-                        {
-                            objetosBuscados.length > 0
-                                ? (
-                                    objetosBuscados.map((producto) => (
-                                        <li key={producto.id} style={styles.containerRowProducto} className='border-t border-b' onClick={() => { addProducto(producto) }}>
-                                            <p style={styles.productoTitulo}>{producto.titulo}</p>
-                                            <p style={styles.productoPrecioVenta}>{producto.precio_venta ? `$${producto.precio_venta}` : ''}</p>
-                                        </li>
-                                    ))
-                                ) : (
-                                    inputText && !isLoading ? <li style={{ textAlign: 'center', padding: 8, backgroundColor: '#e2e2e2' }}>Sin Resultados</li> : ''
-                                )
-                        }
+                    <ul
+                        ref={listContainerRef}
+                        style={{
+                            ...inputText ? styles.productosListWithBorder : styles.productosList,
+                            boxShadow: '0 0 5px rgba(0, 0, 0, 0.1)', // Aplica la sombra difuminada
+                            display: objetosBuscados.length > 0 || (inputText && !isLoading) ? 'block' : 'none',
+                        }}
+                    >
+                        {objetosBuscados.length > 0 ? (
+                            objetosBuscados.map((producto, index) => (
+                                <li
+                                    ref={index === selectedItem ? selectedItemRef : null}
+                                    key={producto.id}
+                                    style={{
+                                        ...styles.containerRowProducto,
+                                        ...(index === selectedItem && styles.selectedItem),
+                                        ...(index === 0 && selectedItem === null && { borderTop: 'none' }), // Evita el borderTop solo cuando no estás seleccionando
+                                        ...(index === objetosBuscados.length - 1 && selectedItem === null && { borderBottom: 'none' }), // Evita el borderBottom solo cuando no estás seleccionando
+                                        
+                                    }}
+                                    className={`border-t ${index === objetosBuscados.length - 1 ? '' : 'border-b'}`}
+                                    onClick={() => {
+                                        addProducto(producto)
+                                    }}
+                                >
+                                    <p style={styles.productoTitulo}>{producto.titulo}</p>
+                                    <p style={styles.productoPrecioVenta}>{producto.precio_venta ? `$${producto.precio_venta}` : ''}</p>
+                                </li>
+                            ))
+                        ) : inputText && !isLoading ? (
+                            <li style={{ textAlign: 'center', padding: 8, backgroundColor: '#e2e2e2' }}>Sin Resultados</li>
+                        ) : null}
                     </ul>
                 </div>
                 {/* FIN BUSCADOR */}
@@ -459,13 +397,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                             }
 
                         </div>
-                        <ResumenPedido
-                            productosSeleccionados={productosSeleccionados}
-                            setProductosSeleccionados={setProductosSeleccionados}
-                            montoTotalMarkups={montoTotalMarkups}
-                            metodosDePago={metodosDePago}
-                        />
-
+                        <ResumenPedido />
 
                     </>
                     :
@@ -488,10 +420,12 @@ const styles = {
         right: 0,
         borderRadius: '8px',
         minWidth: '450px',
-        maxHeight: '200px',
+        maxHeight: '300px',
         overflowY: 'auto',
         backgroundColor: '#fff',
-        zIndex: 1,
+        zIndex: 999,
+        padding: 8,
+        marginTop: 4,
     },
     containerRowProducto: {
         display: 'flex',
@@ -528,6 +462,12 @@ const styles = {
         backgroundColor: 'white',
         padding: '2rem 3rem',
         borderRadius: '11px',
+    },
+    selectedItem: {
+        backgroundColor: "#818cf821",
+        borderWidth: 1,
+        borderColor: "#818cf8",
+        borderRadius: 3,
     },
 };
 styles.productosListWithBorder = {
