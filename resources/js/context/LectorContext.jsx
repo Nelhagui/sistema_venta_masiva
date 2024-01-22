@@ -75,17 +75,6 @@ const LectorContextProvider = ({ children }) => {
         setTotal(Number(totalActual) + Number(aumento))
     }
 
-    const calcularPorcentajeDescuento = () => {
-        const totalActual = obtenerTotalSinModificaciones();
-        setTotal(Number(totalActual) - (Number(totalActual) * Number(descuento) / 100))
-    }
-    const calcularTotalDescuento = () => {
-        const totalActual = obtenerTotalSinModificaciones();
-        setTotal(Number(totalActual) - Number(descuento))
-    }
-
-
-
     return (
         <LectorContext.Provider
             value={{

@@ -5,47 +5,45 @@ import { debounce } from '../../utils/debounce';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SearchIcon } from '../icons/SearchIcon';
+import TeclaDetector from '../teclado/TeclaDetector';
 import {
     Input,
     Select,
     SelectItem,
     AutocompleteItem,
-    Autocomplete
+    Autocomplete,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    useDisclosure
 } from "@nextui-org/react";
 
 function ListProductos({ productos, metodosDePago, clientes }) {
-    const { setVuelto, productosSeleccionados, setProductosSeleccionados } = useLectorContext();
+    const { productosSeleccionados, setProductosSeleccionados } = useLectorContext();
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
     const [estadoDelPago, setEstadoDelPago] = useState(null)
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
-    const [mostrarModalConfirmacionVenta, setMostrarModalConfirmacionVenta] = useState(false);
-    
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
     const inputRef = useRef(null);
     const selectedItemRef = useRef(null);
     const listContainerRef = useRef(null);
     const [inputText, setInputText] = useState('');
     const [selectedItem, setSelectedItem] = useState(null);
 
-
     useEffect(() => {
         setProductosIniciales(productos);
         focusInput()
     }, [productos]);
-   
 
-    const handleModalConfirmation = () => {
-        setMostrarModalConfirmacionVenta(true);
-    };
-
-    const handleCloseModal = () => {
-        setMostrarModalConfirmacionVenta(false);
-    };
 
     const handleConfirmVenta = () => {
         handleSubmit();
-        setMostrarModalConfirmacionVenta(false);
         setProductosSeleccionados([])
         toast.success('Venta realizada con éxito', {
             position: "bottom-right",
@@ -193,7 +191,10 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             });
         } else if (e.key === 'Enter' && objetosBuscados[selectedItem]) {
             addProducto(objetosBuscados[selectedItem]);
+        } else if (e.key === 'F12' && productosSeleccionados.length > 0) {
+            console.log('cargo compra')
         }
+        console.log(e.key)
     };
 
     useEffect(() => {
@@ -218,6 +219,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 
     return (
         <>
+            <TeclaDetector onKeyPress={onOpen} />
             <div className='flex justify-between'>
                 {/* BUSCADOR */}
                 <div
@@ -261,7 +263,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                                         ...(index === selectedItem && styles.selectedItem),
                                         ...(index === 0 && selectedItem === null && { borderTop: 'none' }), // Evita el borderTop solo cuando no estás seleccionando
                                         ...(index === objetosBuscados.length - 1 && selectedItem === null && { borderBottom: 'none' }), // Evita el borderBottom solo cuando no estás seleccionando
-                                        
+
                                     }}
                                     className={`border-t ${index === objetosBuscados.length - 1 ? '' : 'border-b'}`}
                                     onClick={() => {
@@ -291,33 +293,62 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                             borderRadius: 5,
                             visibility: productosSeleccionados.length <= 0 ? 'hidden' : 'visible'
                         }}
-                        onClick={handleModalConfirmation}
+                        onClick={onOpen}
                     >
                         Cargar Venta
                     </button>
                 </div>
             </div>
 
-            {mostrarModalConfirmacionVenta && (
-                <div style={styles.modalVenta}>
-                    <div style={styles.modalContent}>
-                        <h2 className="font-semibold text-xl leading-tight pb-3">¿Estás seguro que deseas cargar la venta?</h2>
-                        <div className='mt-3 flex justify-end'>
-                            <button
-                                onClick={handleConfirmVenta}
-                                className="hover:bg-gray-500 bg-gray-600 text-gray-200 px-3 py-1  cursor-pointer rounded"
-                                id="confirmarVentaToast">
-                                Confirmar
-                            </button>
-                            <button
-                                onClick={handleCloseModal}
-                                className="hover:bg-gray-500 bg-gray-300 text-white px-3 py-1 cursor-pointer rounded">
-                                Cancelar
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* MODAL CONFIRMACION */}
+            <Modal
+                backdrop="opaque"
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+                motionProps={{
+                    variants: {
+                        enter: {
+                            y: 0,
+                            opacity: 1,
+                            transition: {
+                                duration: 0.3,
+                                ease: "easeOut",
+                            },
+                        },
+                        exit: {
+                            y: -20,
+                            opacity: 0,
+                            transition: {
+                                duration: 0.2,
+                                ease: "easeIn",
+                            },
+                        },
+                    }
+                }}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1"></ModalHeader>
+                            <ModalBody>
+                                <h2 className="font-semibold text-xl leading-tight pb-3">¿Estás seguro que deseas cargar la venta?</h2>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Cancelar
+                                </Button>
+                                <Button color="primary" onPress={handleConfirmVenta}>
+                                    Cargar
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            {/* FIN MODAL */}
+
+            
+
             {
                 productosSeleccionados.length > 0
                     ?
