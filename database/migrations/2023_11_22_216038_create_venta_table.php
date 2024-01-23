@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sesion_caja_id');
-            $table->unsignedBigInteger('user_id'); // Quién realizó la venta
+            $table->unsignedBigInteger('user_id')->comment('quien realiza la venta'); // Quién realizó la venta
+            $table->unsignedBigInteger('cliente_id')->nullable(); // Quién realizó la compra
+            $table->enum('estado_pago', ['cobrada', 'parcialmente_cobrada', 'no_cobrada'])->default('cobrada');
             $table->decimal('monto_total_venta', 8, 2);
             $table->decimal('monto_total_costo', 8, 2);
             $table->date('fecha_venta');
@@ -27,6 +29,7 @@ return new class extends Migration
             // Llave foránea
             $table->foreign('sesion_caja_id')->references('id')->on('sesiones_caja')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
         });
     }
 
