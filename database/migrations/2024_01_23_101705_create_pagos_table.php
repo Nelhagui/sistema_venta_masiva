@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pagos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('venta_id');
-            $table->foreign('venta_id')->references('venta_id')->on('ventas');
+            $table->foreign('venta_id')->references('id')->on('ventas');
             $table->date('fecha_pago');
             $table->decimal('monto_pagado', 10, 2);
             $table->timestamps();

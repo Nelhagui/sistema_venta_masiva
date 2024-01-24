@@ -26,7 +26,6 @@ const TablaListCompras = () => {
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
-    const [cantidadFilas, setCantidadFilas] = useState(1);
     const [nuevosProductos, setNuevosProductos] = useState([]);
     const [datosCompra, setDatosCompra] = useState({
         fechaCompra: "",
@@ -272,6 +271,10 @@ const TablaListCompras = () => {
     };
 
     const handleInputChangeNuevoProducto = (index, campo, valor) => {
+        console.log(nuevosProductos)
+        console.log(index)
+        console.log(campo)
+        console.log(valor)
         setNuevosProductos(prevProductos => {
             return prevProductos.map((producto, i) => {
                 // Si el índice coincide con el índice actual del producto en el array
@@ -339,6 +342,7 @@ const TablaListCompras = () => {
 
         // Crea un nuevo producto con valores iniciales o vacíos
         const nuevoProducto = {
+            id: Math.random(),
             titulo: '',
             codigo_barra: '',
             precio_costo: '',
@@ -472,91 +476,83 @@ const TablaListCompras = () => {
                                         <Input
                                             variant="faded"
                                             type="number"
-                                            value={producto.precio_costo || ''}
+                                            textValue={producto.precio_costo || ''}
                                             labelPlacement="outside"
-                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_costo', e.target.value)}
+                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_costo', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             variant="faded"
                                             type="number"
-                                            value={producto.venta || ''}
+                                            textValue={producto.precio_venta || ''}
                                             labelPlacement="outside"
-                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_venta', e.target.value)}
+                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_venta', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             variant="faded"
                                             type="number"
-                                            value={producto.stock || ''}
+                                            textValue={producto.stock || ''}
                                             labelPlacement="outside"
-                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'stock', e.target.value)}
+                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'stock', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Checkbox
                                             value={producto.usar_control_por_lote}
-                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
+                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
                                         ></Checkbox>
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             variant="faded"
                                             type="date"
-                                            value={producto.fecha_vencimiento || ''}
+                                            textValue={producto.fecha_vencimiento || ''}
                                             labelPlacement="outside"
-                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'fecha_vencimiento', e.target.value)}
+                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'fecha_vencimiento', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
-                                        <Select
-                                            label="Seleccione"
+                                        <Select 
+                                            label="Seleccione" 
+                                            className="max-w-xs" 
                                             variant="faded"
-                                            size="sm"
-                                            value={producto.inversor_id || ''}
                                             style={{ minWidth: '150px' }}
-                                            onChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
+                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
                                         >
                                             {inversores.map((inversor) => (
-                                                <SelectItem key={inversor.id} value={inversor.id}>
-                                                    {inversor.nombre} {inversor.apellido}
-                                                </SelectItem>
+                                            <SelectItem key={inversor.id} value={inversor.id}>
+                                                {inversor.nombre}
+                                            </SelectItem>
                                             ))}
                                         </Select>
                                     </TableCell>
                                 </TableRow>
                             ))}
                             {
-                                nuevosProductos.map((producto, index) =>
+                                nuevosProductos.map((producto) =>
                                 (
-                                    <TableRow key={producto.id}>
+                                    <TableRow key={Math.random()}>
                                         <TableCell>
                                             <Input
                                                 variant="faded"
                                                 type="text"
-                                                name={`titulo_${index}`}
+                                                name={`titulo_${producto.id}`}
+                                                textValue={producto.titulo}
                                                 labelPlacement="outside"
-                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'titulo', e.target.value)}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'titulo', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Input
                                                 variant="faded"
                                                 type="number"
-                                                name={`codigo_barra_${index}`}
+                                                textValue={producto.codigo_barra}
+                                                name={`codigo_barra_${producto.id}`}
                                                 labelPlacement="outside"
-                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'codigo_barra', e.target.value)}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Input
-                                                variant="faded"
-                                                type="number"
-                                                labelPlacement="outside"
-                                                name={`precio_costo_${index}`}
-                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_costo', e.target.value)}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'codigo_barra', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -564,47 +560,60 @@ const TablaListCompras = () => {
                                                 variant="faded"
                                                 type="number"
                                                 labelPlacement="outside"
-                                                name={`precio_venta_${index}`}
-                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'precio_venta', e.target.value)}
+                                                textValue={producto.precio_costo}
+                                                name={`precio_costo_${producto.id}`}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'precio_costo', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Input
+                                                variant="faded"
+                                                type="number"
+                                                labelPlacement="outside"
+                                                textValue={producto.precio_venta}
+                                                name={`precio_venta_${producto.id}`}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'precio_venta', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Input
                                                 variant="faded"
                                                 type="text"
-                                                name={`stock_${index}`}
+                                                name={`stock_${producto.id}`}
+                                                textValue={producto.stock}
                                                 labelPlacement="outside"
-                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'stock', e.target.value)}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'stock', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Checkbox
                                                 value={producto.usar_control_por_lote}
-                                                onChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'usar_control_por_lote', e.target.checked)}
                                             ></Checkbox>
                                         </TableCell>
                                         <TableCell>
                                             <Input
                                                 variant="faded"
                                                 type="date"
-                                                name={`fecha_vencimiento_${index}`}
+                                                name={`fecha_vencimiento_${producto.id}`}
+                                                textValue={producto.fecha_vencimiento}
                                                 labelPlacement="outside"
-                                                onChange={(e) => handleInputChangeNuevoProducto(index, 'fecha_vencimiento', e.target.value)}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'fecha_vencimiento', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
-                                            <Select
-                                                label="Seleccione"
+                                            <Select 
+                                                label="Seleccione" 
+                                                className="max-w-xs" 
                                                 variant="faded"
-                                                size="sm"
-                                                value={producto.inversor_id || ''}
+                                                textValue={producto.inversor_id}
                                                 style={{ minWidth: '150px' }}
-                                                onChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'inversor_id', e.target.value)}
                                             >
                                                 {inversores.map((inversor) => (
-                                                    <SelectItem key={inversor.id} value={inversor.id}>
-                                                        {inversor.nombre} {inversor.apellido}
-                                                    </SelectItem>
+                                                <SelectItem key={inversor.id} value={inversor.id}>
+                                                    {inversor.nombre}
+                                                </SelectItem>
                                                 ))}
                                             </Select>
                                         </TableCell>

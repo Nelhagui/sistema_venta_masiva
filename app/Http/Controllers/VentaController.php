@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Venta;
 use App\Models\Lote;
+use App\Models\Pago;
 use Illuminate\Support\Facades\DB;
 
 class VentaController extends Controller
@@ -49,8 +50,10 @@ class VentaController extends Controller
             $venta->user_id = 1;
             $venta->monto_total_costo = 0;
             $venta->monto_total_venta = 0;
+            $venta->cliente_id = $request['cliente'];
             $venta->fecha_venta = now();
-            $venta->metodos_de_pago = json_encode($request->metodos_de_pago);
+            $venta->metodos_de_pago = $request['metodoPago'];
+            $venta->estado_pago =  $request['estadoPago'] ?? "cobrada";
             $venta->save();
     
             $productos = $request->productos;
@@ -74,6 +77,8 @@ class VentaController extends Controller
                 $detalle_venta->precio_unitario = $productoDb->precio_venta;
                 $detalle_venta->costo_unitario = $productoDb->precio_costo;
                 $detalle_venta->save();
+
+
    
                 $monto_total_venta += ($productoDb->precio_venta * $producto['cantidad']);
                 $monto_total_costo += ($productoDb->precio_costo * $producto['cantidad']);
@@ -106,6 +111,12 @@ class VentaController extends Controller
             $venta->monto_total_costo = $monto_total_costo;
             $venta->monto_total_venta = $monto_total_venta;
             $venta->update();
+
+            $pago = new Pago;
+            $pago->venta_id = $venta->id;
+            $pago->fecha_pago = now();
+            $pago->monto_pagado = $venta->monto_total_venta;
+            $pago->save();
     
             DB::commit(); // Confirma la transacción si todo se ejecuta correctamente
             $status = 1;

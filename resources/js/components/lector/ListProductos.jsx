@@ -25,6 +25,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
     const { productosSeleccionados, setProductosSeleccionados } = useLectorContext();
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
     const [estadoDelPago, setEstadoDelPago] = useState(null)
+    const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = React.useState("");
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
@@ -64,7 +65,12 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                 'Content-Type': 'application/json', // Asegurarse de enviar los datos en formato JSON
             },
             // Aquí debes incluir los datos que deseas enviar al servidor
-            body: JSON.stringify({ productos: productosSeleccionados, metodos_de_pago: metodosSeleccionados }),
+            body: JSON.stringify({ 
+                productos: productosSeleccionados, 
+                cliente: clienteSeleccionado,
+                estadoPago: estadoDelPago,
+                metodoPago: metodoPagoSeleccionado
+            }),
         })
             .then((response) => {
                 if (!response.ok) {
@@ -87,6 +93,10 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         if (inputRef.current) {
             inputRef.current.select(); // Seleccionar todo el contenido del input
         }
+    };
+
+    const handleSelectionChange = (e) => {
+        setMetodoPagoSeleccionado(e.target.value);
     };
 
     const reset = () => {
@@ -164,6 +174,10 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         setEstadoDelPago("3")
     };
 
+    useEffect(() => {
+        console.log('estado pago:', estadoDelPago)
+    }, [estadoDelPago])
+
     const handleSelectionChangeEstadoPago = (e) => {
         setEstadoDelPago(e.target.value);
     };
@@ -194,7 +208,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         } else if (e.key === 'F12' && productosSeleccionados.length > 0) {
             console.log('cargo compra')
         }
-        console.log(e.key)
     };
 
     useEffect(() => {
@@ -337,7 +350,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                                 <Button color="danger" variant="light" onPress={onClose}>
                                     Cancelar
                                 </Button>
-                                <Button color="primary" onPress={handleConfirmVenta}>
+                                <Button color="primary" onPress={handleConfirmVenta} onPressChange={onClose}>
                                     Cargar
                                 </Button>
                             </ModalFooter>
@@ -373,13 +386,13 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                             <Select
                                 isRequired
                                 label="Método de pago"
-                                defaultSelectedKeys={["1"]}
                                 className="max-w-xs"
                                 size='sm'
+                                onChange={handleSelectionChange}
                             >
                                 {metodosDePago.map((metodo) => (
                                     <SelectItem key={metodo.id} value={metodo.id}>
-                                        {metodo.nombre}
+                                        {metodo.nombre} 
                                     </SelectItem>
                                 ))}
                             </Select>
