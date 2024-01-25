@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\Lote;
-
-
 use Illuminate\Http\Request;
+use App\Models\Lote;
 use App\Models\Producto;
+use App\Models\Comercio;
 use App\Models\ProductosBase;
 use App\Models\Proveedor;
 use App\Models\Inversor;
@@ -307,5 +307,16 @@ class ProductoController extends Controller
     public function actualizarStock()
     {
 
+    }
+
+
+
+    //API
+    public function indexApi()
+    {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+        $productos = Comercio::find($id_comercio)->productos;
+        return $productos;
     }
 }

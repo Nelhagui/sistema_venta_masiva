@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -29,17 +30,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/productos', function () {
-    $productos = Producto::all();
-    return $productos;
-});
 
-Route::get('/clientes', function () {
-    $clientes = Cliente::all();
-    return $clientes;
-});
 
-Route::get('/metodos-pago', [MetodoPagoController::class, 'index']);
+
+
+
 
 Route::get('/productos-base/busqueda/{busqueda}', [ProductoController::class, 'busquedaProductosBase']);
 Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busqueda']);
@@ -66,9 +61,25 @@ Route::get('/compras', function () {
 
 Route::post('/compras/agregar', [CompraController::class, 'store']);
 
-Route::get('/ventas', function () {
-    $ventas = Venta::with('user')->get();
-    return $ventas;
-});
 
-Route::post('/ventas/crear', [VentaController::class, 'storeApi']);
+
+Route::middleware('auth')->group(function () {
+    
+    // CLIENTES
+    Route::prefix('clientes')->group(function () {
+        Route::get('/', [ClienteController::class, 'indexApi']);
+        Route::get('/detalle/{id}', [ClienteController::class, 'showApi']);
+    });
+
+    // PRODUCTOS
+    Route::get('/productos', [ProductoController::class, 'indexApi']);
+
+    // METODOS DE PAGO
+    Route::get('/metodos-pago', [MetodoPagoController::class, 'indexApi']);
+
+    // VENTAS
+    Route::prefix('ventas')->group(function () {
+        Route::post('/', [VentaController::class, 'indexApi']);
+        Route::post('/ventas/crear', [VentaController::class, 'storeApi']);
+    });
+});

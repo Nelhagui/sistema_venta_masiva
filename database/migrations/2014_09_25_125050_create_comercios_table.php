@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gastos', function (Blueprint $table) {
+        Schema::create('comercios', function (Blueprint $table) {
             $table->id();
-            $table->decimal('monto_total', 8, 2);
-            $table->string('detalle');
-            $table->softDeletes();
+            $table->string("nombre");
+            $table->string("url")->nullable();
+            $table->string('email')->nullable();
+            $table->boolean('estado')->default(0);
             $table->timestamps();
-
-            // Llave foránea
-            $table->unsignedBigInteger('comercio_id');
-            $table->foreign('comercio_id')->references('id')->on('comercios')->onDelete('cascade');
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gastos');
+        Schema::dropIfExists('comercios');
     }
 };

@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('lotes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('producto_id');
-            $table->unsignedBigInteger('compra_id');
+            
             $table->decimal('precio_costo', 8, 2);
             $table->decimal('precio_venta', 8, 2);
             $table->decimal('precio_dolar', 8, 2)->nullable();
@@ -25,6 +24,11 @@ return new class extends Migration
             $table->timestamps();
 
             // Llave foránea
+            $table->unsignedBigInteger('comercio_id');
+            $table->unsignedBigInteger('compra_id');
+            $table->unsignedBigInteger('producto_id');
+
+            $table->foreign('comercio_id')->references('id')->on('comercios')->onDelete('cascade');
             $table->foreign('compra_id')->references('id')->on('compras');
             $table->foreign('producto_id')->references('id')->on('productos')->onDelete('cascade');
         });

@@ -1,31 +1,27 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import TablaListClientes from './TablaListClientes';
+import clienteServices from '../../services/clienteServices';
 
 export default function MainClientes() {
     const [clientes, setClientes] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        // Realizar la solicitud GET a la API de clientes
-        fetch('/api/clientes')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de clientes
-                setClientes(data);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
+        fetchClientes()
     }, []);
+
+    const fetchClientes = async () => {
+        setIsLoading(true);
+        try {
+            const clientesResponse = await clienteServices.traerLista();
+            setClientes(clientesResponse);
+        } catch (error) {
+            // Maneja el error si la creación de la venta falla
+        } finally {
+            setIsLoading(false);
+        }
+    };
     
     return (
         <>

@@ -12,11 +12,13 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Pagination,
+    Tooltip,
 } from "@nextui-org/react";
+import { EyeIcon } from '../icons/EyeIcon';
 import { SearchIcon } from '../icons/SearchIcon';
 import { VerticalDotsIcon } from '../icons/VerticalDotsIcon';
 import { PlusIcon } from '../icons/PlusIcon';
+import { urls } from '../../config/config';
 
 const columns = [
     {
@@ -49,7 +51,7 @@ const TablaListClientes = ({ clientes }) => {
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [page, setPage] = React.useState(1);
-    
+
     const rowsPerPage = 30;
     const pages = Math.ceil(clientes.length / rowsPerPage);
 
@@ -101,7 +103,7 @@ const TablaListClientes = ({ clientes }) => {
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu>
-                                <DropdownItem> 
+                                <DropdownItem>
                                     <a href={`/clientes/editar/${cliente.id}`}>
                                         Editar
                                     </a>
@@ -154,37 +156,45 @@ const TablaListClientes = ({ clientes }) => {
         hasSearchFilter,
     ]);
 
+    function irPaginaDetalle(cliente_id) {
+        window.location.href = `${urls.clientes.detalle}/${cliente_id}`;
+    }
+
     return (
         <Table
-            aria-label="Lista de Clientes"
-            selectionMode="multiple"
-            selectedKeys={selectedKeys}
-            onSelectionChange={setSelectedKeys}
-            topContent={topContent}
-            topContentPlacement="outside"
-            bottomContent={
-                <div className="flex w-full justify-center">
-                    <Pagination
-                        isCompact
-                        showControls
-                        showShadow
-                        color="secondary"
-                        page={page}
-                        total={pages}
-                        onChange={(page) => setPage(page)}
-                    />
-                </div>
-            }
+            isStriped
+            aria-label="Example static collection table"
         >
-            <TableHeader columns={columns}>
-                {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+            <TableHeader>
+                <TableColumn>Nombre</TableColumn>
+                <TableColumn>Telefono</TableColumn>
+                <TableColumn>Whatsapp</TableColumn>
+                <TableColumn>Nota</TableColumn>
+                <TableColumn>Acción</TableColumn>
             </TableHeader>
-            <TableBody items={items}>
-                {(item) => (
-                    <TableRow key={item.id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
+            <TableBody>
+                {
+                    clientes.map((cliente) => (
+                        <TableRow key={cliente?.id}>
+                            <TableCell>{cliente?.nombre}</TableCell>
+                            <TableCell>{cliente?.telefono ?? "-"}</TableCell>
+                            <TableCell>{cliente?.whatsapp ?? "-"}</TableCell>
+                            <TableCell>{cliente?.nota ?? "-"}</TableCell>
+                            <TableCell>
+                                <div className="relative flex items-center gap-2">
+                                    <Tooltip content="Ver cliente">
+                                        <span
+                                            className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                            onClick={() => irPaginaDetalle(cliente?.id)}
+                                        >
+                                            <EyeIcon />
+                                        </span>
+                                    </Tooltip>
+                                </div>
+                            </TableCell>
+                        </TableRow>
+                    ))
+                }
             </TableBody>
         </Table>
     )

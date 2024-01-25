@@ -24,6 +24,10 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
 
+            // Llave foránea
+            $table->unsignedBigInteger('comercio_id');
+            $table->foreign('comercio_id')->references('id')->on('comercios')->onDelete('cascade');
+
         });
     }
 

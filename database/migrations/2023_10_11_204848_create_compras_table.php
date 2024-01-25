@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('compras', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('proveedor_id')->nullable();
             $table->decimal('precio_total', 8, 2);
             $table->date('fecha_compra');
             $table->date('fecha_carga');
@@ -22,7 +21,10 @@ return new class extends Migration
             $table->timestamps();
 
             // Llave foránea
+            $table->unsignedBigInteger('proveedor_id')->nullable();
             $table->foreign('proveedor_id')->references('id')->on('proveedores')->onDelete('cascade');
+            $table->unsignedBigInteger('comercio_id');
+            $table->foreign('comercio_id')->references('id')->on('comercios')->onDelete('cascade');
         });
     }
 

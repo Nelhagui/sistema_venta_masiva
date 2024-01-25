@@ -11,6 +11,12 @@ class Producto extends Model
 
     protected $table = 'productos';
 
+    protected $hidden = [
+        'comercio_id',
+        'deleted_at',
+        'created_at',
+        'updated_at',
+    ];
     protected $fillable = [
         'titulo', 'descripcion', 'precio_costo', 'precio_venta', 'stock', 'codigo_barra'
     ];

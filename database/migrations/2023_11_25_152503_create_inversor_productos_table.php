@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('finalizada')->default(false);
             $table->timestamps();
 
-            $table->foreign('inversor_id')->references('id')->on('inversors')->onDelete('cascade');
+            $table->foreign('inversor_id')->references('id')->on('inversores')->onDelete('cascade');
         });
     }
 

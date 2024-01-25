@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SearchIcon } from '../icons/SearchIcon';
 import TeclaDetector from '../teclado/TeclaDetector';
+import lectorServices from '../../services/lectorServices';
 import {
     Input,
     Select,
@@ -22,7 +23,7 @@ import {
 } from "@nextui-org/react";
 
 function ListProductos({ productos, metodosDePago, clientes }) {
-    const { productosSeleccionados, setProductosSeleccionados } = useLectorContext();
+    const { productosSeleccionados, setProductosSeleccionados, montoAbonado, setMontoAbonado, resetAll } = useLectorContext();
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
     const [estadoDelPago, setEstadoDelPago] = useState(null)
     const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = React.useState("");
@@ -45,47 +46,32 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 
     const handleConfirmVenta = () => {
         handleSubmit();
-        setProductosSeleccionados([])
-        toast.success('Venta realizada con éxito', {
-            position: "bottom-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        });
     };
 
-    const handleSubmit = () => {
-        fetch('http://127.0.0.1:8000/api/ventas/crear', {
-            method: 'POST', // Usar el método POST
-            headers: {
-                'Content-Type': 'application/json', // Asegurarse de enviar los datos en formato JSON
-            },
-            // Aquí debes incluir los datos que deseas enviar al servidor
-            body: JSON.stringify({ 
-                productos: productosSeleccionados, 
-                cliente: clienteSeleccionado,
-                estadoPago: estadoDelPago,
-                metodoPago: metodoPagoSeleccionado
-            }),
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    console.log(response)
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .finally(() => {
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
+    console.log(metodosDePago)
+
+    const handleSubmit = async () => {
+        setIsLoading(true);
+        try {
+            await lectorServices.crearVenta(productosSeleccionados, clienteSeleccionado, estadoDelPago, metodoPagoSeleccionado, montoAbonado);
+            // Realiza alguna acción adicional después de completar la creación de la venta, si es necesario
+        } catch (error) {
+            // Maneja el error si la creación de la venta falla
+        } finally {
+            setIsLoading(false);
+            toast.success('Venta realizada con éxito', {
+                position: "bottom-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
             });
-    }
+            resetAll();
+        }
+    };
 
     const focusInput = () => inputRef.current.focus();
 
@@ -183,10 +169,13 @@ function ListProductos({ productos, metodosDePago, clientes }) {
     };
 
     useEffect(() => {
-        if (!clienteSeleccionado && productosSeleccionados.length > 0)
+        if (!clienteSeleccionado && productosSeleccionados.length > 0) {
             setEstadoDelPago(null)
-        if (productosSeleccionados.length === 0 && clienteSeleccionado)
+        }
+        if (productosSeleccionados.length === 0 && clienteSeleccionado) {
             setClienteSeleccionado(null)
+            setMontoAbonado('');
+        }
     }, [clienteSeleccionado, productosSeleccionados])
 
 
@@ -208,6 +197,10 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         } else if (e.key === 'F12' && productosSeleccionados.length > 0) {
             console.log('cargo compra')
         }
+    };
+
+    const handleInputImporte = (event) => {
+        setMontoAbonado(event.target.value);
     };
 
     useEffect(() => {
@@ -360,7 +353,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             </Modal>
             {/* FIN MODAL */}
 
-            
+
 
             {
                 productosSeleccionados.length > 0
@@ -389,10 +382,11 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                                 className="max-w-xs"
                                 size='sm'
                                 onChange={handleSelectionChange}
+                                defaultSelectedKeys={["1"]}
                             >
                                 {metodosDePago.map((metodo) => (
                                     <SelectItem key={metodo.id} value={metodo.id}>
-                                        {metodo.nombre} 
+                                        {metodo.nombre}
                                     </SelectItem>
                                 ))}
                             </Select>
@@ -427,6 +421,8 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                                                     type="number"
                                                     label="Importe"
                                                     placeholder="0.00"
+                                                    onChange={handleInputImporte}
+                                                    value={montoAbonado}
                                                     size='sm'
                                                     startContent={
                                                         <div className="pointer-events-none flex items-center">

@@ -12,6 +12,10 @@ class Venta extends Model
     protected $table = 'ventas';
     protected $fillable = ['sesion_caja_id', 'user_id', 'monto_total'];
 
+    const COBRADA = 1;
+    const NO_COBRADA = 2;
+    const PARCIALMENTE_COBRADA = 3;
+
     public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'cliente_id');

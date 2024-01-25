@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Comercio;
 
 class CompraSeeder extends Seeder
 {
@@ -18,6 +19,7 @@ class CompraSeeder extends Seeder
         $nombreProveedor = 'Día';
         $proveedor = DB::table('proveedores')->where('nombre', $nombreProveedor)->first();
         $compraId = DB::table('compras')->insertGetId([
+            'comercio_id' => Comercio::inRandomOrder()->first()->id,
             'proveedor_id' => $proveedor->id, // Aquí deberías establecer el ID del proveedor o su nombre, dependiendo de cómo lo manejes en tu aplicación
             'precio_total' => 3770, // Precio total de la compra
             'fecha_compra' => Carbon::parse('2023-12-01'),
@@ -61,6 +63,7 @@ class CompraSeeder extends Seeder
         $nombreProveedor = 'JN Distribuidora';
         $proveedor = DB::table('proveedores')->where('nombre', $nombreProveedor)->first();
         $compraId = DB::table('compras')->insertGetId([
+            'comercio_id' => Comercio::inRandomOrder()->first()->id,
             'proveedor_id' => $proveedor->id, // Aquí deberías establecer el ID del proveedor o su nombre, dependiendo de cómo lo manejes en tu aplicación
             'precio_total' => 9730.00, // Precio total de la compra
             'fecha_compra' => Carbon::parse('2023-12-19'),
@@ -97,6 +100,7 @@ class CompraSeeder extends Seeder
         $nombreProveedor = 'El Rayo SRL';
         $proveedor = DB::table('proveedores')->where('nombre', $nombreProveedor)->first();
         $compraId = DB::table('compras')->insertGetId([
+            'comercio_id' => Comercio::inRandomOrder()->first()->id,
             'proveedor_id' => $proveedor->id, // Aquí deberías establecer el ID del proveedor o su nombre, dependiendo de cómo lo manejes en tu aplicación
             'precio_total' => 3807.00, // Precio total de la compra
             'fecha_compra' => Carbon::parse('2023-11-30'),
@@ -126,6 +130,7 @@ class CompraSeeder extends Seeder
         $nombreProveedor = 'El Rayo SRL';
         $proveedor = DB::table('proveedores')->where('nombre', $nombreProveedor)->first();
         $compraId = DB::table('compras')->insertGetId([
+            'comercio_id' => Comercio::inRandomOrder()->first()->id,
             'proveedor_id' => $proveedor->id, // Aquí deberías establecer el ID del proveedor o su nombre, dependiendo de cómo lo manejes en tu aplicación
             'precio_total' => 2598.00, // Precio total de la compra
             'fecha_compra' => Carbon::parse('2023-11-29'),
@@ -155,6 +160,7 @@ class CompraSeeder extends Seeder
         $nombreProveedor = 'El Rayo SRL';
         $proveedor = DB::table('proveedores')->where('nombre', $nombreProveedor)->first();
         $compraId = DB::table('compras')->insertGetId([
+            'comercio_id' => Comercio::inRandomOrder()->first()->id,
             'proveedor_id' => $proveedor->id, // Aquí deberías establecer el ID del proveedor o su nombre, dependiendo de cómo lo manejes en tu aplicación
             'precio_total' => 5872.00, // Precio total de la compra
             'fecha_compra' => Carbon::parse('2023-11-15'),
@@ -219,6 +225,7 @@ class CompraSeeder extends Seeder
         $nombreProveedor = 'El Rayo SRL';
         $proveedor = DB::table('proveedores')->where('nombre', $nombreProveedor)->first();
         $compraId = DB::table('compras')->insertGetId([
+            'comercio_id' => Comercio::inRandomOrder()->first()->id,
             'proveedor_id' => $proveedor->id, // Aquí deberías establecer el ID del proveedor o su nombre, dependiendo de cómo lo manejes en tu aplicación
             'precio_total' => 5872.00, // Precio total de la compra
             'fecha_compra' => Carbon::parse('2023-11-13'),
@@ -261,6 +268,7 @@ class CompraSeeder extends Seeder
         if (!$producto) {
             $nuevoProducto = [
                 'titulo' => $nombreProducto,
+                'comercio_id' => Comercio::inRandomOrder()->first()->id,
                 'descripcion' => 'Descripción por defecto', // Puedes cambiar esto según tus necesidades
                 'precio_costo' => 0.00, // Puedes cambiar esto según tus necesidades
                 'precio_venta' => 0.00, // Puedes cambiar esto según tus necesidades

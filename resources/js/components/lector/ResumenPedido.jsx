@@ -19,12 +19,11 @@ const ResumenPedido = () => {
         productosSeleccionados,
         setProductosSeleccionados,
         sacarProducto,
-        obtenerTotal,
-        cancelarCompra
+        resetAll
     } = useLectorContext()
 
     const funCancelarCompra = () => {
-        cancelarCompra()
+        resetAll()
     }
 
     const handleInputChangeCantidad = (e, productoId) => {

@@ -64,11 +64,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/compras/{compra}', [CompraController::class, 'show'])->name('show.compras');
 
         //CLIENTES
-        Route::get('/clientes', [ClienteController::class, 'index'])->name('index.clientes');
-        Route::get('/clientes/agregar', [ClienteController::class, 'create'])->name('create.clientes');
-        Route::post('/clientes/agregar', [ClienteController::class, 'store'])->name('store.clientes');
-        Route::get('/clientes/editar/{id}', [ClienteController::class, 'edit'])->name('edit.clientes');
-        Route::post('/clientes/editar/{id}', [ClienteController::class, 'update'])->name('update.clientes');
+        Route::prefix('clientes')->group(function () {
+            Route::get('/', [ClienteController::class, 'index'])->name('index.clientes');
+            Route::get('/agregar', [ClienteController::class, 'create'])->name('create.clientes');
+            Route::post('/agregar', [ClienteController::class, 'store'])->name('store.clientes');
+            Route::get('/detalle/{id}', [ClienteController::class, 'show'])->name('show.clientes');
+            Route::get('/editar/{id}', [ClienteController::class, 'edit'])->name('edit.clientes');
+            Route::post('/editar/{id}', [ClienteController::class, 'update'])->name('update.clientes');
+        });
 
         //INVERSORES
         Route::get('/inversores', [InversorController::class, 'index'])->name('index.inversores');
@@ -106,7 +109,7 @@ Route::middleware('auth')->group(function () {
         // LOTES
         Route::get('/lotes/productos', [LoteController::class, 'index'])->name('index.lotes');
         Route::get('/lotes/productos/{producto}', [LoteController::class, 'show'])->name('show.lote');
-        
+
         //METODOS
         Route::get('/metodos', [MetodoController::class, 'index'])->name('index.metodos');
         Route::get('/metodos/agregar', [MetodoController::class, 'create'])->name('create.metodos');

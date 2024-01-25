@@ -9,6 +9,14 @@ class MetodoPago extends Model
 {
     use HasFactory;
 
+    protected $hidden = [
+        'comercio_id',
+        'deleted_at',
+        'created_at',
+        'updated_at',
+        'editable',
+    ];
+
     const TIPO_MARKUP_TEXT = [
         0 => 'Sin markup',
         1 => 'Porcentaje',

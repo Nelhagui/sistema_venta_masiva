@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cliente;
+use App\Models\Comercio;
+use Illuminate\Support\Facades\Auth;
 
 class ClienteController extends Controller
 {
@@ -12,7 +14,9 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        $clientes = Cliente::all();
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+        $clientes = Comercio::find($id_comercio)->clientes;
         return view('clientes.index', compact('clientes'));
     }
 
@@ -43,8 +47,7 @@ class ClienteController extends Controller
      */
     public function show(string $id)
     {
-        $cliente = Cliente::find($id);
-        return view('clientes.edit', compact('cliente'));
+        return view('clientes.show');
     }
 
     /**
@@ -76,4 +79,26 @@ class ClienteController extends Controller
     {
         //
     }
+
+
+    //API
+    public function indexApi()
+    {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+        $clientes = Comercio::find($id_comercio)->clientes;
+        return $clientes;
+    }
+
+    public function showApi(string $id)
+    {
+        $user = Auth::user();
+
+        $cliente = Cliente::where('id', $id)
+            ->where('comercio_id', $user->comercio_id)
+            ->first();
+
+        return $cliente;
+    }
+
 }

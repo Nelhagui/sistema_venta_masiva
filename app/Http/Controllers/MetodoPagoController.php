@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\MetodoPago;
 use App\Http\Requests\StoreMetodoPagoRequest;
 use App\Http\Requests\UpdateMetodoPagoRequest;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Comercio;
 
 class MetodoPagoController extends Controller
 {
@@ -63,5 +65,14 @@ class MetodoPagoController extends Controller
     public function destroy(MetodoPago $metodoPago)
     {
         //
+    }
+
+    //API
+    public function indexApi()
+    {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+        $productos = Comercio::find($id_comercio)->metodosDePago;
+        return $productos;
     }
 }

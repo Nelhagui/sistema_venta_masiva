@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Comercio;
 
 class MetodoPagoSeeder extends Seeder
 {
@@ -13,7 +14,8 @@ class MetodoPagoSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('metodo_pagos')->insert([
+        $comercios = Comercio::all();
+        $metodoPagos = [
             [
                 'nombre' => 'Efectivo',
                 'markup' => null,
@@ -50,6 +52,16 @@ class MetodoPagoSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        ]);
+        ];
+        foreach ($metodoPagos as $metodoPago) {
+            // Obtener un comercio aleatorio de la lista de comercios
+            $comercioAleatorio = $comercios->random();
+
+            // Asignar el ID del comercio aleatorio al método de pago
+            $metodoPago['comercio_id'] = $comercioAleatorio->id;
+
+            // Insertar el método de pago en la tabla
+            DB::table('metodo_pagos')->insert($metodoPago);
+        }
     }
 }

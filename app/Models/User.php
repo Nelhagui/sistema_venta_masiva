@@ -34,6 +34,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function comercio()
+    {
+        return $this->belongsTo(Comercio::class);
+    }
+
     /**
      * Un usuario puede tener muchas sesiones de caja.
      */
@@ -45,6 +50,13 @@ class User extends Authenticatable
     public function cajaMovimientos()
     {
         return $this->hasMany(CajaMovimiento::class);
+    }
+
+    public function ultimaSesionCajaAbierta()
+    {
+        return $this->hasOne(SesionCaja::class)
+            ->whereNull('fecha_hora_cierre')
+            ->latest();
     }
 
     /**

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\Comercio;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,17 +16,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            ProductsTableSeeder::class,
-            ProductosBaseSeeder::class,
-            ClientesTableSeeder::class,
-            ProveedorSeeder::class,
-            InversorSeeder::class,
-            MetodoPagoSeeder::class,
-            CompraSeeder::class,
+        $comercio = Comercio::create([
+            'nombre' => 'Kiosco La 41',
+        ]);
+
+        $comercio = Comercio::create([
+            'nombre' => 'Kiosco La Fábrica',
+        ]);
+
+        $comercio = Comercio::create([
+            'nombre' => 'Kiosco Coronado',
         ]);
 
         $user = User::create([
+            'comercio_id' => $comercio->id,
             'nombre' => 'Juan Pérez',
             'email' => 'juanperez@gmail.com',
             'email_verified_at' => now(),
@@ -33,18 +37,16 @@ class DatabaseSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        // \App\Models\Producto::factory()->count(100)->create();
+        $this->call([
+            ProductsTableSeeder::class,
+            ProductosBaseSeeder::class,
+            ClientesTableSeeder::class,
+            ProveedorSeeder::class,
+            MetodoPagoSeeder::class,
+            CompraSeeder::class,
+        ]);
+        
         \App\Models\SesionCaja::factory()->count(100)->create();
         \App\Models\CajaMovimiento::factory()->count(100)->create();
-        // \App\Models\Compra::factory()->count(100)->create();
-        // \App\Models\CompraDetalle::factory()->count(1000)->create();
-        // \App\Models\StockMovimiento::factory()->count(100)->create();
-        // \App\Models\Venta::factory(10)->create(); // Crear 10 ventas para el ejemplo
-        // \App\Models\DetalleVenta::factory(50)->create(); // Crear 50 detal
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
 }

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Comercio;
 
 class ProveedorSeeder extends Seeder
 {
@@ -16,6 +17,7 @@ class ProveedorSeeder extends Seeder
         DB::table('proveedores')->insert([
             [
                 'nombre' => 'SM Calle Mitre',
+                'comercio_id' => Comercio::inRandomOrder()->first()->id,
                 'direccion' => 'Calle mitre',
                 'telefono' => null,
                 'whatsapp' => null,
@@ -25,6 +27,7 @@ class ProveedorSeeder extends Seeder
             ],
             [
                 'nombre' => 'Gerardo',
+                'comercio_id' => Comercio::inRandomOrder()->first()->id,
                 'direccion' => 'sin direccion',
                 'telefono' => null,
                 'whatsapp' => null,
@@ -34,6 +37,7 @@ class ProveedorSeeder extends Seeder
             ],
             [
                 'nombre' => 'Día',
+                'comercio_id' => Comercio::inRandomOrder()->first()->id,
                 'direccion' => 'sin direccion',
                 'telefono' => null,
                 'whatsapp' => null,
@@ -43,6 +47,7 @@ class ProveedorSeeder extends Seeder
             ],
             [
                 'nombre' => 'Carrefourd',
+                'comercio_id' => Comercio::inRandomOrder()->first()->id,
                 'direccion' => 'sin direccion',
                 'telefono' => null,
                 'whatsapp' => null,
@@ -52,6 +57,7 @@ class ProveedorSeeder extends Seeder
             ],
             [
                 'nombre' => 'El Rayo SRL',
+                'comercio_id' => Comercio::inRandomOrder()->first()->id,
                 'direccion' => 'Av. Eva Perón 9593, Loma Hermosa',
                 'telefono' => null,
                 'whatsapp' => null,
@@ -61,6 +67,7 @@ class ProveedorSeeder extends Seeder
             ],
             [
                 'nombre' => 'JN Distribuidora',
+                'comercio_id' => Comercio::inRandomOrder()->first()->id,
                 'direccion' => '1657 Ruta 8 10084',
                 'telefono' => null,
                 'whatsapp' => null,

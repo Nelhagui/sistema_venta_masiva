@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Cliente;
+use App\Models\Comercio;
 
 class ClientesTableSeeder extends Seeder
 {
@@ -13,66 +14,69 @@ class ClientesTableSeeder extends Seeder
      */
     public function run(): void
     {
+        $comercios = Comercio::all();
         $clientes = [
             [
-                'nombre' => "ARIEL ISCOT"
+                'nombre' => "ARIEL ISCOT",
             ],
             [
-                'nombre' => "CORI ISCOT"
+                'nombre' => "CORI ISCOT",
             ],
             [
-                'nombre' => "CRISTIAN BELTRAN D S"
+                'nombre' => "CRISTIAN BELTRAN D S",
             ],
             [
-                'nombre' => "DIEGO ISCOT"
+                'nombre' => "DIEGO ISCOT",
             ],
             [
-                'nombre' => "DONATO ISCOT"
+                'nombre' => "DONATO ISCOT",
             ],
             [
-                'nombre' => "GERMAN LABONIA"
+                'nombre' => "GERMAN LABONIA",
             ],
             [
-                'nombre' => "IVAN ISCOT"
+                'nombre' => "IVAN ISCOT",
             ],
             [
-                'nombre' => "JORGE LABONIA"
+                'nombre' => "JORGE LABONIA",
             ],
             [
-                'nombre' => "JORGE PINTOS ISCOT"
+                'nombre' => "JORGE PINTOS ISCOT",
             ],
             [
-                'nombre' => "JUAN ARCE ISCOT"
+                'nombre' => "JUAN ARCE ISCOT",
             ],
             [
-                'nombre' => "LIMON ISCOT"
+                'nombre' => "LIMON ISCOT",
             ],
             [
-                'nombre' => "MICAEL ISCOT"
+                'nombre' => "MICAEL ISCOT",
             ],
             [
-                'nombre' => "MONTIVERO ISCOT"
+                'nombre' => "MONTIVERO ISCOT",
             ],
             [
-                'nombre' => "NICO ISCOT"
+                'nombre' => "NICO ISCOT",
             ],
             [
-                'nombre' => "NICO PINTOS ISCOT"
+                'nombre' => "NICO PINTOS ISCOT",
             ],
             [
-                'nombre' => "ROCIO"
+                'nombre' => "ROCIO",
             ],
             [
-                'nombre' => "RODRIGO ISCOT"
+                'nombre' => "RODRIGO ISCOT",
             ],
             [
-                'nombre' => "SEBASTIAN PSA"
+                'nombre' => "SEBASTIAN PSA",
             ],
             [
-                'nombre' => "SERGIO CARDOZO"
+                'nombre' => "SERGIO CARDOZO",
             ]
         ];
         foreach ($clientes as $cliente) {
+            $comercioAleatorio = $comercios->random();
+            $cliente['comercio_id'] = $comercioAleatorio->id;
             Cliente::create($cliente);
         }
     }

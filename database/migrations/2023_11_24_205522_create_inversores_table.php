@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inversors', function (Blueprint $table) {
+        Schema::create('inversores', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
             $table->string('apellido');
             $table->string('estado')->default(1);
             $table->timestamps();
+
+            // Llave foránea
+            $table->unsignedBigInteger('comercio_id');
+            $table->foreign('comercio_id')->references('id')->on('comercios')->onDelete('cascade');
 
         });
     }
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inversors');
+        Schema::dropIfExists('inversores');
     }
 };
