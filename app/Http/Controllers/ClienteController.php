@@ -47,7 +47,8 @@ class ClienteController extends Controller
      */
     public function show(string $id)
     {
-        return view('clientes.show');
+        $cliente_id = $id;
+        return view('clientes.show', compact('cliente_id'));
     }
 
     /**
@@ -56,7 +57,8 @@ class ClienteController extends Controller
     public function edit(string $id)
     {
         $cliente = Cliente::find($id);
-        return view('clientes.edit', compact('cliente'));    }
+        return view('clientes.edit', compact('cliente'));
+    }
 
     /**
      * Update the specified resource in storage.
@@ -84,6 +86,7 @@ class ClienteController extends Controller
     //API
     public function indexApi()
     {
+        // dd('listat');
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
         $clientes = Comercio::find($id_comercio)->clientes;
@@ -93,11 +96,12 @@ class ClienteController extends Controller
     public function showApi(string $id)
     {
         $user = Auth::user();
-
         $cliente = Cliente::where('id', $id)
+            ->with('ventas')
             ->where('comercio_id', $user->comercio_id)
             ->first();
-
+        $deudas = $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with('pagos')->get();
+        $cliente->deudas = $deudas;
         return $cliente;
     }
 

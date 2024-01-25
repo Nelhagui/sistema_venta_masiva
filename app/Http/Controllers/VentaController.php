@@ -131,6 +131,7 @@ class VentaController extends Controller
             $venta->fecha_hora_venta = now();
             $venta->metodos_de_pago = $request['metodoPago'] ?? 1;
             $venta->estado_pago = $request['estadoPago'] ?? "cobrada";
+            $venta->comercio_id = $user->comercio_id;
             $venta->save();
 
             // 2 CREO DETALLE DE VENTAS

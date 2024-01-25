@@ -80,6 +80,6 @@ Route::middleware('auth')->group(function () {
     // VENTAS
     Route::prefix('ventas')->group(function () {
         Route::post('/', [VentaController::class, 'indexApi']);
-        Route::post('/ventas/crear', [VentaController::class, 'storeApi']);
+        Route::post('/crear', [VentaController::class, 'storeApi']);
     });
 });

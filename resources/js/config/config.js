@@ -7,6 +7,7 @@ export const endpoints = {
     },
     clientes: {
         lista: `${API_BASE_URL}/clientes`,
+        detalle: `${API_BASE_URL}/clientes/detalle`,
     },
 };
 
