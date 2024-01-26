@@ -80,9 +80,6 @@
                     <div>
                         <a href="{{ route('index.productos') }}" class="button-link">Ver lista de productos</a>
                     </div>
-                    <!-- <div>
-                        <a href="{{route('index.productosBase')}}">Agregar producto desde "lista de productos base"</a>
-                    </div> -->
                 </div>
                 <div style="position: relative; margin-bottom: 20px">
                     <div class="flex justify-between">

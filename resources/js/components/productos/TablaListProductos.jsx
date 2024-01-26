@@ -20,6 +20,7 @@ import { VerticalDotsIcon } from '../icons/VerticalDotsIcon';
 import { PlusIcon } from '../icons/PlusIcon';
 import { InventoryIcon } from '../icons/InventoryIcon';
 import { UploadFileIcon } from '../icons/UploadFileIcon';
+import { urls } from '../../config/config';
 
 const columns = [
     {
@@ -100,11 +101,10 @@ const TablaListProductos = ({ productos }) => {
                             </DropdownTrigger>
                             <DropdownMenu>
                                 <DropdownItem>
-                                    <a href={`/productos/editar/${producto.id}`}>
+                                    <span onClick={() => irPaginaEditProducto(producto.id)}>
                                         Editar
-                                    </a>
+                                    </span>
                                 </DropdownItem>
-                                <DropdownItem>Eliminar</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </div>
@@ -114,6 +114,18 @@ const TablaListProductos = ({ productos }) => {
         }
     }, []);
 
+    function irPaginaEditProducto(producto_id) {
+        window.location.href = `${urls.productos.editar}/${producto_id}`;
+    }
+
+    function irPaginaStockPrecio() {
+        window.location.href = `${urls.productos.stockPrecio}`
+    }
+
+    function irPaginaAgregarProducto() {
+        window.location.href = `${urls.productos.crear}`
+    }
+
     const onSearchChange = React.useCallback((value) => {
         if (value) {
             setFilterValue(value);
@@ -122,6 +134,7 @@ const TablaListProductos = ({ productos }) => {
             setFilterValue("");
         }
     }, []);
+
 
     const topContent = React.useMemo(() => {
         return (
@@ -148,25 +161,23 @@ const TablaListProductos = ({ productos }) => {
                             </div>
                         }
                     >
-                        <a href={"/productos/agregar"}>
-                            <Button
-                                className="bg-foreground text-background"
-                                // color="primary" 
-                                endContent={<PlusIcon />}
-                            >
-                                Crear Producto
-                            </Button>
-                        </a>
-                    </Tooltip>
-                    <a href={"/productos/update/stock"}>
                         <Button
                             className="bg-foreground text-background"
-                            // color="danger"
-                            endContent={<InventoryIcon />}
+                            // color="primary" 
+                            endContent={<PlusIcon />}
+                            onPress={() => irPaginaAgregarProducto()}
                         >
-                            Stock - Precio
+                            Crear Producto
                         </Button>
-                    </a>
+                    </Tooltip>
+                    <Button
+                        className="bg-foreground text-background"
+                        // color="danger"
+                        endContent={<InventoryIcon />}
+                        onPress={() => irPaginaStockPrecio()}
+                    >
+                        Stock - Precio
+                    </Button>
                     {/* <a href={"/productos/importar"}>
                         <Button
                             className="bg-foreground text-background"

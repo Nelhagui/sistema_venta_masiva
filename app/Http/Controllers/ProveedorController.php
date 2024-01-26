@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Proveedor;
+use App\Models\Comercio;
 
 class ProveedorController extends Controller
 {
@@ -68,5 +69,14 @@ class ProveedorController extends Controller
     public function destroy(Proveedor $proveedor)
     {
         //
+    }
+
+    //API
+    public function indexApi()
+    {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+        $proveedores = Comercio::find($id_comercio)->proveedores;
+        return $proveedores;
     }
 }

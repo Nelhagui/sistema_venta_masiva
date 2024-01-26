@@ -309,6 +309,13 @@ class ProductoController extends Controller
 
     }
 
+    public function stockPrecio()
+    {
+        $productos = Producto::all();
+        $proveedores = Proveedor::all();
+        $inversores = Inversor::all();
+        return view('productos.stockPrecio', compact('productos', 'proveedores', 'inversores'));
+    }
 
 
     //API
@@ -318,5 +325,113 @@ class ProductoController extends Controller
         $id_comercio = $user->comercio_id;
         $productos = Comercio::find($id_comercio)->productos;
         return $productos;
+    }
+
+    public function apiStockPrecio()
+    {
+        $productosSeleccionados = $request->productos;
+        $nuevosProductos = $request->nuevosProductos;
+        $datosCompra = $request->datosCompra;
+
+        // Convierte los datos a colecciones si no lo están
+        $coleccionProductos = collect($productosSeleccionados);
+        $coleccionNuevosProductos = collect($nuevosProductos);
+
+        // Fusiona las colecciones
+        $productos = $coleccionProductos->merge($coleccionNuevosProductos)->all();
+        $messages = [
+            'precio_venta.required' => 'El campo Precio de venta es obligatorio.',
+            'precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
+            'precio_costo.required' => 'El campo Precio de costo es obligatorio.',
+            'precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
+            'stock.required' => 'El campo Stock es obligatorio.',
+            'stock.numeric' => 'El campo Stock debe ser un valor numérico.',
+        ];
+
+        $rules = [
+            'productos.*.descripcion' => ['nullable', 'sometimes', 'string'],
+            'productos.*.precio_costo' => 'required|numeric',
+            'productos.*.precio_venta' => 'required|numeric',
+            'productos.*.stock' => 'required|numeric',
+            'productos.*.usar_control_por_lote' => 'required|boolean',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'errors' => $validator->errors()
+            ], 400); // Código HTTP 400 para peticiones incorrectas
+        }
+
+        $totalCompra = 0; // Variable para almacenar el total de la compra
+
+        // Iterar sobre los productos para calcular el costo total de la compra
+        foreach ($productos as $producto) {
+            $totalCompra += $producto['stock'] * $producto['precio_costo'];
+        }
+
+        $compra = new Compra;
+        $compra->fecha_compra = $datosCompra['fechaCompra'] ?? now();;
+        $compra->fecha_carga = date('Y-m-d H:i:s');
+        $compra->precio_total = $totalCompra;
+        $compra->numero_factura = $datosCompra['nroFactura'] ?? "";
+        $compra->proveedor_id = $datosCompra['proveedor'] ?? "";
+        $compra->save();
+
+
+        DB::transaction(function () use ($productos, $compra) {
+            foreach ($productos as $producto) {
+
+                if(isset($producto['id'])) {
+                    $productoDB = Producto::find($producto['id']);
+                } else {
+                    $productoDB = new Producto;
+                    $productoDB->titulo = $producto['titulo'];
+                    $productoDB->codigo_barra = $producto['codigo_barra'];
+                    $productoDB->save();
+                }
+                $productoDB->precio_venta = $producto['precio_venta'];
+                $productoDB->precio_costo = $producto['precio_costo'];
+                $productoDB->stock_actual = $productoDB->stock_actual + $producto['stock'];
+                $productoDB->usar_control_por_lote = $producto['usar_control_por_lote'] == "on" ? 1 : 0;
+                $productoDB->update();
+
+                if ($producto['usar_control_por_lote']) {
+                    $newLoteProducto = new Lote;
+                    $newLoteProducto->producto_id = $productoDB->id;
+                    $newLoteProducto->compra_id = $compra->id;
+                    $newLoteProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
+                    $newLoteProducto->precio_costo = $producto['precio_costo'];
+                    $newLoteProducto->precio_venta = $producto['precio_venta'];
+                    $newLoteProducto->precio_dolar = $producto['precio_dolar'] ?? null;
+                    $newLoteProducto->cantidad_inicial = $producto['stock'];
+                    $newLoteProducto->cantidad_restante = $producto['stock'];
+                    $newLoteProducto->save();
+
+                }
+
+                if(isset($producto['inversor_id'])) {
+                    $inversorProducto = new InversorProducto;
+                    $inversorProducto->model()->associate($productoDB);
+                    $inversorProducto->cantidad_producto_invertido = $producto['stock'];
+                    $inversorProducto->inversor_id = $producto['inversor_id'];
+                    $inversorProducto->save();
+                }
+
+                $detalleCompra = new CompraDetalle;
+                $detalleCompra->compra_id = $compra->id;
+                $detalleCompra->producto_id = $productoDB->id;
+                $detalleCompra->precio_unitario = $producto['precio_costo'];
+                $detalleCompra->cantidad = $producto['stock'];
+                $detalleCompra->precio_total = $compra->precio_total;
+                $detalleCompra->save();
+
+
+            }
+        });
+
+        return response()->json(['status' => 'success', 'message' => 'Productos insertados con éxito.']);
     }
 }

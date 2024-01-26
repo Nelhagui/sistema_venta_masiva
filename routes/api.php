@@ -38,17 +38,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/productos-base/busqueda/{busqueda}', [ProductoController::class, 'busquedaProductosBase']);
 Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busqueda']);
- 
 
-Route::get('/proveedores', function () {
-    $proveedores = Proveedor::all();
-    return $proveedores;
-});
-
-Route::get('/inversores', function () {
-    $inversores = Inversor::all();
-    return $inversores;
-});
 
 Route::post('/productos/base/agregar', [ProductoController::class, 'storeDesdeBase']);
 Route::post('/productos/actualizar/stock', [ProductoController::class, 'updateStockProductos']);
@@ -58,9 +48,6 @@ Route::get('/compras', function () {
     $compras = Compra::with('proveedor')->get();
     return $compras;
 });
-
-Route::post('/compras/agregar', [CompraController::class, 'store']);
-
 
 
 Route::middleware('auth')->group(function () {
@@ -73,6 +60,7 @@ Route::middleware('auth')->group(function () {
 
     // PRODUCTOS
     Route::get('/productos', [ProductoController::class, 'indexApi']);
+    Route::post('/productos/stock-precio', [ProductoController::class, 'apiStockPrecio']);
 
     // METODOS DE PAGO
     Route::get('/metodos-pago', [MetodoPagoController::class, 'indexApi']);
@@ -81,5 +69,17 @@ Route::middleware('auth')->group(function () {
     Route::prefix('ventas')->group(function () {
         Route::post('/', [VentaController::class, 'indexApi']);
         Route::post('/crear', [VentaController::class, 'storeApi']);
+    });
+
+    // PROVEEDORES
+    Route::get('/proveedores', function () {
+        $proveedores = Proveedor::all();
+        return $proveedores;
+    });
+
+    // INVERSORES
+    Route::get('/inversores', function () {
+        $inversores = Inversor::all();
+        return $inversores;
     });
 });

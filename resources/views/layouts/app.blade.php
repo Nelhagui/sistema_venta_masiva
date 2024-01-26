@@ -15,7 +15,6 @@
     @vite('resources/js/components/reportes/MainReportes.jsx')
     @vite('resources/js/components/productos/MainProductos.jsx')
     @vite('resources/js/components/productos_base/MainProductosBase.jsx')
-    @vite('resources/js/components/compras/MainCompras.jsx')
     @vite('resources/js/components/ventas/MainVentas.jsx')
     @vite('resources/js/components/clientes/MainClientes.jsx')
     @vite('resources/js/components/clientes/ver/MainDetalleCliente.jsx')
@@ -25,6 +24,7 @@
     @vite('resources/js/components/icons/SearchIcon.jsx')
     @vite('resources/js/components/icons/VerticalDotsIcon.jsx')
     @vite('resources/js/components/productos_stock/MainProductosActualizarStock.jsx')
+    @vite('resources/js/components/productos/stock_precio/StockPrecio.jsx')
 </head>
 
 <body class="font-sans antialiased">

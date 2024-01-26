@@ -43,19 +43,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware('verified')->group(function () {
+
         //PRODUCTOS
-        Route::get('/productos', [ProductoController::class, 'index'])->name('index.productos');
-        Route::get('/productos/agregar', [ProductoController::class, 'create'])->name('create.productos');
-        Route::post('/productos/agregar', [ProductoController::class, 'store'])->name('store.productos');
-        Route::get('/productos/editar/{id}', [ProductoController::class, 'edit'])->name('edit.productos');
-        Route::post('/productos/editar/{id}', [ProductoController::class, 'update'])->name('update.productos');
-        Route::get('/productos/update/stock', [ProductoController::class, 'createStock'])->name('create.productosStock');
-        Route::get('productos/actualizar-stock', [ProductoController::class, 'actualizarStock'])->name('create.actualizarStock');
-        Route::get('productos/importar', [ProductoController::class, 'updateFileView'])->name('create.productos.fileUpdate');
+        Route::prefix('productos')->group(function () {
+            Route::get('/', [ProductoController::class, 'index'])->name('index.productos');
+            Route::get('/agregar', [ProductoController::class, 'create'])->name('create.productos');
+            Route::post('/agregar', [ProductoController::class, 'store'])->name('store.productos');
+            Route::get('/editar/{id}', [ProductoController::class, 'edit'])->name('edit.productos');
+            Route::post('/editar/{id}', [ProductoController::class, 'update'])->name('update.productos');
+            // Route::get('/update/stock', [ProductoController::class, 'createStock'])->name('create.productosStock');
+            // Route::get('/actualizar-stock', [ProductoController::class, 'actualizarStock'])->name('create.actualizarStock');
+            Route::get('/importar', [ProductoController::class, 'updateFileView'])->name('create.productos.fileUpdate');
+            Route::get('/stock-precio', [ProductoController::class, 'stockPrecio'])->name('create.stockPrecio');
+        });
 
 
         //PRODUCTOS BASE
-        Route::get('/productos/base', [ProductoController::class, 'indexProductosBase'])->name('index.productosBase');
+        // Route::get('/productos/base', [ProductoController::class, 'indexProductosBase'])->name('index.productosBase');
 
 
         //COMPRAS

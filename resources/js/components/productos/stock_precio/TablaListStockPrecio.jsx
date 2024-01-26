@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { capitalizeFirstLetterOfEachWord } from '../../utils/capitalizeFirstLetterOfEachWord';
-import { debounce } from '../../utils/debounce';
+import { capitalizeFirstLetterOfEachWord } from '../../../utils/capitalizeFirstLetterOfEachWord';
+import { debounce } from '../../../utils/debounce';
 import { Input, Select, SelectItem, Checkbox, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
-import { SearchIcon } from '../icons/SearchIcon';
+import { SearchIcon } from '../../icons/SearchIcon';
 
 // Estilo de resaltado
 const highlightedStyle = {
@@ -10,16 +10,14 @@ const highlightedStyle = {
     transition: 'background-color 2s ease', // Animación de transición
 };
 
-const TablaListCompras = () => {
-    const [productosIniciales, setProductosIniciales] = useState([])
+const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
+    const [productosIniciales, setProductosIniciales] = useState(productos)
     const productosInicialesRef = useRef([]);
 
     useEffect(() => {
         productosInicialesRef.current = productosIniciales;
     }, [productosIniciales]);
 
-    const [proveedores, setProveedores] = useState([])
-    const [inversores, setInversores] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [isLoadingProveedores, setIsLoadingProveedores] = useState(true)
     const [inputText, setInputText] = useState('');
@@ -72,55 +70,6 @@ const TablaListCompras = () => {
         if (inputRef.current) {
             focusInput();
         }
-
-        fetch('/api/proveedores')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setProveedores(data);
-            })
-            .finally(() => {
-                setIsLoadingProveedores(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-
-        fetch('/api/productos')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setProductosIniciales(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            })
-
-        fetch('/api/inversores')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setInversores(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            })
-
     }, []);
 
 
@@ -671,4 +620,4 @@ styles.productosListWithBorder = {
     border: '1px solid #ccc',
 };
 
-export default TablaListCompras
+export default TablaListStockPrecio

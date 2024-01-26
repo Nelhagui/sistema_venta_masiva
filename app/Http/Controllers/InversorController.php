@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inversor;
+use App\Models\Comercio;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreInversorRequest;
 use App\Http\Requests\UpdateInversorRequest;
@@ -74,5 +75,14 @@ class InversorController extends Controller
     public function destroy(Inversor $inversor)
     {
         //
+    }
+
+    //API
+    public function indexApi()
+    {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+        $inversores = Comercio::find($id_comercio)->inversores;
+        return $inversores;
     }
 }

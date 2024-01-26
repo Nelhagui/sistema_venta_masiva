@@ -1,30 +1,29 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import TablaListProductos from './TablaListProductos';
+import productoServices from '../../services/productoServices';
 
 export default function MainProductos() {
     const [productos, setProductos] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+
     useEffect(() => {
-        // Realizar la solicitud GET a la API de productos
-        fetch('/api/productos')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setProductos(data);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
+        fetchProductos()
     }, []);
+
+    const fetchProductos = async () => {
+        setIsLoading(true);
+        try {
+            const productosResponse = await productoServices.traerLista();
+            setProductos(productosResponse);
+            console.log(productosResponse)
+        } catch (error) {
+            // Maneja el error si la creación de la venta falla
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
         <>
             {
