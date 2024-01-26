@@ -3,7 +3,6 @@ const productoServices = {
     traerLista: async () => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const url = endpoints.productos.lista;
-
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -13,7 +12,6 @@ const productoServices = {
                 'X-CSRF-TOKEN': csrfToken
             }
         };
-
         try {
             const response = await fetch(url, requestOptions);
             if (!response.ok) {
@@ -28,7 +26,6 @@ const productoServices = {
     detalleCliente: async (cliente_id) => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const url = `${endpoints.clientes.detalle}/${cliente_id}`;
-
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -38,7 +35,6 @@ const productoServices = {
                 'X-CSRF-TOKEN': csrfToken
             }
         };
-
         try {
             const response = await fetch(url, requestOptions);
             if (!response.ok) {

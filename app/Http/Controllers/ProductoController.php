@@ -327,7 +327,7 @@ class ProductoController extends Controller
         return $productos;
     }
 
-    public function apiStockPrecio()
+    public function apiStockPrecio(Request $request)
     {
         $productosSeleccionados = $request->productos;
         $nuevosProductos = $request->nuevosProductos;

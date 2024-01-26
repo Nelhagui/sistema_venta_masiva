@@ -2,56 +2,59 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import ListProductos from './ListProductos';
 import { LectorContextProvider } from '../../context/LectorContext';
+import metodoPagoServices from '../../services/metodoPagoServices';
+import clienteServices from '../../services/clienteServices';
+import productoServices from '../../services/productoServices';
 
 export default function MainLector() {
     const [productos, setProductos] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
     const [metodosDePago, setMetodosDePago] = useState([])
     const [clientes, setClientes] = useState([])
-    useEffect(() => {
-        // Realizar la solicitud GET a la API de productos
-        fetch('/api/productos')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setProductos(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
 
-        fetch('/api/metodos-pago')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setMetodosDePago(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-        fetch('/api/clientes')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setClientes(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
+    const fetchMetodosDePago = async () => {
+        setIsLoading(true);
+        try {
+            const response = await metodoPagoServices.traerLista(); // Agrega paréntesis para invocar la función
+            setMetodosDePago(response); // Establece el estado con los datos de la respuesta
+        } catch (error) {
+            // Maneja el error de alguna manera, por ejemplo, mostrando un mensaje de error al usuario
+            console.error('Error al obtener la lista de métodos de pago:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchListaClientes = async () => {
+        setIsLoading(true);
+        try {
+            const response = await clienteServices.traerLista(); // Agrega paréntesis para invocar la función
+            setClientes(response); // Establece el estado con los datos de la respuesta
+        } catch (error) {
+            // Maneja el error de alguna manera, por ejemplo, mostrando un mensaje de error al usuario
+            console.error('Error al obtener la lista de métodos de pago:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchListaProductos = async () => {
+        setIsLoading(true);
+        try {
+            const response = await productoServices.traerLista();
+            setProductos(response)
+        } catch (error) {
+            // Maneja el error si la creación de la venta falla
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    useEffect(() => {
+        fetchMetodosDePago()
+        fetchListaClientes()
+        fetchListaProductos()
     }, []);
 
     return (

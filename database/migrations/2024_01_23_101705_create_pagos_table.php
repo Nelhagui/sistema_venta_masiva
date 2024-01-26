@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('venta_id');
             $table->foreign('venta_id')->references('id')->on('ventas');
+            $table->string('metodos_de_pago');
             $table->date('fecha_pago');
             $table->decimal('monto_pagado', 10, 2);
             $table->timestamps();

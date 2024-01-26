@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
+use App\Models\Pago;
+use App\Models\Venta;
 use Illuminate\Http\Request;
 use App\Models\Cliente;
 use App\Models\Comercio;
@@ -101,8 +104,69 @@ class ClienteController extends Controller
             ->where('comercio_id', $user->comercio_id)
             ->first();
         $deudas = $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with('pagos')->get();
+        $ventas = $cliente->ventas()->with('pagos')->get();
+        
         $cliente->deudas = $deudas;
+        $cliente->ventas = $ventas;
         return $cliente;
+    }
+
+    public function saldarDeudaApi(Request $request)
+    {
+        DB::beginTransaction();
+
+        try {
+            $user = Auth::user();
+            $cliente = Cliente::where('id', $request->cliente)
+                ->where('comercio_id', $user->comercio_id)
+                ->first();
+            if (isset($cliente)) {
+                $ventasRequest = collect($request->deudas);
+                $arrayIdsVentas = $ventasRequest->pluck('id')->toArray();
+
+                $ventas = Venta::whereIn('id', $arrayIdsVentas)
+                    ->with('pagos')
+                    ->where('comercio_id', $user->comercio_id)
+                    ->get();
+
+                // CREO LOS PAGOS PARA LAS VENTAS CON COBRO PENDIENTES
+                foreach ($ventas as $venta) {
+                    $valor_total_venta = $venta->monto_total_venta;
+                    $total_pagos_parciales = 0;
+                    foreach ($venta->pagos as $pago) {
+                        $total_pagos_parciales = $total_pagos_parciales + $pago->monto_pagado;
+                    }
+                    $resta_abonar = $valor_total_venta - $total_pagos_parciales;
+
+                    $pago = new Pago;
+                    $pago->venta_id = $venta->id;
+                    $pago->fecha_pago = now();
+                    $pago->monto_pagado = $resta_abonar;
+                    $venta->metodos_de_pago = $request->metodoPago;
+                    $pago->save();
+
+                    $ventaDb = Venta::find($venta->id);
+                    $ventaDb->estado_pago = Venta::COBRADA;
+                    $ventaDb->update();
+                }
+            } else {
+                return response()->json(['error' => 'Ocurrió un error al procesar la solicitud'], 500);
+            }
+
+            
+            DB::commit();
+            
+            return [
+                "deudas" => $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with('pagos')->get(),
+                "ventas" => $cliente->ventas()->with('pagos')->get(),
+            ];
+
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            return response()->json(['error' => 'Ocurrió un error al procesar la solicitud'], 500);
+
+        }
     }
 
 }

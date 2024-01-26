@@ -8,6 +8,7 @@ export const endpoints = {
     clientes: {
         lista: `${API_BASE_URL}/clientes`,
         detalle: `${API_BASE_URL}/clientes/detalle`,
+        saldarDeudas: `${API_BASE_URL}/clientes/deudas/saldar`,
     },
     productos: {
         lista: `${API_BASE_URL}/productos`,
@@ -18,6 +19,9 @@ export const endpoints = {
     },
     inversores: {
         lista: `${API_BASE_URL}/inversores`,
+    },
+    metodosDePago: {
+        lista: `${API_BASE_URL}/metodos-pago`,
     },
 };
 
