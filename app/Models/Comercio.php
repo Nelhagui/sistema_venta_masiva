@@ -9,6 +9,11 @@ class Comercio extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nombre',
+        'email'
+    ];
+
     public function clientes()
     {
         return $this->hasMany(Cliente::class);
@@ -50,5 +55,10 @@ class Comercio extends Model
     public function usuarios()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function sesionesCaja()
+    {
+        return $this->hasMany(SesionCaja::class);
     }
 }

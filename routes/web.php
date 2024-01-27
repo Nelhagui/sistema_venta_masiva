@@ -99,7 +99,7 @@ Route::middleware('auth')->group(function () {
         // GASTOS
         Route::get('/gastos', [SesionCajaController::class, 'index'])->name('index.gastos');
 
-        // MOVIMIENTOS 
+        // MOVIMIENTOS revisado user
         Route::middleware('checksesion')->group(function () { //todos los movimientos de caja tiene que validar antes que esté en una sesion caja
             Route::get('/caja/cargar-ingreso', [CajaMovimientoController::class, 'createIngreso'])->name('create.ingresoCaja');
             Route::post('/caja/cargar-ingreso/{sesionCajaId}', [CajaMovimientoController::class, 'agregarDinero'])->name('store.ingresoCaja');
@@ -107,7 +107,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/caja/cargar-egreso/{sesionCajaId}', [CajaMovimientoController::class, 'retirarDinero'])->name('store.egresoCaja');
         });
 
-        //LECTOR
+        //LECTOR revisado user
         Route::get('/lector', [LectorController::class, 'index'])->name('index.lector')->middleware('checksesion');
 
         // LOTES

@@ -11,9 +11,16 @@
 
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+
+            <div class="sm:col-span-3">
+                <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Correo Electrónico</label>
+                <div class="mt-2">
+                    <input type="email" name="email" id="email"
+                        value="{{ old('email') }}" required autofocus
+                        class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                </div>
+            </div>
         </div>
 
         <div class="flex items-center justify-end mt-4">

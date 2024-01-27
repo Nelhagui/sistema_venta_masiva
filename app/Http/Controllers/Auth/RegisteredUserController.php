@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comercio;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -31,13 +32,20 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'comercio' => ['required', 'string', 'max:255'],
+            'nombre' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $comercio = Comercio::create([
+            'nombre' => $request->comercio,
+            'email' => $request->email,
+        ]);
+
         $user = User::create([
-            'name' => $request->name,
+            'comercio_id' => $comercio->id,
+            'nombre' => $request->nombre,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);

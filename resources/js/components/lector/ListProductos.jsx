@@ -46,6 +46,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 
     const handleConfirmVenta = () => {
         handleSubmit();
+        console.log('metodo seleccionado', metodoPagoSeleccionado);
     };
 
     console.log(metodosDePago)
@@ -80,6 +81,17 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             inputRef.current.select(); // Seleccionar todo el contenido del input
         }
     };
+
+    useEffect(() => {
+        if(metodosDePago.length > 0){
+            metodosDePago.forEach(metodo => {
+                if(metodo.predeterminado){
+                    setMetodoPagoSeleccionado(metodo.id)
+                }
+            });
+        }
+    }, [metodosDePago])
+
 
     const handleSelectionChange = (e) => {
         setMetodoPagoSeleccionado(e.target.value);
