@@ -9,11 +9,13 @@
     <title>{{ config('app.name', 'RapidoVentas') }}</title>
     
     @vite('resources/css/app.css')
+    @vite('resources/css/dashboard.css')
     @viteReactRefresh
     @vite('resources/js/app.js')
     @vite('resources/js/components/lector/MainLector.jsx')
     @vite('resources/js/components/reportes/MainReportes.jsx')
     @vite('resources/js/components/productos/MainProductos.jsx')
+    @vite('resources/js/components/productos/importar/MainImportarProductos.jsx')
     @vite('resources/js/components/productos_base/MainProductosBase.jsx')
     @vite('resources/js/components/ventas/MainVentas.jsx')
     @vite('resources/js/components/clientes/MainClientes.jsx')

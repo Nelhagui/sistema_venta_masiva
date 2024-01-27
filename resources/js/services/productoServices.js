@@ -23,18 +23,23 @@ const productoServices = {
             throw error;
         }
     },
-    detalleCliente: async (cliente_id) => {
+    uploadExcel: async (file) => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const url = `${endpoints.clientes.detalle}/${cliente_id}`;
+        const url = `${endpoints.productos.subirExcel}`;
+        const formData = new FormData();
+        
+        // Agrega el archivo al formData
+        formData.append('file', file);
+    
         const requestOptions = {
-            method: 'GET',
+            method: 'POST', 
             headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Referer': window.location.origin,
-                'X-CSRF-TOKEN': csrfToken
-            }
+                'X-CSRF-TOKEN': csrfToken,
+                'Referer': window.location.origin
+            },
+            body: formData
         };
+    
         try {
             const response = await fetch(url, requestOptions);
             if (!response.ok) {

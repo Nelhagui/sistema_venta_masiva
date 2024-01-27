@@ -13,6 +13,7 @@ export const endpoints = {
     productos: {
         lista: `${API_BASE_URL}/productos`,
         crear: `${API_BASE_URL}/productos`,
+        subirExcel: `${API_BASE_URL}/productos/subir/archivo`,
     },
     proveedores: {
         lista: `${API_BASE_URL}/proveedores`,
@@ -39,6 +40,7 @@ export const urls = {
         editar: `${BASE_URL}/productos/editar`,
         importar: `${BASE_URL}/productos/importar`,
         stockPrecio: `${BASE_URL}/productos/stock-precio`,
+        importarArchivo: `${BASE_URL}/productos/importar`
     }
 };
 

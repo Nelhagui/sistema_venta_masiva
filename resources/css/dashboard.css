@@ -1,0 +1,24 @@
+.text-descripcion {
+    color: #0000008c;
+    line-height: 21px; 
+    font-weight: 300;
+}
+.text-instructivo {
+    color: #0000008c;
+    line-height: 23px; 
+    font-weight: 300;
+    font-size: 18px;
+}
+.text-instructivo-strong {
+    font-weight: 600;
+    font-style: italic;
+}
+.titulo-seccion {
+    font-size: 32px;
+    font-weight: 600;
+    color: #000000cc;
+    font-family: Helvetica, sans-serif;
+}
+.bg-personalizado {
+    background-color: #6f7cf2;
+}

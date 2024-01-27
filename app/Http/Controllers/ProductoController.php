@@ -434,4 +434,9 @@ class ProductoController extends Controller
 
         return response()->json(['status' => 'success', 'message' => 'Productos insertados con éxito.']);
     }
+
+    public function apiSubirExcel(Request $request)
+    {
+        dd($request);
+    }
 }

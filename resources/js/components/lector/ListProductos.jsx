@@ -46,10 +46,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 
     const handleConfirmVenta = () => {
         handleSubmit();
-        console.log('metodo seleccionado', metodoPagoSeleccionado);
     };
-
-    console.log(metodosDePago)
 
     const handleSubmit = async () => {
         setIsLoading(true);
@@ -83,7 +80,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
     };
 
     useEffect(() => {
-        if(metodosDePago.length > 0){
+        if(metodosDePago.length > 0) {
             metodosDePago.forEach(metodo => {
                 if(metodo.predeterminado){
                     setMetodoPagoSeleccionado(metodo.id)
@@ -91,7 +88,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             });
         }
     }, [metodosDePago])
-
 
     const handleSelectionChange = (e) => {
         setMetodoPagoSeleccionado(e.target.value);
@@ -171,10 +167,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         setClienteSeleccionado(id);
         setEstadoDelPago("3")
     };
-
-    useEffect(() => {
-        console.log('estado pago:', estadoDelPago)
-    }, [estadoDelPago])
 
     const handleSelectionChangeEstadoPago = (e) => {
         setEstadoDelPago(e.target.value);
@@ -364,9 +356,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                 </ModalContent>
             </Modal>
             {/* FIN MODAL */}
-
-
-
             {
                 productosSeleccionados.length > 0
                     ?
@@ -394,7 +383,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                                 className="max-w-xs"
                                 size='sm'
                                 onChange={handleSelectionChange}
-                                defaultSelectedKeys={["1"]}
+                                defaultSelectedKeys={[`${metodoPagoSeleccionado}`]}
                             >
                                 {metodosDePago.map((metodo) => (
                                     <SelectItem key={metodo.id} value={metodo.id}>
