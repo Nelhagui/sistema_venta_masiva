@@ -13,6 +13,7 @@ export const endpoints = {
     productos: {
         lista: `${API_BASE_URL}/productos`,
         crear: `${API_BASE_URL}/productos`,
+        stockPrecio: `${API_BASE_URL}/productos/stock-precio`
     },
     proveedores: {
         lista: `${API_BASE_URL}/proveedores`,

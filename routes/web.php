@@ -59,7 +59,7 @@ Route::middleware('auth')->group(function () {
 
 
         //PRODUCTOS BASE
-        // Route::get('/productos/base', [ProductoController::class, 'indexProductosBase'])->name('index.productosBase');
+        Route::get('/productos/base', [ProductoController::class, 'indexProductosBase'])->name('index.productosBase');
 
 
         //COMPRAS
