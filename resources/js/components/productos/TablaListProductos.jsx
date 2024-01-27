@@ -17,10 +17,10 @@ import {
 } from "@nextui-org/react";
 import { SearchIcon } from '../icons/SearchIcon';
 import { VerticalDotsIcon } from '../icons/VerticalDotsIcon';
-import { PlusIcon } from '../icons/PlusIcon';
 import { InventoryIcon } from '../icons/InventoryIcon';
 import { UploadFileIcon } from '../icons/UploadFileIcon';
 import { urls } from '../../config/config';
+import { PlusIcon } from '../icons/PlusIcon';
 
 const columns = [
     {

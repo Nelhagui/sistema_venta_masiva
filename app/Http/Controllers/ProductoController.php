@@ -13,6 +13,8 @@ use App\Models\ProductosBase;
 use App\Models\Proveedor;
 use App\Models\Inversor;
 use App\Models\InversorProducto;
+use App\Models\Compra;
+use App\Models\CompraDetalle;
 
 class ProductoController extends Controller
 {
@@ -329,6 +331,8 @@ class ProductoController extends Controller
 
     public function apiStockPrecio(Request $request)
     {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
         $productosSeleccionados = $request->productos;
         $nuevosProductos = $request->nuevosProductos;
         $datosCompra = $request->datosCompra;
@@ -344,15 +348,15 @@ class ProductoController extends Controller
             'precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
             'precio_costo.required' => 'El campo Precio de costo es obligatorio.',
             'precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
-            'stock.required' => 'El campo Stock es obligatorio.',
-            'stock.numeric' => 'El campo Stock debe ser un valor numérico.',
+            'stock_actual.required' => 'El campo Stock es obligatorio.',
+            'stock_actual.numeric' => 'El campo Stock debe ser un valor numérico.',
         ];
 
         $rules = [
             'productos.*.descripcion' => ['nullable', 'sometimes', 'string'],
             'productos.*.precio_costo' => 'required|numeric',
             'productos.*.precio_venta' => 'required|numeric',
-            'productos.*.stock' => 'required|numeric',
+            'productos.*.stock_actual' => 'required|numeric',
             'productos.*.usar_control_por_lote' => 'required|boolean',
         ];
 
@@ -369,7 +373,7 @@ class ProductoController extends Controller
 
         // Iterar sobre los productos para calcular el costo total de la compra
         foreach ($productos as $producto) {
-            $totalCompra += $producto['stock'] * $producto['precio_costo'];
+            $totalCompra += $producto['stock_actual'] * $producto['precio_costo'];
         }
 
         $compra = new Compra;
@@ -378,6 +382,7 @@ class ProductoController extends Controller
         $compra->precio_total = $totalCompra;
         $compra->numero_factura = $datosCompra['nroFactura'] ?? "";
         $compra->proveedor_id = $datosCompra['proveedor'] ?? "";
+        $compra->comercio_id = $id_comercio;
         $compra->save();
 
 
@@ -390,11 +395,12 @@ class ProductoController extends Controller
                     $productoDB = new Producto;
                     $productoDB->titulo = $producto['titulo'];
                     $productoDB->codigo_barra = $producto['codigo_barra'];
+                    $productoDB->comercio_id = $id_comercio;
                     $productoDB->save();
                 }
                 $productoDB->precio_venta = $producto['precio_venta'];
                 $productoDB->precio_costo = $producto['precio_costo'];
-                $productoDB->stock_actual = $productoDB->stock_actual + $producto['stock'];
+                $productoDB->stock_actual = $productoDB->stock_actual + $producto['stock_actual'];
                 $productoDB->usar_control_por_lote = $producto['usar_control_por_lote'] == "on" ? 1 : 0;
                 $productoDB->update();
 
@@ -406,8 +412,8 @@ class ProductoController extends Controller
                     $newLoteProducto->precio_costo = $producto['precio_costo'];
                     $newLoteProducto->precio_venta = $producto['precio_venta'];
                     $newLoteProducto->precio_dolar = $producto['precio_dolar'] ?? null;
-                    $newLoteProducto->cantidad_inicial = $producto['stock'];
-                    $newLoteProducto->cantidad_restante = $producto['stock'];
+                    $newLoteProducto->cantidad_inicial = $producto['stock_actual'];
+                    $newLoteProducto->cantidad_restante = $producto['stock_actual'];
                     $newLoteProducto->save();
 
                 }
@@ -415,7 +421,7 @@ class ProductoController extends Controller
                 if(isset($producto['inversor_id'])) {
                     $inversorProducto = new InversorProducto;
                     $inversorProducto->model()->associate($productoDB);
-                    $inversorProducto->cantidad_producto_invertido = $producto['stock'];
+                    $inversorProducto->cantidad_producto_invertido = $producto['stock_actual'];
                     $inversorProducto->inversor_id = $producto['inversor_id'];
                     $inversorProducto->save();
                 }
@@ -424,10 +430,9 @@ class ProductoController extends Controller
                 $detalleCompra->compra_id = $compra->id;
                 $detalleCompra->producto_id = $productoDB->id;
                 $detalleCompra->precio_unitario = $producto['precio_costo'];
-                $detalleCompra->cantidad = $producto['stock'];
+                $detalleCompra->cantidad = $producto['stock_actual'];
                 $detalleCompra->precio_total = $compra->precio_total;
                 $detalleCompra->save();
-
 
             }
         });

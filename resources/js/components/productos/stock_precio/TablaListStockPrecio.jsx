@@ -3,12 +3,50 @@ import { capitalizeFirstLetterOfEachWord } from '../../../utils/capitalizeFirstL
 import { debounce } from '../../../utils/debounce';
 import { Input, Select, SelectItem, Checkbox, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
 import { SearchIcon } from '../../icons/SearchIcon';
+import productoServices from '../../../services/productoServices';
+import { toast } from 'react-toastify';
 
 // Estilo de resaltado
 const highlightedStyle = {
     backgroundColor: 'green',
     transition: 'background-color 2s ease', // Animación de transición
 };
+
+
+const columns = [
+    {
+        key: "name",
+        label: "TÍTULO",
+    },
+    {
+        key: "codigo_barra",
+        label: "CÓDIGO BARRA",
+    },
+    {
+        key: "precio_costo",
+        label: "PRECIO COSTO",
+    },
+    {
+        key: "precio_venta",
+        label: "PRECIO VENTA",
+    },
+    {
+        key: "stock_actual",
+        label: "STOCK",
+    },
+    {
+        key: "control_por_lote",
+        label: "CONTROL POR LOTE",
+    },
+    {
+        key: "fecha_vencimiento",
+        label: "FECHA VENCIMIENTO",
+    },
+    {
+        key: "inversor",
+        label: "INVERSOR",
+    },
+];
 
 const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const [productosIniciales, setProductosIniciales] = useState(productos)
@@ -19,7 +57,6 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     }, [productosIniciales]);
 
     const [isLoading, setIsLoading] = useState(false)
-    const [isLoadingProveedores, setIsLoadingProveedores] = useState(true)
     const [inputText, setInputText] = useState('');
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
@@ -30,41 +67,6 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
         proveedor: "",
         nroFactura: ""
     })
-
-    const columns = [
-        {
-            key: "name",
-            label: "TÍTULO",
-        },
-        {
-            key: "codigo_barra",
-            label: "CÓDIGO BARRA",
-        },
-        {
-            key: "precio_costo",
-            label: "PRECIO COSTO",
-        },
-        {
-            key: "precio_venta",
-            label: "PRECIO VENTA",
-        },
-        {
-            key: "stock",
-            label: "STOCK",
-        },
-        {
-            key: "control_por_lote",
-            label: "CONTROL POR LOTE",
-        },
-        {
-            key: "fecha_vencimiento",
-            label: "FECHA VENCIMIENTO",
-        },
-        {
-            key: "inversor",
-            label: "INVERSOR",
-        },
-    ];
 
     useEffect(() => {
         if (inputRef.current) {
@@ -98,6 +100,8 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const handleChangeDatosCompra = (e) => {
         const { name, value } = e.target
         setDatosCompra({ ...datosCompra, [name]: value })
+        console.log(datosCompra)
+
     }
 
     const realizarBusqueda = (textoBusqueda) => {
@@ -146,7 +150,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                     if (p.titulo === productoExistente.titulo) {
                         return {
                             ...p,
-                            stock: p.stock + 1,
+                            stock_actual: p.stock_actual + 1,
                             highlighted: true
                         };
                     }
@@ -156,7 +160,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                 let newProducto = {
                     ...producto,
                     highlighted: true,
-                    stock: 1,
+                    stock_actual: 1,
                     precio_costo: 99999,
                     precio_venta: 99999,
                     usar_control_por_lote: false,
@@ -189,21 +193,14 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
         reset();
     };
 
-    const handleInputChangeProducto = (titulo, campo, valor) => {
+    const handleInputChangeProducto = (productoId, campo, valor) => {
         setProductosSeleccionados(prevProductos => {
             return prevProductos.map(producto => {
-                if (producto.titulo === titulo) {
+                if (producto.id === productoId) {
                     let updatedProducto = {
                         ...producto,
-                        [campo]: valor
+                        [campo]: valor 
                     };
-
-                    // Si usar_control_por_lote se desactiva, borramos fecha_vencimiento
-                    if (campo === 'usar_control_por_lote' && !valor) {
-                        updatedProducto.fecha_vencimiento = '';
-                        updatedProducto.proveedor_id = '';
-                        updatedProducto.numero_factura = '';
-                    }
 
                     // Si el campo que se está modificando es "precio_costo", actualizamos "precio_venta"
                     if (campo === 'precio_costo') {
@@ -217,75 +214,63 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                 return producto;
             });
         });
-    };
+    }
 
-    const handleInputChangeNuevoProducto = (index, campo, valor) => {
-        console.log(nuevosProductos)
-        console.log(index)
-        console.log(campo)
-        console.log(valor)
+    const handleInputChangeNuevoProducto = (productoTitulo, campo, valor) => {
+
         setNuevosProductos(prevProductos => {
-            return prevProductos.map((producto, i) => {
-                // Si el índice coincide con el índice actual del producto en el array
-                if (i === index) {
-                    // Actualiza solo el campo específico para ese producto
-                    return {
+            return prevProductos.map(producto => {
+                if (producto.titulo === productoTitulo) {
+                    let updatedProducto = {
                         ...producto,
-                        [campo]: valor
+                        [campo]: valor 
                     };
+
+                    // Si el campo que se está modificando es "precio_costo", actualizamos "precio_venta"
+                    if (campo === 'precio_costo') {
+                        const porcentaje = 1.50; // Aumentamos en un 10%
+                        const nuevoPrecio = valor * porcentaje;
+                        updatedProducto.precio_venta = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
+                    }
+
+                    return updatedProducto;
                 }
-                // Si no es el producto actual, devuelve el producto sin cambios
                 return producto;
             });
         });
+
+        console.log(nuevosProductos)
+
     };
 
 
-    const changeSubmit = () => {
-        console.log(productosSeleccionados);
-        fetch('/api/compras/agregar', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-                productos: productosSeleccionados,
-                datosCompra: datosCompra,
-                nuevosProductos: nuevosProductos
-            }),
-        })
-            .then(response => {
-                if (response.status === 422) {
-                    return response.json().then(err => {
-                        throw err;
-                    });
-                }
+    const handleConfirmCompra = () => {
+        handleSubmit();
+    };
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
 
-                return response.json();
-            })
-            .then(data => {
-                // Código para manejar la respuesta exitosa
-                reset();
-                setProductosSeleccionados([]);
-                alert('Todo guardado correctamente');
-            })
-            .catch(error => {
-                if (error.errors) {
-                    // Aquí puedes manejar los errores de validación
-                    console.error('Errores de validación:', error.errors);
-                } else {
-                    console.error('Error fetching data:', error.message);
-                }
-            })
-            .finally(() => {
-                setIsLoading(false);
+    const handleSubmit = async () => {
+        setIsLoading(true);
+        try {
+            await productoServices.cargarCompra(productosSeleccionados, datosCompra, nuevosProductos);
+        } catch (error) {
+            // Maneja el error si la creación de la compra falla
+        } finally {
+            setIsLoading(false);
+            toast.success('Compra realizada con éxito', {
+                position: "bottom-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
             });
-    }
+            setProductosSeleccionados([]);
+
+        }
+    };
 
     const agregarProductoNuevo = () => {
 
@@ -296,7 +281,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
             codigo_barra: '',
             precio_costo: '',
             precio_venta: '',
-            stock: '',
+            stock_actual: '',
             usar_control_por_lote: false,
             fecha_vencimiento: '',
             inversor_id: '',
@@ -312,8 +297,8 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
         <>
             {/* BUSCADOR */}
             <div style={styles.listContainer}>
-                <div className='flex justify-between'>
-                    <div>
+                <div className='flex justify-between my-auto'>
+                    <div className='flex gap-4'>
                         <Input
                             isClearable
                             variant="bordered"
@@ -327,10 +312,12 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                             style={{ minWidth: '450px' }}
                         />
                         {/* <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span> */}
+                        <Button color="primary" variant="ghost" onClick={() => { agregarProductoNuevo() }}>Nuevo Producto</Button>
                     </div>
                     {
-                        (productosSeleccionados.length > 0 || nuevosProductos.length > 0)  &&
+                        (productosSeleccionados.length > 0 || nuevosProductos.length > 0 ) &&
                         <>
+                            
                             <div style={{ display: 'flex', marginTop: '-1.5em', gap: '.5em' }}>
                                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                                     <Input
@@ -348,6 +335,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                         label="Proveedor"
                                         labelPlacement="outside"
                                         placeholder="Seleccione proveedor"
+                                        name="proveedor"
                                         style={{ minWidth: '150px' }}
                                         onChange={handleChangeDatosCompra}
                                     >
@@ -373,7 +361,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                             </div>
 
                             <div>
-                                <Button className="bg-foreground text-background" onClick={() => { changeSubmit() }}>Cargar Compra</Button>
+                                <Button color="danger" onClick={() => { handleConfirmCompra() }}>Cargar Compra</Button>
                             </div>
                         </>
                     }
@@ -425,33 +413,37 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                         <Input
                                             variant="faded"
                                             type="number"
-                                            textValue={producto.precio_costo || ''}
+                                            name='precio_costo'
                                             labelPlacement="outside"
-                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_costo', e.target.value)}
+                                            value={producto.precio_costo}
+                                            onChange={(e) => handleInputChangeProducto(producto.id, 'precio_costo', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             variant="faded"
                                             type="number"
-                                            textValue={producto.precio_venta || ''}
+                                            name='precio_venta'
                                             labelPlacement="outside"
-                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'precio_venta', e.target.value)}
+                                            value={producto.precio_venta}
+                                            onChange={(e) => handleInputChangeProducto(producto.id, 'precio_venta', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
                                             variant="faded"
                                             type="number"
-                                            textValue={producto.stock || ''}
+                                            name='stock_actual'
                                             labelPlacement="outside"
-                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'stock', e.target.value)}
+                                            value={producto.stock_actual}
+                                            onChange={(e) => handleInputChangeProducto(producto.id, 'stock_actual', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Checkbox
                                             value={producto.usar_control_por_lote}
-                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'usar_control_por_lote', e.target.checked)}
+                                            name='usar_control_por_lote'
+                                            onValueChange={(e) => handleInputChangeProducto(producto.id, 'control_por_lote', e)}
                                         ></Checkbox>
                                     </TableCell>
                                     <TableCell>
@@ -459,8 +451,9 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                             variant="faded"
                                             type="date"
                                             textValue={producto.fecha_vencimiento || ''}
+                                            name='fecha_vencimiento'
                                             labelPlacement="outside"
-                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'fecha_vencimiento', e.target.value)}
+                                            onChange={(e) => handleInputChangeProducto(producto.id, 'fecha_vencimiento', e.target.value)}
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -469,7 +462,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                             className="max-w-xs" 
                                             variant="faded"
                                             style={{ minWidth: '150px' }}
-                                            onValueChange={(e) => handleInputChangeProducto(producto.titulo, 'inversor_id', e.target.value)}
+                                            onChange={(e) => handleInputChangeProducto(producto.id, 'inversor', e.target.checked)}
                                         >
                                             {inversores.map((inversor) => (
                                             <SelectItem key={inversor.id} value={inversor.id}>
@@ -491,7 +484,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 name={`titulo_${producto.id}`}
                                                 textValue={producto.titulo}
                                                 labelPlacement="outside"
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'titulo', e.target.value)}
+                                                onChange={(e) => handleInputChangeNuevoProducto(producto.titulo, 'titulo', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -501,7 +494,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 textValue={producto.codigo_barra}
                                                 name={`codigo_barra_${producto.id}`}
                                                 labelPlacement="outside"
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'codigo_barra', e.target.value)}
+                                                onChange={(e) => handleInputChangeNuevoProducto(producto.titulo, 'codigo_barra', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -511,7 +504,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 labelPlacement="outside"
                                                 textValue={producto.precio_costo}
                                                 name={`precio_costo_${producto.id}`}
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'precio_costo', e.target.value)}
+                                                onChange={(e) => handleInputChangeNuevoProducto(producto.titulo, 'precio_costo', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -521,7 +514,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 labelPlacement="outside"
                                                 textValue={producto.precio_venta}
                                                 name={`precio_venta_${producto.id}`}
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'precio_venta', e.target.value)}
+                                                onChange={(e) => handleInputChangeNuevoProducto(producto.titulo, 'precio_venta', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -529,9 +522,9 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 variant="faded"
                                                 type="text"
                                                 name={`stock_${producto.id}`}
-                                                textValue={producto.stock}
+                                                textValue={producto.stock_actual}
                                                 labelPlacement="outside"
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'stock', e.target.value)}
+                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'stock_actual', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -576,9 +569,6 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
 
             }
 
-            <div className='mt-4 text-center'>
-                <button onClick={agregarProductoNuevo}>Agregar Nuevo Producto</button>
-            </div>
         </>
     )
 }

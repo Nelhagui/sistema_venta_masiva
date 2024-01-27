@@ -14,6 +14,7 @@ export const endpoints = {
         lista: `${API_BASE_URL}/productos`,
         crear: `${API_BASE_URL}/productos`,
         subirExcel: `${API_BASE_URL}/productos/subir/archivo`,
+        stockPrecio: `${API_BASE_URL}/productos/stock-precio`
     },
     proveedores: {
         lista: `${API_BASE_URL}/proveedores`,
