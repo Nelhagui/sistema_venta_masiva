@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->decimal('markup', 8, 2)->nullable();
             $table->boolean('editable')->default(true);
+            $table->boolean('predeterminado')->default(false);
             $table->integer('tipo_markup')->comment('0: Sin markup; 1: Porcentaje; 2: Monto fijo'); 
             $table->string('estado');
             $table->softDeletes();

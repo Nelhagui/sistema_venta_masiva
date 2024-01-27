@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sesiones_caja', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id'); // Relación con la tabla de usuarios
+            $table->unsignedBigInteger('comercio_id'); // Relación con la tabla de usuarios
             $table->timestamp('fecha_hora_apertura');
             $table->timestamp('fecha_hora_cierre')->nullable(); // Puede ser NULL si la caja aún no ha sido cerrada
             $table->decimal('monto_inicial', 8, 2);
@@ -24,6 +25,7 @@ return new class extends Migration
 
             // Llave foránea
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('comercio_id')->references('id')->on('comercios')->onDelete('cascade');
         });
     }
 

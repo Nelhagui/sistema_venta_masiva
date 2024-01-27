@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import TablaListProductos from './TablaListProductos';
 import productoServices from '../../services/productoServices';
+import InstructivoSinProductos from './instructivo/InstructivoSinProductos';
 
 export default function MainProductos() {
     const [productos, setProductos] = useState([])
@@ -29,7 +30,9 @@ export default function MainProductos() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <TablaListProductos productos={productos} />
+                    : productos.length > 0
+                        ? <TablaListProductos productos={productos} />
+                        : <InstructivoSinProductos/>
             }
         </>
     )

@@ -10,18 +10,24 @@ class SesionCajaController extends Controller
 {
     public function index()
     {
-        $sesiones = SesionCaja::orderBy('created_at', 'desc')->paginate(15);
+        $user = Auth::user();
+        $sesiones = $user->sesionesCaja()->latest()->paginate(15);
         return view('cajas.index', compact('sesiones'));
     }
 
     public function show()
     {
-        $ultimaSesion = SesionCaja::latest()->first();
+        $user = Auth::user();
+        $ultimaSesion = $user->sesionesCaja()->latest()->first();
         return view('cajas.show', compact('ultimaSesion'));
     }
     public function showDetalle(SesionCaja $sesionCaja)
     {
-        return view('cajas.showDetalle', compact('sesionCaja'));
+        $user = Auth::user();
+        if($user->comercio_id == $sesionCaja->comercio_id)
+            return view('cajas.showDetalle', compact('sesionCaja'));
+        else
+            return back();
     }
     
     public function createApertura()
@@ -30,13 +36,15 @@ class SesionCajaController extends Controller
     }
     public function storeApertura(Request $request)
     {
+        $user = Auth::user();
         $request->validate([
             'monto' => 'required'
         ]);
         $montoInicial = $request->input('monto');
         $sesionCaja = new SesionCaja;
 
-        $sesionCaja->user_id = Auth::id();
+        $sesionCaja->user_id = $user->id;
+        $sesionCaja->comercio_id = $user->comercio_id;
         $sesionCaja->fecha_hora_apertura = now();
         $sesionCaja->monto_inicial = $montoInicial;
         $sesionCaja->monto_actual = $montoInicial;

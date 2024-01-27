@@ -19,6 +19,7 @@ class MetodoPagoSeeder extends Seeder
             [
                 'nombre' => 'Efectivo',
                 'markup' => null,
+                'predeterminado' => true,
                 'tipo_markup' => 0,
                 'estado' => 1,
                 'editable' => false,
@@ -37,6 +38,7 @@ class MetodoPagoSeeder extends Seeder
             [
                 'nombre' => 'Mercado Pago Transferencia',
                 'markup' => null,
+                'predeterminado' => false,
                 'tipo_markup' => 0,
                 'estado' => 1,
                 'editable' => true,
@@ -46,6 +48,7 @@ class MetodoPagoSeeder extends Seeder
             [
                 'nombre' => 'Cheque',
                 'markup' => null,
+                'predeterminado' => false,
                 'tipo_markup' => 0,
                 'estado' => 1,
                 'editable' => true,
