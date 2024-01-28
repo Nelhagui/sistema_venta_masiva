@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->string('titulo')->unique();
+            $table->string('titulo');
             $table->text('descripcion')->nullable();
             $table->decimal('precio_costo', 15, 2)->nullable();
             $table->decimal('precio_venta', 15, 2)->nullable();
-            $table->integer('stock_actual')->nullable();
-            $table->string('codigo_barra')->unique()->nullable();
+            $table->bigInteger('stock_actual')->nullable();
+            $table->string('codigo_barra')->nullable();
             $table->boolean('usar_control_por_lote')->default(false);
             $table->boolean('habilitado')->default(1);
             $table->softDeletes();

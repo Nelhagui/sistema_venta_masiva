@@ -38,12 +38,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            ProductsTableSeeder::class,
+            // ProductsTableSeeder::class,
             ProductosBaseSeeder::class,
             ClientesTableSeeder::class,
             ProveedorSeeder::class,
             MetodoPagoSeeder::class,
-            CompraSeeder::class,
+            // CompraSeeder::class,
         ]);
         
         \App\Models\SesionCaja::factory()->count(100)->create();

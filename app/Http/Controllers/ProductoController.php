@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\Comercio;
@@ -53,7 +55,7 @@ class ProductoController extends Controller
         return $productos;
     }
 
-    
+
     public function busqueda($busqueda)
     {
         $productos = Producto::where('titulo', 'LIKE', '%' . $busqueda . '%')
@@ -254,8 +256,8 @@ class ProductoController extends Controller
                 $updateProducto->stock_actual = $updateProducto['stock_actual'] + $producto['nuevo_stock'];
                 $updateProducto->update();
 
-                
-                if(!$producto['usar_control_por_lote'] && $producto['inversor_id'] !== null && $producto['inversor_id'] !== '') {
+
+                if (!$producto['usar_control_por_lote'] && $producto['inversor_id'] !== null && $producto['inversor_id'] !== '') {
                     $inversorProducto = new InversorProducto;
                     $inversorProducto->model()->associate($updateProducto);
                     $inversorProducto->cantidad_producto_invertido = $producto['nuevo_stock'];
@@ -277,7 +279,7 @@ class ProductoController extends Controller
                     $newLoteProducto->cantidad_restante = $producto['nuevo_stock'];
                     $newLoteProducto->save();
 
-                    if($producto['inversor_id'] !== null && $producto['inversor_id'] !== '') {
+                    if ($producto['inversor_id'] !== null && $producto['inversor_id'] !== '') {
                         $newInversorProducto = new InversorProducto;
                         $newInversorProducto->model()->associate($newLoteProducto);
                         $newInversorProducto->cantidad_producto_invertido = $producto['nuevo_stock'];
@@ -377,7 +379,8 @@ class ProductoController extends Controller
         }
 
         $compra = new Compra;
-        $compra->fecha_compra = $datosCompra['fechaCompra'] ?? now();;
+        $compra->fecha_compra = $datosCompra['fechaCompra'] ?? now();
+        ;
         $compra->fecha_carga = date('Y-m-d H:i:s');
         $compra->precio_total = $totalCompra;
         $compra->numero_factura = $datosCompra['nroFactura'] ?? "";
@@ -386,10 +389,10 @@ class ProductoController extends Controller
         $compra->save();
 
 
-        DB::transaction(function () use ($productos, $compra) {
+        DB::transaction(function () use ($productos, $compra, $id_comercio) {
             foreach ($productos as $producto) {
 
-                if(isset($producto['id'])) {
+                if (isset($producto['id'])) {
                     $productoDB = Producto::find($producto['id']);
                 } else {
                     $productoDB = new Producto;
@@ -418,7 +421,7 @@ class ProductoController extends Controller
 
                 }
 
-                if(isset($producto['inversor_id'])) {
+                if (isset($producto['inversor_id'])) {
                     $inversorProducto = new InversorProducto;
                     $inversorProducto->model()->associate($productoDB);
                     $inversorProducto->cantidad_producto_invertido = $producto['stock_actual'];
@@ -440,8 +443,234 @@ class ProductoController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Productos insertados con éxito.']);
     }
 
+    private function validaRequisitosObligatorios($request)
+    {
+        $pasaValidacion = true;
+        $msjError = '';
+        $cant_columnas_obligatorias = 6;
+
+        // Validar si se envió un archivo
+        if (!$request->hasFile('file')) {
+            $msjError = 'No se proporcionó ningún archivo';
+            $pasaValidacion = false;
+        }
+
+        $file = $request->file('file');
+
+        // Validar la extensión del archivo
+        $extension = $file->getClientOriginalExtension();
+        if ($extension != 'xlsx') {
+            $msjError = 'La extensión del archivo debe ser .xlsx';
+            $pasaValidacion = false;
+        }
+
+        // Validar el tamaño del archivo (en bytes)
+        $maxSize = 5 * 1024 * 1024; // 5 MB
+        if ($file->getSize() > $maxSize) {
+            $msjError = 'El tamaño del archivo excede el límite de 5 MB';
+            $pasaValidacion = false;
+        }
+
+
+        // Cargar el archivo Excel
+        $reader = IOFactory::createReader('Xlsx');
+        $spreadsheet = $reader->load($file->getPathname());
+
+        // Obtener la cantidad de columnas
+        $sheet = $spreadsheet->getActiveSheet();
+        $columnCount = $sheet->getHighestDataColumn();
+
+        // Convertir la letra de la columna en un número (6: titulo, stock, costo, precio, codigo_barra, nota)
+        $columnCount = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($columnCount);
+
+        if ($cant_columnas_obligatorias !== $columnCount) {
+            $msjError = 'La cantidad de columnas subidas no igual a las requeridas';
+            $pasaValidacion = false;
+        }
+
+        return ['pasaValidacion' => $pasaValidacion, 'msjError' => $msjError];
+
+    }
     public function apiSubirExcel(Request $request)
     {
-        dd($request);
+        $user = Auth::user();
+
+        // valida extension, tamaño y nro de columnas (deben ser 6)
+        $pasaValidacion = $this->validaRequisitosObligatorios($request);
+        if (!$pasaValidacion['pasaValidacion']) {
+            return response()->json(['message' => $pasaValidacion['msjError']], 400);
+        }
+
+        // Obtener productos válidos e inválidos
+        $productosValidosInvalidos = $this->obtenerProductosDesdeArchivo($request->file('file'));
+        // return $productosValidosInvalidos;
+
+        if ($user->comercio->productos->count() > 0) {
+            // valido si el ya existen productos similares cargados
+            $productosReptidosNoRepetidos = $this->obtenerProductosRepetidosEnSistema($productosValidosInvalidos);
+        } else {
+            $productosValidos = $productosValidosInvalidos['productosValidos'];
+            // Insertar productos válidos en lotes
+            $chunkSize = 100; // Tamaño del lote
+            $productosChunked = array_chunk($productosValidos, $chunkSize);
+
+            // Iniciar una transacción
+            DB::beginTransaction();
+
+            try {
+                foreach ($productosChunked as $productosLote) {
+                    // Obtener datos de los productos del lote para inserción
+                    $datosProductosLote = [];
+                    foreach ($productosLote as $producto) {
+                        $datosProductosLote[] = [
+                            'comercio_id' => $user->comercio_id,
+                            'titulo' => $producto->titulo,
+                            'precio_costo' => $producto->costo,
+                            'precio_venta' => $producto->precio,
+                            'stock_actual' => $producto->stock,
+                            'codigo_barra' => $producto->codigo_barra !== null && $producto->codigo_barra !== "" ? $producto->codigo_barra : null,
+                            'descripcion' => $producto->descripcion,
+                            // Otros campos si es necesario
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
+
+                    // Insertar productos del lote en la base de datos
+                    Producto::insert($datosProductosLote);
+                }
+
+                // Confirmar la transacción si todas las inserciones son exitosas
+                DB::commit();
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Capturar mensaje de error de la base de datos
+                $errorMessage = $e->getMessage();
+
+                // Log del mensaje de error
+                // Log::error('Error al insertar productos en lote: ' . $errorMessage);
+
+                // Revertir la transacción y manejar la excepción
+                DB::rollBack();
+                return response()->json(['message' => $errorMessage], 500);
+            } catch (\Exception $e) {
+                // Capturar otras excepciones
+                // ...
+
+                // Revertir la transacción y manejar la excepción
+                DB::rollBack();
+                return response()->json(['message' => 'Error al procesar la solicitud'], 500);
+            }
+        }
+
+        return response()->json(['message' => 'Todo guardado'], 200);
     }
+
+    private function obtenerProductosDesdeArchivo($file)
+    {
+        // Array para almacenar los objetos Producto
+        $productosValidos = [];
+        $productosInvalidos = [];
+        $productosDuplicados = [];
+        $codigosBarras = [];
+
+        // Cargar el archivo Excel
+        $reader = IOFactory::createReader('Xlsx');
+        $spreadsheet = $reader->load($file->getPathname());
+
+        // Obtener la hoja activa
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $rowData = $sheet->toArray();
+
+        // Recorrer las filas del archivo Excel (omitir la primera fila si contiene encabezados)
+        for ($i = 1; $i < count($rowData); $i++) {
+            // Crear un nuevo objeto Producto
+            $producto = new Producto();
+
+            // Asignar los valores de las celdas a los atributos del objeto Producto
+            $producto->titulo = $rowData[$i][0];
+            $producto->costo = $this->transformarComaAPunto($rowData[$i][1]);
+            $producto->precio = $this->transformarComaAPunto($rowData[$i][2]);
+            $producto->stock = $this->transformarComaAPunto($rowData[$i][3]);
+            $codigoBarra = $rowData[$i][4];
+            $producto->descripcion = $rowData[$i][5];
+
+            // Validar el código de barras
+            if (is_numeric($codigoBarra)) {
+                // Si el código de barras es numérico, se asigna tal cual al atributo del producto
+                $producto->codigo_barra = $codigoBarra;
+            } elseif (strpos($codigoBarra, '-') !== false) {
+                // Si el código de barras contiene un guión "-", se reemplaza por vacío y se toma como válido
+                $producto->codigo_barra = str_replace('-', null, $codigoBarra);
+            } else {
+                // Si el código de barras no es numérico y no contiene un guión "-", se considera inválido
+                $producto->codigo_barra = null; // O asigna el valor que consideres apropiado para indicar que es inválido
+            }
+            
+            
+            // Verificar si el código de barras ya ha sido procesado y es diferente de null o vacío
+            if ($producto->codigo_barra !== null && $producto->codigo_barra !== '') {
+                if (isset($codigosBarras[$producto->codigo_barra])) {
+                    // Si el código de barras ya existe en el array de códigos, es un producto duplicado
+                    // Asignar el campo inválido correspondiente
+                    $producto->campo_invalido = 'codigo_barra';
+                    $productosDuplicados[] = $producto;
+                    continue; // Saltar a la próxima iteración del bucle
+                } else {
+                    // Agregar el código de barras al array de códigos procesados
+                    $codigosBarras[$producto->codigo_barra] = true;
+                }
+            }
+
+            // Validar los tipos de datos de los atributos
+            if (
+                is_string($producto->titulo) && is_string($producto->descripcion) &&
+                is_numeric($producto->costo) && is_numeric($producto->precio) &&
+                is_numeric($producto->stock) && (is_numeric($producto->codigo_barra) || $producto->codigo_barra == null)
+            ) {
+                // Si los tipos de datos son válidos, agregar el objeto Producto al array de productos válidos
+                $productosValidos[] = $producto;
+            } else {
+                // Si los tipos de datos no son válidos, agregar el objeto Producto al array de productos no válidos
+                $producto->campo_invalido = $this->determinarCampoInvalido($producto);
+                $productosInvalidos[] = $producto;
+            }
+        }
+
+        return [
+            'productosValidos' => $productosValidos,
+            'productosInvalidos' => $productosInvalidos,
+            'productosDuplicados' => $productosDuplicados
+        ];
+    }
+
+    private function determinarCampoInvalido($producto)
+    {
+        if (!is_string($producto->titulo) && $producto->titulo !== null && $producto->titulo !== '')
+            return 'titulo';
+        elseif (!is_string($producto->descripcion) && $producto->descripcion !== null && $producto->descripcion !== '')
+            return 'descripcion';
+        elseif (!is_numeric($producto->costo))
+            return 'costo';
+        elseif (!is_numeric($producto->precio))
+            return 'precio';
+        elseif (!is_numeric($producto->stock))
+            return 'stock';
+
+        return 'codigo_barra';
+    }
+
+    private function transformarComaAPunto($cadena)
+    {
+        if (strpos($cadena, ',') !== false) {
+            // La cadena contiene una coma, realizar el reemplazo
+            $cadenaTransformada = str_replace(',', '.', $cadena);
+        } else {
+            // La cadena no contiene una coma, mantenerla igual
+            $cadenaTransformada = $cadena;
+        }
+
+        return $cadenaTransformada;
+    }
+
 }

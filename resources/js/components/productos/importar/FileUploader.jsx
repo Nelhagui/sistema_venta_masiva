@@ -33,7 +33,10 @@ const FileUploader = () => {
         }
 
         fetchUploadFileProductos(file);
-        
+
+        // Restablecer el valor del input de tipo archivo para permitir cargar el mismo archivo nuevamente
+        event.target.value = null; // Esto restablece el valor del input a null
+
         setMessage('');
     };
 
@@ -69,7 +72,7 @@ const FileUploader = () => {
                 style={{ display: 'none' }} // Oculta el input
                 onChange={handleFileUpload}
             />
-            {message && <p style={{color: 'red', marginTop: 5}}>{message}</p>}
+            {message && <p style={{ color: 'red', marginTop: 5 }}>{message}</p>}
         </div>
     );
 };
