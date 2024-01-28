@@ -548,6 +548,7 @@ class ProductoController extends Controller
 
                 // Log del mensaje de error
                 // Log::error('Error al insertar productos en lote: ' . $errorMessage);
+                $errorMessage = "Error al procesar los datos. Error A89E";
 
                 // Revertir la transacción y manejar la excepción
                 DB::rollBack();
