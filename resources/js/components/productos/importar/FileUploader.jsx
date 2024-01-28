@@ -64,14 +64,14 @@ const FileUploader = () => {
         setIsLoading(true);
         try {
             const response = await productoServices.uploadExcel(file)
+            const data = await response.json();
             if (response.status === 400) {
-                const data = await response.json();
                 setMessage(data.message);
             } else {
                 // La petición fue exitosa, actualiza los productos
-                setProductosRepetidos(response.productos_repetidos);
-                setProductosInvalidos(response.productos_invalidos);
-                setProductosValidos(response.productos_validos);
+                setProductosRepetidos(data?.productos_repetidos);
+                setProductosInvalidos(data?.productos_invalidos);
+                setProductosValidos(data?.productos_validos);
                 setProcesoFinalizado(true)
             }
         } catch (error) {
@@ -93,10 +93,10 @@ const FileUploader = () => {
                                 <p className='text-descripcion' style={{ color: 'green' }}>{productosValidos} productos agregados</p>
                             </div>
                             <div>
-                                <p className='text-descripcion' style={{ color: 'orange' }}>{productosRepetidos.length} omitidos por repetición</p>
+                                <p className='text-descripcion' style={{ color: 'orange' }}>{productosRepetidos?.length} omitidos por repetición</p>
                             </div>
                             <div>
-                                <p className='text-descripcion' style={{ color: 'red' }}>{productosInvalidos.length} omitidos por campos erróneos</p>
+                                <p className='text-descripcion' style={{ color: 'red' }}>{productosInvalidos?.length} omitidos por campos erróneos</p>
                             </div>
                         </div>
 
