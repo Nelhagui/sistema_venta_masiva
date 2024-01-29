@@ -35,7 +35,7 @@ const columns = [
         label: "STOCK",
     },
     {
-        key: "control_por_lote",
+        key: "usar_control_por_lote",
         label: "CONTROL POR LOTE",
     },
     {
@@ -61,7 +61,20 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
-    const [nuevosProductos, setNuevosProductos] = useState([]);
+    const [nuevosProductos, setNuevosProductos] = useState([
+        {
+            key: Math.random(),
+            titulo: '',
+            codigo_barra: '',
+            precio_costo: '',
+            precio_venta: '',
+            stock_actual: '',
+            usar_control_por_lote: false,
+            fecha_vencimiento: '',
+            inversor_id: '',
+            highlighted: false,
+        }
+    ]);
     const [datosCompra, setDatosCompra] = useState({
         fechaCompra: "",
         proveedor: "",
@@ -193,54 +206,40 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
         reset();
     };
 
-    const handleInputChangeProducto = (productoId, campo, valor) => {
+    const handleInputChangeProducto = (id, campo, valor) => {
         setProductosSeleccionados(prevProductos => {
             return prevProductos.map(producto => {
-                if (producto.id === productoId) {
-                    let updatedProducto = {
-                        ...producto,
-                        [campo]: valor 
-                    };
-
-                    // Si el campo que se está modificando es "precio_costo", actualizamos "precio_venta"
-                    if (campo === 'precio_costo') {
-                        const porcentaje = 1.50; // Aumentamos en un 10%
-                        const nuevoPrecio = valor * porcentaje;
-                        updatedProducto.precio_venta = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
-                    }
-
-                    return updatedProducto;
+                if (producto.id === id) {
+                    return actualizarProducto(producto, campo, valor);
                 }
                 return producto;
             });
         });
-    }
-
-    const handleInputChangeNuevoProducto = (productoTitulo, campo, valor) => {
-
-        setNuevosProductos(prevProductos => {
-            return prevProductos.map(producto => {
-                if (producto.titulo === productoTitulo) {
-                    let updatedProducto = {
-                        ...producto,
-                        [campo]: valor 
-                    };
-
-                    // Si el campo que se está modificando es "precio_costo", actualizamos "precio_venta"
-                    if (campo === 'precio_costo') {
-                        const porcentaje = 1.50; // Aumentamos en un 10%
-                        const nuevoPrecio = valor * porcentaje;
-                        updatedProducto.precio_venta = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
-                    }
-
-                    return updatedProducto;
+    
+        setNuevosProductos(prevNuevosProductos => {
+            return prevNuevosProductos.map(nuevoProducto => {
+                if (nuevoProducto.key === id) {
+                    return actualizarProducto(nuevoProducto, campo, valor);
                 }
-                return producto;
+                return nuevoProducto;
             });
         });
-
-        console.log(nuevosProductos)
-
+    };
+    
+    const actualizarProducto = (producto, campo, valor) => {
+        let updatedProducto = {
+            ...producto,
+            [campo]: valor 
+        };
+    
+        // Si el campo que se está modificando es "precio_costo", actualizamos "precio_venta"
+        if (campo === 'precio_costo') {
+            const porcentaje = 1.50; // Aumentamos en un 10%
+            const nuevoPrecio = valor * porcentaje;
+            updatedProducto.precio_venta = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
+        }
+    
+        return updatedProducto;
     };
 
 
@@ -268,7 +267,25 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                 theme: "light",
             });
             setProductosSeleccionados([]);
-
+            setNuevosProductos([
+                {
+                    key: Math.random(),
+                    titulo: '',
+                    codigo_barra: '',
+                    precio_costo: '',
+                    precio_venta: '',
+                    stock_actual: '',
+                    usar_control_por_lote: false,
+                    fecha_vencimiento: '',
+                    inversor_id: '',
+                    highlighted: false,
+                }
+            ]);
+            setDatosCompra({
+                fechaCompra: "",
+                proveedor: "",
+                nroFactura: ""
+            })
         }
     };
 
@@ -276,7 +293,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
 
         // Crea un nuevo producto con valores iniciales o vacíos
         const nuevoProducto = {
-            id: Math.random(),
+            key: Math.random(),
             titulo: '',
             codigo_barra: '',
             precio_costo: '',
@@ -310,9 +327,8 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                             onChange={handleInputChange}
                             onFocus={handleInputFocus}
                             style={{ minWidth: '450px' }}
-                        />
+                        /> 
                         {/* <span style={{ marginLeft: 18, color: 'green' }}>{productosSeleccionados?.length > 0 ? `Productos: ${productosSeleccionados?.length}` : ''}</span> */}
-                        <Button color="primary" variant="ghost" onClick={() => { agregarProductoNuevo() }}>Nuevo Producto</Button>
                     </div>
                     {
                         (productosSeleccionados.length > 0 || nuevosProductos.length > 0 ) &&
@@ -389,7 +405,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
             {
                 (productosSeleccionados.length > 0 || nuevosProductos.length > 0) &&
                 <>
-                    <Table aria-label="Example table with dynamic content">
+                    <Table aria-label="Tabla de Stock y Precio de productos">
                         <TableHeader columns={columns}>
                             <TableColumn>TÍTULO</TableColumn>
                             <TableColumn>CÓDIGO BARRA</TableColumn>
@@ -443,7 +459,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                         <Checkbox
                                             value={producto.usar_control_por_lote}
                                             name='usar_control_por_lote'
-                                            onValueChange={(e) => handleInputChangeProducto(producto.id, 'control_por_lote', e)}
+                                            onValueChange={(event) => handleInputChangeProducto(producto.id, 'usar_control_por_lote', event)}
                                         ></Checkbox>
                                     </TableCell>
                                     <TableCell>
@@ -466,7 +482,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                         >
                                             {inversores.map((inversor) => (
                                             <SelectItem key={inversor.id} value={inversor.id}>
-                                                {inversor.nombre}
+                                                {inversor.nombre + " " + inversor.apellido} 
                                             </SelectItem>
                                             ))}
                                         </Select>
@@ -476,35 +492,24 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                             {
                                 nuevosProductos.map((producto) =>
                                 (
-                                    <TableRow key={Math.random()}>
+                                    <TableRow key={producto.key}>
                                         <TableCell>
                                             <Input
                                                 variant="faded"
                                                 type="text"
-                                                name={`titulo_${producto.id}`}
-                                                textValue={producto.titulo}
+                                                value={producto.titulo}
                                                 labelPlacement="outside"
-                                                onChange={(e) => handleInputChangeNuevoProducto(producto.titulo, 'titulo', e.target.value)}
+                                                onChange={(e) => handleInputChangeProducto(producto.key, 'titulo', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Input
                                                 variant="faded"
                                                 type="number"
-                                                textValue={producto.codigo_barra}
-                                                name={`codigo_barra_${producto.id}`}
+                                                value={producto.codigo_barra}
+                                                name="codigo_barra"
                                                 labelPlacement="outside"
-                                                onChange={(e) => handleInputChangeNuevoProducto(producto.titulo, 'codigo_barra', e.target.value)}
-                                            />
-                                        </TableCell>
-                                        <TableCell>
-                                            <Input
-                                                variant="faded"
-                                                type="number"
-                                                labelPlacement="outside"
-                                                textValue={producto.precio_costo}
-                                                name={`precio_costo_${producto.id}`}
-                                                onChange={(e) => handleInputChangeNuevoProducto(producto.titulo, 'precio_costo', e.target.value)}
+                                                onChange={(e) => handleInputChangeProducto(producto.key, 'codigo_barra', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -512,35 +517,45 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 variant="faded"
                                                 type="number"
                                                 labelPlacement="outside"
-                                                textValue={producto.precio_venta}
-                                                name={`precio_venta_${producto.id}`}
-                                                onChange={(e) => handleInputChangeNuevoProducto(producto.titulo, 'precio_venta', e.target.value)}
+                                                value={producto.precio_costo}
+                                                name="precio_costo"
+                                                onChange={(e) => handleInputChangeProducto(producto.key, 'precio_costo', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Input
                                                 variant="faded"
-                                                type="text"
-                                                name={`stock_${producto.id}`}
-                                                textValue={producto.stock_actual}
+                                                type="number"
                                                 labelPlacement="outside"
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'stock_actual', e.target.value)}
+                                                value={producto.precio_venta}
+                                                name="precio_venta"
+                                                onChange={(e) => handleInputChangeProducto(producto.key, 'precio_venta', e.target.value)}
+                                            />
+                                        </TableCell>
+                                        <TableCell>
+                                            <Input
+                                                variant="faded"
+                                                type="number"
+                                                name="stock_actual"
+                                                value={producto.stock_actual}
+                                                labelPlacement="outside"
+                                                onChange={(e) => handleInputChangeProducto(producto.key, 'stock_actual', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Checkbox
                                                 value={producto.usar_control_por_lote}
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'usar_control_por_lote', e.target.checked)}
+                                                onValueChange={(event) => handleInputChangeProducto(producto.key, 'usar_control_por_lote', event)}
                                             ></Checkbox>
                                         </TableCell>
                                         <TableCell>
                                             <Input
                                                 variant="faded"
                                                 type="date"
-                                                name={`fecha_vencimiento_${producto.id}`}
-                                                textValue={producto.fecha_vencimiento}
+                                                name="fecha_nacimiento"
+                                                value={producto.fecha_vencimiento}
                                                 labelPlacement="outside"
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'fecha_vencimiento', e.target.value)}
+                                                onChange={(e) => handleInputChangeProducto(producto.key, 'fecha_vencimiento', e.target.value)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -548,13 +563,13 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 label="Seleccione" 
                                                 className="max-w-xs" 
                                                 variant="faded"
-                                                textValue={producto.inversor_id}
+                                                value={producto.inversor_id}
                                                 style={{ minWidth: '150px' }}
-                                                onValueChange={(e) => handleInputChangeNuevoProducto(producto.id, 'inversor_id', e.target.value)}
+                                                onValueChange={(e) => handleInputChangeProducto(producto.key, 'inversor_id', e.target.value)}
                                             >
                                                 {inversores.map((inversor) => (
                                                 <SelectItem key={inversor.id} value={inversor.id}>
-                                                    {inversor.nombre}
+                                                    {inversor.nombre + " " + inversor.apellido} 
                                                 </SelectItem>
                                                 ))}
                                             </Select>
@@ -568,6 +583,10 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                 </>
 
             }
+
+            <div className='d-flex text-center mt-4'>
+                <Button variant="ghost" onClick={() => { agregarProductoNuevo() }}>Agregar Nuevo Producto</Button>
+            </div>
 
         </>
     )

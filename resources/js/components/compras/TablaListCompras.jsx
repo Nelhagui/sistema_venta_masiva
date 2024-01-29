@@ -48,7 +48,7 @@ const columns = [
     },
 ];
 
-const TablaIndexCompras = ({ compras }) => {
+const TablaListCompras = ({ compras }) => {
     const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [page, setPage] = React.useState(1);
     
@@ -147,4 +147,4 @@ const TablaIndexCompras = ({ compras }) => {
     )
 }
 
-export default TablaIndexCompras
+export default TablaListCompras

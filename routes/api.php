@@ -61,6 +61,7 @@ Route::middleware('auth')->group(function () {
 
     // PRODUCTOS
     Route::get('/productos', [ProductoController::class, 'indexApi']);
+    Route::post('/productos', [ProductoController::class, 'apiStoreProducto']);
     Route::post('/productos/stock-precio', [ProductoController::class, 'apiStockPrecio']);
     Route::post('/productos/subir/archivo', [ProductoController::class, 'apiSubirExcel']);
     

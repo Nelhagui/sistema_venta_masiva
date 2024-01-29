@@ -5,7 +5,7 @@ import productoServices from '../../../services/productoServices';
 import inversorServices from '../../../services/inversorServices';
 import proveedorServices from '../../../services/proveedorServices';
 
-export default function StockPrecio() {
+export default function MainStockPrecio() {
     const [productos, setProductos] = useState([])
     const [inversores, setInversores] = useState([])
     const [proveedores, setProveedores] = useState([])
@@ -62,17 +62,17 @@ export default function StockPrecio() {
             isLoading
                 ? "Cargando..."
                 :   <TablaListStockPrecio 
-                            productos={productos} 
-                            inversores={inversores}
-                            proveedores={proveedores}
+                        productos={productos} 
+                        inversores={inversores}
+                        proveedores={proveedores}
                     />
         }
         </>
     )
 }
 
-if (document.getElementById('stockPrecio')) {
-    const domNode = document.getElementById('stockPrecio');
+if (document.getElementById('mainStockPrecio')) {
+    const domNode = document.getElementById('mainStockPrecio');
     const root = createRoot(domNode);
-    root.render(<StockPrecio />);
+    root.render(<MainStockPrecio />);
 }

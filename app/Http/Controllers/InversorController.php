@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Inversor;
 use App\Models\Comercio;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreInversorRequest;
 use App\Http\Requests\UpdateInversorRequest;
 use Illuminate\Http\Request;
@@ -33,9 +34,12 @@ class InversorController extends Controller
      */
     public function store(Request $request)
     {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
         $inversor = new Inversor;
         $inversor->nombre = $request->nombre;
         $inversor->apellido = $request->apellido;
+        $inversor->comercio_id = $id_comercio;
         $inversor->save();
         return redirect()->route('index.inversores');
     }

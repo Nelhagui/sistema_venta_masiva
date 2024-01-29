@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import TablaIndexCompras from './TablaIndexCompras';
+import TablaListCompras from './TablaListCompras';
 
-export default function IndexCompras() {
+export default function MainCompras() {
     const [compras, setCompras] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
@@ -32,14 +32,14 @@ export default function IndexCompras() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <TablaIndexCompras compras={compras} />
+                    : <TablaListCompras compras={compras} />
             }
         </>
     )
 }
 
-if (document.getElementById('indexCompras')) {
-    const domNode = document.getElementById('indexCompras');
+if (document.getElementById('mainCompras')) {
+    const domNode = document.getElementById('mainCompras');
     const root = createRoot(domNode);
-    root.render(<IndexCompras />);
+    root.render(<MainCompras />);
 }

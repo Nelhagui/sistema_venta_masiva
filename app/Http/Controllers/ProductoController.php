@@ -65,33 +65,6 @@ class ProductoController extends Controller
         return $productos;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $messages = [
-            'productos.*.titulo.required' => 'El campo Título es obligatorio.',
-            'productos.*.titulo.unique' => 'El título ya está en uso.',
-            'productos.*.codigo_barra.numeric' => 'El campo requiere números.',
-            'productos.*.codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
-        ];
-
-        $request->validate([
-            'productos.*.titulo' => 'required|unique:productos,titulo,',
-            'productos.*.codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
-        ], $messages);
-
-        foreach ($request->input('productos') as $productoData) {
-            $producto = new Producto;
-            $producto->titulo = $productoData['titulo'];
-            $producto->codigo_barra = $productoData['codigo_barra'];
-            $producto->save();
-
-        }
-
-        return redirect()->route('create.productos');
-    }
 
     public function storeDesdeBase(Request $request)
     {
@@ -318,7 +291,7 @@ class ProductoController extends Controller
         $productos = Producto::all();
         $proveedores = Proveedor::all();
         $inversores = Inversor::all();
-        return view('productos.stockPrecio', compact('productos', 'proveedores', 'inversores'));
+        return view('productos.stock_precio.create', compact('productos', 'proveedores', 'inversores'));
     }
 
 
@@ -329,6 +302,38 @@ class ProductoController extends Controller
         $id_comercio = $user->comercio_id;
         $productos = Comercio::find($id_comercio)->productos;
         return $productos;
+    }
+
+    public function apiStoreProducto(Request $request)
+    {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+
+        $messages = [
+            'productos.*.titulo.required' => 'El campo Título es obligatorio.',
+            'productos.*.titulo.unique' => 'El título ya está en uso.',
+            'productos.*.codigo_barra.numeric' => 'El campo requiere números.',
+            'productos.*.codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
+        ];
+
+        $request->validate([
+            'productos.*.titulo' => 'required|unique:productos,titulo,',
+            'productos.*.codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
+        ], $messages);
+
+        foreach ($request->input('productos') as $productoData) {
+            $producto = new Producto;
+            $producto->titulo = $productoData['titulo'];
+            $producto->codigo_barra = $productoData['codigo_barra'];
+            $producto->precio_costo = $productoData['precio_costo'];
+            $producto->precio_venta = $productoData['precio_venta'];
+            $producto->stock_actual = $productoData['stock_actual'];
+            $producto->comercio_id = $id_comercio;
+            $producto->save();
+
+        }
+
+        return redirect()->route('create.productos');
     }
 
     public function apiStockPrecio(Request $request)
@@ -411,6 +416,7 @@ class ProductoController extends Controller
                     $newLoteProducto = new Lote;
                     $newLoteProducto->producto_id = $productoDB->id;
                     $newLoteProducto->compra_id = $compra->id;
+                    $newLoteProducto->comercio_id = $id_comercio;
                     $newLoteProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
                     $newLoteProducto->precio_costo = $producto['precio_costo'];
                     $newLoteProducto->precio_venta = $producto['precio_venta'];
