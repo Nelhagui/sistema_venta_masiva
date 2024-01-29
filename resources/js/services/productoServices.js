@@ -42,10 +42,7 @@ const productoServices = {
     
         try {
             const response = await fetch(url, requestOptions);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
+            return response;
         } catch (error) {
             console.error('Error fetching data:', error);
             throw error;

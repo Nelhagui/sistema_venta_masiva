@@ -490,7 +490,7 @@ class ProductoController extends Controller
         $columnCount = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($columnCount);
 
         if ($cant_columnas_obligatorias !== $columnCount) {
-            $msjError = 'La cantidad de columnas subidas no igual a las requeridas';
+            $msjError = 'La cantidad de columnas en el archivo no es igual a las requeridas';
             $pasaValidacion = false;
         }
 
@@ -536,7 +536,6 @@ class ProductoController extends Controller
                             'stock_actual' => $producto->stock,
                             'codigo_barra' => $producto->codigo_barra !== null && $producto->codigo_barra !== "" ? $producto->codigo_barra : null,
                             'descripcion' => $producto->descripcion,
-                            // Otros campos si es necesario
                             'created_at' => now(),
                             'updated_at' => now(),
                         ];
@@ -569,7 +568,12 @@ class ProductoController extends Controller
             }
         }
 
-        return response()->json(['message' => 'Todo guardado'], 200);
+        return response()->json(
+            [
+                'productos_repetidos' => $productosValidosInvalidos['productosDuplicados'],
+                'productos_invalidos' => $productosValidosInvalidos['productosInvalidos'],
+                'productos_validos' => count($productosValidosInvalidos['productosValidos'])
+            ], 200);
     }
 
     private function obtenerProductosDesdeArchivo($file)

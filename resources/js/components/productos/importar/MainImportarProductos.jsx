@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Card, CardBody, Button } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/react";
 import { UploadFileCloud } from '../../icons/UploadFileICloud';
 import FileUploader from './FileUploader';
 
@@ -21,9 +21,7 @@ export default function MainImportarProductos() {
                         style={{ padding: 45 }}
                     >
                         <div className='text-center'>
-                            <h3 className='titulo-seccion' style={{fontSize: 25, fontWeight: 500}}>Aún no has cargado ningún archivo</h3>
-                            
-                            <FileUploader/>
+                            <FileUploader />
                         </div>
                     </CardBody>
                 </Card>
