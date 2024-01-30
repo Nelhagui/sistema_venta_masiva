@@ -81,38 +81,71 @@ export default function MainCrearProductos() {
     };
 
 
+    // const handleSubmit = async () => {
+    //     setIsLoading(true);
+    //     try {
+    //         await productoServices.crear(nuevosProductos);
+    //         toast.success('Compra realizada con éxito', {
+    //             position: "bottom-right",
+    //             autoClose: 2000,
+    //             hideProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: true,
+    //             draggable: true,
+    //             progress: undefined,
+    //             theme: "light",
+    //         });
+    //         setNuevosProductos([
+    //             {
+    //                 key: Math.random(),
+    //                 titulo: '',
+    //                 codigo_barra: '',
+    //                 precio_costo: '',
+    //                 precio_venta: '',
+    //                 stock_actual: '',
+    //                 highlighted: false,
+    //             }
+    //         ]);
+    //     } catch (error) {
+    //         console.log('essaaa')
+    //         setErrores(error.errors)
+    //     } finally {
+    //         setIsLoading(false);
+    //     }
+    // };
+
+
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
-            await productoServices.crear(nuevosProductos);
-            toast.success('Compra realizada con éxito', {
-                position: "bottom-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            });
-            setNuevosProductos([
-                {
-                    key: Math.random(),
-                    titulo: '',
-                    codigo_barra: '',
-                    precio_costo: '',
-                    precio_venta: '',
-                    stock_actual: '',
-                    highlighted: false,
+            const response = await productoServices.crear(nuevosProductos);
+            const data = await response.json();
+            if (response.status !== 200) {
+                if(data?.errors?.length > 0){
+                    let objetoResultado = {};
+                    data.errors.forEach(error => {
+                        objetoResultado[`${error.key}-${error.campo}`] = true;
+                        
+                    });
+                    setErrores(objetoResultado);
+                    console.log('bucleando')
+                } else {
+                    console.log('error inesperado');
                 }
-            ]);
+            } else {
+                console.log('Todo bien')
+            }
         } catch (error) {
-            setErrores(error.errors)
+            // Maneja el error si la creación de la venta falla
         } finally {
             setIsLoading(false);
         }
     };
 
+    useEffect(() => {
+      console.log(errores)
+    }, [errores])
+    
 
     const agregarProductoNuevo = () => {
 
@@ -132,6 +165,9 @@ export default function MainCrearProductos() {
         console.log(nuevosProductos)
     }
 
+    
+
+    console.log('errrores', errores)
     return (
         <>
             <div className='d-flex' style={{textAlign: 'end', marginBlock: '0 10px'}}>
@@ -153,13 +189,14 @@ export default function MainCrearProductos() {
                             <TableCell>
                                 <Input
                                     variant="bordered" 
-                                    isInvalid={false}
                                     type="text"
                                     value={producto.titulo}
-                                    errorMessage={false}
                                     labelPlacement="outside"
                                     isRequired
                                     onChange={(e) => handleInputChangeProducto(producto.key, 'titulo', e.target.value)}
+                                    errorMessage={errores[`${producto.key}-titulo`] === true ? "este es un errror" : ""}
+                                    isInvalid={errores[`${producto.key}-titulo`]}
+
                                 />
                             </TableCell>
                             <TableCell>
@@ -176,12 +213,13 @@ export default function MainCrearProductos() {
                             <TableCell>
                                 <Input
                                     variant="bordered" 
-                                    isInvalid={false}
                                     type="number"
                                     labelPlacement="outside"
                                     value={producto.precio_costo}
                                     name="precio_costo"
                                     onChange={(e) => handleInputChangeProducto(producto.key, 'precio_costo', e.target.value)}
+                                    errorMessage={errores[`${producto.key}-precio_costo`] === true ? "este es un errror" : ""}
+                                    isInvalid={errores[`${producto.key}-precio_costo`]}
                                 />
                             </TableCell>
                             <TableCell>

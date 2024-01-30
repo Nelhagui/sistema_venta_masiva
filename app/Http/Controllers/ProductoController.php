@@ -329,6 +329,7 @@ class ProductoController extends Controller
                 $key = $producto['key'];
                 $validator = Validator::make($producto, [
                     'titulo' => 'required|unique:productos,titulo',
+                    'precio_costo' => 'required',
                     'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra'],
                     // Otras reglas de validación según tus necesidades
                 ]);

@@ -27,19 +27,19 @@ const productoServices = {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const url = `${endpoints.productos.subirExcel}`;
         const formData = new FormData();
-        
+
         // Agrega el archivo al formData
         formData.append('file', file);
-    
+
         const requestOptions = {
-            method: 'POST', 
+            method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
                 'Referer': window.location.origin
             },
             body: formData
         };
-    
+
         try {
             const response = await fetch(url, requestOptions);
             return response;
@@ -60,8 +60,8 @@ const productoServices = {
                 'Referer': window.location.origin,
                 'X-CSRF-TOKEN': csrfToken
             },
-            body: JSON.stringify({ 
-                productos: productosSeleccionados, 
+            body: JSON.stringify({
+                productos: productosSeleccionados,
                 datosCompra: datosCompra,
                 nuevosProductos: nuevosProductos,
             })
@@ -91,30 +91,14 @@ const productoServices = {
                 'Referer': window.location.origin,
                 'X-CSRF-TOKEN': csrfToken
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 productos: productos,
             })
         };
 
         try {
             const response = await fetch(url, requestOptions);
-
-            if (response.ok) {
-                // La solicitud fue exitosa, puedes manejar la respuesta como desees
-                const responseData = await response.json();
-                console.log(responseData);
-            } else if (response.status === 422) {
-                // La solicitud tuvo errores de validación
-                const errorData = await response.json();
-                console.log(errorData);
-        
-                // Aquí puedes acceder a errorData.errors y manejar los errores según tus necesidades
-                return errorData.errors;
-            } else {
-                // Otro manejo de errores si es necesario
-                console.error('Error en la solicitud: ' + response.status);
-                throw new Error('Network response was not ok');
-            }
+            return response;
         } catch (error) {
             console.error('Error fetching data:', error);
             throw error;
