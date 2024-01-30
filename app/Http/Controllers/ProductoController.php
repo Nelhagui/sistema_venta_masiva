@@ -330,6 +330,8 @@ class ProductoController extends Controller
                 $validator = Validator::make($producto, [
                     'titulo' => 'required|unique:productos,titulo',
                     'precio_costo' => 'required',
+                    'precio_venta' => 'required',
+                    'stock_actual' => 'required',
                     'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra'],
                     // Otras reglas de validación según tus necesidades
                 ]);

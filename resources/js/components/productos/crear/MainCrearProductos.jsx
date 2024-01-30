@@ -2,7 +2,7 @@ import { createRoot } from 'react-dom/client';
 import { Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
 import { useEffect, useState } from 'react';
 import productoServices from '../../../services/productoServices';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const columns = [
@@ -41,14 +41,10 @@ export default function MainCrearProductos() {
         }
     ]);
     const [isLoading, setIsLoading] = useState(false)
-    const [errores, setErrores] = useState([]); 
-
-    useEffect(() => {
-        console.log(errores)
-    }, [errores])
+    const [errores, setErrores] = useState([]);
 
     const handleInputChangeProducto = (id, campo, valor) => {
-    
+
         setNuevosProductos(prevNuevosProductos => {
             return prevNuevosProductos.map(nuevoProducto => {
                 if (nuevoProducto.key === id) {
@@ -58,20 +54,20 @@ export default function MainCrearProductos() {
             });
         });
     };
-    
+
     const actualizarProducto = (producto, campo, valor) => {
         let updatedProducto = {
             ...producto,
-            [campo]: valor 
+            [campo]: valor
         };
-    
+
         // Si el campo que se está modificando es "precio_costo", actualizamos "precio_venta"
         if (campo === 'precio_costo') {
             const porcentaje = 1.50; // Aumentamos en un 10%
             const nuevoPrecio = valor * porcentaje;
             updatedProducto.precio_venta = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
         }
-    
+
         return updatedProducto;
     };
 
@@ -79,40 +75,6 @@ export default function MainCrearProductos() {
     const handleConfirmCompra = () => {
         handleSubmit();
     };
-
-
-    // const handleSubmit = async () => {
-    //     setIsLoading(true);
-    //     try {
-    //         await productoServices.crear(nuevosProductos);
-    //         toast.success('Compra realizada con éxito', {
-    //             position: "bottom-right",
-    //             autoClose: 2000,
-    //             hideProgressBar: false,
-    //             closeOnClick: true,
-    //             pauseOnHover: true,
-    //             draggable: true,
-    //             progress: undefined,
-    //             theme: "light",
-    //         });
-    //         setNuevosProductos([
-    //             {
-    //                 key: Math.random(),
-    //                 titulo: '',
-    //                 codigo_barra: '',
-    //                 precio_costo: '',
-    //                 precio_venta: '',
-    //                 stock_actual: '',
-    //                 highlighted: false,
-    //             }
-    //         ]);
-    //     } catch (error) {
-    //         console.log('essaaa')
-    //         setErrores(error.errors)
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // };
 
 
     const handleSubmit = async () => {
@@ -124,16 +86,37 @@ export default function MainCrearProductos() {
                 if(data?.errors?.length > 0){
                     let objetoResultado = {};
                     data.errors.forEach(error => {
-                        objetoResultado[`${error.key}-${error.campo}`] = true;
-                        
+                        objetoResultado[`${error.key}-${error.campo}`] = error.error;
                     });
                     setErrores(objetoResultado);
                     console.log('bucleando')
+                    console.log(errores)
                 } else {
                     console.log('error inesperado');
                 }
             } else {
-                console.log('Todo bien')
+                toast.success('Productos cargados exitosamente', {
+                    position: "bottom-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setErrores([]);
+                setNuevosProductos([
+                    {
+                        key: Math.random(),
+                        titulo: '',
+                        codigo_barra: '',
+                        precio_costo: '',
+                        precio_venta: '',
+                        stock_actual: '',
+                        highlighted: false,
+                    }
+                ]);
             }
         } catch (error) {
             // Maneja el error si la creación de la venta falla
@@ -145,7 +128,7 @@ export default function MainCrearProductos() {
     useEffect(() => {
       console.log(errores)
     }, [errores])
-    
+
 
     const agregarProductoNuevo = () => {
 
@@ -165,7 +148,7 @@ export default function MainCrearProductos() {
         console.log(nuevosProductos)
     }
 
-    
+
 
     console.log('errrores', errores)
     return (
@@ -188,21 +171,21 @@ export default function MainCrearProductos() {
                         <TableRow key={producto.key}>
                             <TableCell>
                                 <Input
-                                    variant="bordered" 
+                                    variant="bordered"
                                     type="text"
                                     value={producto.titulo}
                                     labelPlacement="outside"
                                     isRequired
                                     onChange={(e) => handleInputChangeProducto(producto.key, 'titulo', e.target.value)}
-                                    errorMessage={errores[`${producto.key}-titulo`] === true ? "este es un errror" : ""}
-                                    isInvalid={errores[`${producto.key}-titulo`]}
+                                    errorMessage={errores[`${producto.key}-titulo`] ? errores[`${producto.key}-titulo`] : ""}
+                                    isInvalid={errores[`${producto.key}-titulo`] ? true : false}
 
                                 />
                             </TableCell>
                             <TableCell>
                                 <Input
-                                    variant="bordered" 
-                                    isInvalid={false}  
+                                    variant="bordered"
+                                    isInvalid={false}
                                     type="number"
                                     value={producto.codigo_barra}
                                     name="codigo_barra"
@@ -212,36 +195,38 @@ export default function MainCrearProductos() {
                             </TableCell>
                             <TableCell>
                                 <Input
-                                    variant="bordered" 
+                                    variant="bordered"
                                     type="number"
                                     labelPlacement="outside"
                                     value={producto.precio_costo}
                                     name="precio_costo"
                                     onChange={(e) => handleInputChangeProducto(producto.key, 'precio_costo', e.target.value)}
-                                    errorMessage={errores[`${producto.key}-precio_costo`] === true ? "este es un errror" : ""}
-                                    isInvalid={errores[`${producto.key}-precio_costo`]}
+                                    errorMessage={errores[`${producto.key}-precio_costo`] ? errores[`${producto.key}-precio_costo`] : ""}
+                                    isInvalid={errores[`${producto.key}-precio_costo`] ? true : false}
                                 />
                             </TableCell>
                             <TableCell>
                                 <Input
-                                    variant="bordered" 
-                                    isInvalid={false}
+                                    variant="bordered"
                                     type="number"
                                     labelPlacement="outside"
                                     value={producto.precio_venta}
                                     name="precio_venta"
                                     onChange={(e) => handleInputChangeProducto(producto.key, 'precio_venta', e.target.value)}
+                                    errorMessage={errores[`${producto.key}-precio_venta`] ? errores[`${producto.key}-precio_venta`] : ""}
+                                    isInvalid={errores[`${producto.key}-precio_venta`] ? true : false}
                                 />
                             </TableCell>
                             <TableCell>
                                 <Input
-                                    variant="bordered" 
-                                    isInvalid={false}
+                                    variant="bordered"
                                     type="number"
                                     name="stock_actual"
                                     value={producto.stock_actual}
                                     labelPlacement="outside"
                                     onChange={(e) => handleInputChangeProducto(producto.key, 'stock_actual', e.target.value)}
+                                    errorMessage={errores[`${producto.key}-stock_actual`] ? errores[`${producto.key}-stock_actual`] : ""}
+                                    isInvalid={errores[`${producto.key}-stock_actual`] ? true : false}
                                 />
                             </TableCell>
                         </TableRow>
@@ -249,10 +234,11 @@ export default function MainCrearProductos() {
                     )
                 }
                 </TableBody>
-            </Table> 
+            </Table>
             <div className='d-flex text-center mt-4'>
                 <Button variant="ghost" onClick={() => { agregarProductoNuevo() }}>Agregar Nuevo Producto</Button>
             </div>
+            <ToastContainer />
         </>
     )
 }
