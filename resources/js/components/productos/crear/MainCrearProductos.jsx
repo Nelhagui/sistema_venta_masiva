@@ -1,7 +1,9 @@
 import { createRoot } from 'react-dom/client';
 import { Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from "@nextui-org/react";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import productoServices from '../../../services/productoServices';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const columns = [
     {
@@ -39,6 +41,11 @@ export default function MainCrearProductos() {
         }
     ]);
     const [isLoading, setIsLoading] = useState(false)
+    const [errores, setErrores] = useState([]); 
+
+    useEffect(() => {
+        console.log(errores)
+    }, [errores])
 
     const handleInputChangeProducto = (id, campo, valor) => {
     
@@ -78,10 +85,6 @@ export default function MainCrearProductos() {
         setIsLoading(true);
         try {
             await productoServices.crear(nuevosProductos);
-        } catch (error) {
-            // Maneja el error si la creación de la compra falla
-        } finally {
-            setIsLoading(false);
             toast.success('Compra realizada con éxito', {
                 position: "bottom-right",
                 autoClose: 2000,
@@ -103,8 +106,13 @@ export default function MainCrearProductos() {
                     highlighted: false,
                 }
             ]);
+        } catch (error) {
+            setErrores(error.errors)
+        } finally {
+            setIsLoading(false);
         }
     };
+
 
     const agregarProductoNuevo = () => {
 
@@ -144,16 +152,20 @@ export default function MainCrearProductos() {
                         <TableRow key={producto.key}>
                             <TableCell>
                                 <Input
-                                    variant="faded"
+                                    variant="bordered" 
+                                    isInvalid={false}
                                     type="text"
                                     value={producto.titulo}
+                                    errorMessage={false}
                                     labelPlacement="outside"
+                                    isRequired
                                     onChange={(e) => handleInputChangeProducto(producto.key, 'titulo', e.target.value)}
                                 />
                             </TableCell>
                             <TableCell>
                                 <Input
-                                    variant="faded"
+                                    variant="bordered" 
+                                    isInvalid={false}  
                                     type="number"
                                     value={producto.codigo_barra}
                                     name="codigo_barra"
@@ -163,7 +175,8 @@ export default function MainCrearProductos() {
                             </TableCell>
                             <TableCell>
                                 <Input
-                                    variant="faded"
+                                    variant="bordered" 
+                                    isInvalid={false}
                                     type="number"
                                     labelPlacement="outside"
                                     value={producto.precio_costo}
@@ -173,7 +186,8 @@ export default function MainCrearProductos() {
                             </TableCell>
                             <TableCell>
                                 <Input
-                                    variant="faded"
+                                    variant="bordered" 
+                                    isInvalid={false}
                                     type="number"
                                     labelPlacement="outside"
                                     value={producto.precio_venta}
@@ -183,7 +197,8 @@ export default function MainCrearProductos() {
                             </TableCell>
                             <TableCell>
                                 <Input
-                                    variant="faded"
+                                    variant="bordered" 
+                                    isInvalid={false}
                                     type="number"
                                     name="stock_actual"
                                     value={producto.stock_actual}

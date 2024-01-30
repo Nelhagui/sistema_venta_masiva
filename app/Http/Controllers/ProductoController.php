@@ -306,34 +306,83 @@ class ProductoController extends Controller
 
     public function apiStoreProducto(Request $request)
     {
-        $user = Auth::user();
-        $id_comercio = $user->comercio_id;
+        try {
+            $user = Auth::user();
+            $id_comercio = $user->comercio_id;
 
-        $messages = [
-            'productos.*.titulo.required' => 'El campo Título es obligatorio.',
-            'productos.*.titulo.unique' => 'El título ya está en uso.',
-            'productos.*.codigo_barra.numeric' => 'El campo requiere números.',
-            'productos.*.codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
-        ];
+            // $messages = [
+            //     'productos.*.titulo.required' => 'El campo Título es obligatorio.',
+            //     'productos.*.titulo.unique' => 'El título ya está en uso.',
+            //     'productos.*.codigo_barra.numeric' => 'El campo requiere números.',
+            //     'productos.*.codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
+            // ];
 
-        $request->validate([
-            'productos.*.titulo' => 'required|unique:productos,titulo,',
-            'productos.*.codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
-        ], $messages);
+            // Validator::make($request->all(), [
+            //     'productos.*.titulo' => 'required|unique:productos,titulo,',
+            //     'productos.*.codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
+            // ])->validate();
 
-        foreach ($request->input('productos') as $productoData) {
-            $producto = new Producto;
-            $producto->titulo = $productoData['titulo'];
-            $producto->codigo_barra = $productoData['codigo_barra'];
-            $producto->precio_costo = $productoData['precio_costo'];
-            $producto->precio_venta = $productoData['precio_venta'];
-            $producto->stock_actual = $productoData['stock_actual'];
-            $producto->comercio_id = $id_comercio;
-            $producto->save();
+            $productos = $request->input('productos', []);
+            $errores = [];
 
+            foreach ($productos as $producto) {
+                $key = $producto['key'];
+                $validator = Validator::make($producto, [
+                    'titulo' => 'required|unique:productos,titulo',
+                    'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra'],
+                    // Otras reglas de validación según tus necesidades
+                ]);
+        
+                // Personalizar mensajes de error
+                $validator->messages()->merge([
+                    'required' => 'El campo :attribute es obligatorio.',
+                    'unique' => 'El :attribute ya está en uso.',
+                    'numeric' => 'El campo :attribute requiere números.',
+                    // Personaliza los mensajes según tus necesidades
+                ]);
+        
+                if ($validator->fails()) {
+                    foreach ($validator->errors()->toArray() as $campo => $mensajes) {
+                        foreach ($mensajes as $mensaje) {
+                            $errores[] = [
+                                'key' => $key,
+                                'campo' => $campo,
+                                'error' => $mensaje,
+                            ];
+                        }
+                    }
+                }
+            }
+        
+            if (!empty($errores)) {
+                // Devolver una respuesta JSON con los errores ordenados por clave de producto
+                return response()->json(['errors' => $errores], 422);
+            }
+        
+
+            DB::beginTransaction(); // Inicia la transacción
+
+
+            foreach ($request->input('productos') as $productoData) {
+                $producto = new Producto;
+                $producto->titulo = $productoData['titulo'];
+                $producto->codigo_barra = $productoData['codigo_barra'];
+                $producto->precio_costo = $productoData['precio_costo'];
+                $producto->precio_venta = $productoData['precio_venta'];
+                $producto->stock_actual = $productoData['stock_actual'];
+                $producto->comercio_id = $id_comercio;
+                $producto->save();
+
+            }
+
+            DB::commit(); // Confirma la transacción si todo se ejecuta correctamente
+            return response()->json(['message' => 'Productos insertados con éxito.'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack(); // Revierte la transacción si hay una excepción
+
+            return response()->json(['message' => $e->getMessage()], 500);
         }
 
-        return redirect()->route('create.productos');
     }
 
     public function apiStockPrecio(Request $request)

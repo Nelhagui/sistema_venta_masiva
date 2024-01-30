@@ -98,10 +98,23 @@ const productoServices = {
 
         try {
             const response = await fetch(url, requestOptions);
-            if (!response.ok) {
+
+            if (response.ok) {
+                // La solicitud fue exitosa, puedes manejar la respuesta como desees
+                const responseData = await response.json();
+                console.log(responseData);
+            } else if (response.status === 422) {
+                // La solicitud tuvo errores de validación
+                const errorData = await response.json();
+                console.log(errorData);
+        
+                // Aquí puedes acceder a errorData.errors y manejar los errores según tus necesidades
+                return errorData.errors;
+            } else {
+                // Otro manejo de errores si es necesario
+                console.error('Error en la solicitud: ' + response.status);
                 throw new Error('Network response was not ok');
             }
-            return response.json();
         } catch (error) {
             console.error('Error fetching data:', error);
             throw error;
