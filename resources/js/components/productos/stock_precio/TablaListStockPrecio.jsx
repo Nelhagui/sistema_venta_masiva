@@ -43,6 +43,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
         proveedor: "",
         nroFactura: ""
     })
+    const [errores, setErrores] = useState([])
 
     useEffect(() => {
         if (inputRef.current) {
@@ -214,30 +215,51 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
-            await productoServices.cargarCompra(productosSeleccionados, datosCompra, nuevosProductos);
+            const response = await productoServices.cargarCompra(productosSeleccionados, datosCompra, nuevosProductos);
+            const data = await response.json();
+
+            if (response.status !== 200) {
+                if(data?.errors?.length > 0){
+                    let objetoResultado = {};
+                    data.errors.forEach(error => {
+                        objetoResultado[`${error.key}-${error.campo}`] = error.error;
+                    });
+                    setErrores(objetoResultado);
+                    console.log(errores)
+                    console.log("bucleando")
+                } else {
+                    console.log('error inesperado');
+                }
+            } else {
+                toast.success('Compra realizada con éxito', {
+                    position: "bottom-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+                setProductosSeleccionados([]);
+                setNuevosProductos([nuevoProducto]);
+                setDatosCompra({
+                    fechaCompra: "",
+                    proveedor: "",
+                    nroFactura: ""
+                })
+            }
         } catch (error) {
             // Maneja el error si la creación de la compra falla
         } finally {
             setIsLoading(false);
-            toast.success('Compra realizada con éxito', {
-                position: "bottom-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            });
-            setProductosSeleccionados([]);
-            setNuevosProductos([nuevoProducto]);
-            setDatosCompra({
-                fechaCompra: "",
-                proveedor: "",
-                nroFactura: ""
-            })
+           
         }
     };
+
+    useEffect(() => {
+        console.log(errores)
+      }, [errores])
 
     const agregarProductoNuevo = () => {
         setNuevosProductos([...nuevosProductos, nuevoProducto]);
@@ -361,32 +383,38 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                     </TableCell>
                                     <TableCell>
                                         <Input
-                                            variant="faded"
+                                            variant="bordered"
                                             type="number"
                                             name='precio_costo'
                                             labelPlacement="outside"
                                             value={producto.precio_costo}
                                             onChange={(e) => handleInputChangeProducto(producto.id, 'precio_costo', e.target.value)}
+                                            errorMessage={errores[`${producto.id}-precio_costo`] ? errores[`${producto.id}-precio_costo`] : ""}
+                                            isInvalid={errores[`${producto.id}-precio_costo`] ? true : false}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
-                                            variant="faded"
+                                            variant="bordered"
                                             type="number"
                                             name='precio_venta'
                                             labelPlacement="outside"
                                             value={producto.precio_venta}
                                             onChange={(e) => handleInputChangeProducto(producto.id, 'precio_venta', e.target.value)}
+                                            errorMessage={errores[`${producto.id}-precio_venta`] ? errores[`${producto.id}-precio_venta`] : ""}
+                                            isInvalid={errores[`${producto.id}-precio_venta`] ? true : false}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Input
-                                            variant="faded"
+                                            variant="bordered"
                                             type="number"
                                             name='stock_actual'
                                             labelPlacement="outside"
                                             value={producto.stock_actual}
                                             onChange={(e) => handleInputChangeProducto(producto.id, 'stock_actual', e.target.value)}
+                                            errorMessage={errores[`${producto.id}-stock_actual`] ? errores[`${producto.id}-stock_actual`] : ""}
+                                            isInvalid={errores[`${producto.id}-stock_actual`] ? true : false}
                                         />
                                     </TableCell>
                                     <TableCell>
@@ -398,7 +426,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                     </TableCell>
                                     <TableCell>
                                         <Input
-                                            variant="faded"
+                                            variant="bordered"
                                             type="date"
                                             textValue={producto.fecha_vencimiento || ''}
                                             name='fecha_vencimiento'
@@ -429,51 +457,61 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                     <TableRow key={producto.key}>
                                         <TableCell>
                                             <Input
-                                                variant="faded"
+                                                variant="bordered"
                                                 type="text"
                                                 value={producto.titulo}
                                                 labelPlacement="outside"
                                                 onChange={(e) => handleInputChangeProducto(producto.key, 'titulo', e.target.value)}
+                                                errorMessage={errores[`${producto.key}-titulo`] ? errores[`${producto.key}-titulo`] : ""}
+                                                isInvalid={errores[`${producto.key}-titulo`] ? true : false}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Input
-                                                variant="faded"
+                                                variant="bordered"
                                                 type="number"
                                                 value={producto.codigo_barra}
                                                 name="codigo_barra"
                                                 labelPlacement="outside"
                                                 onChange={(e) => handleInputChangeProducto(producto.key, 'codigo_barra', e.target.value)}
+                                                errorMessage={errores[`${producto.key}-codigo_barra`] ? errores[`${producto.key}-codigo_barra`] : ""}
+                                                isInvalid={errores[`${producto.key}-codigo_barra`] ? true : false}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Input
-                                                variant="faded"
+                                                variant="bordered"
                                                 type="number"
                                                 labelPlacement="outside"
                                                 value={producto.precio_costo}
                                                 name="precio_costo"
                                                 onChange={(e) => handleInputChangeProducto(producto.key, 'precio_costo', e.target.value)}
+                                                errorMessage={errores[`${producto.key}-precio_costo`] ? errores[`${producto.key}-precio_costo`] : ""}
+                                                isInvalid={errores[`${producto.key}-precio_costo`] ? true : false}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Input
-                                                variant="faded"
+                                                variant="bordered"
                                                 type="number"
                                                 labelPlacement="outside"
                                                 value={producto.precio_venta}
                                                 name="precio_venta"
                                                 onChange={(e) => handleInputChangeProducto(producto.key, 'precio_venta', e.target.value)}
+                                                errorMessage={errores[`${producto.key}-precio_venta`] ? errores[`${producto.key}-precio_venta`] : ""}
+                                                isInvalid={errores[`${producto.key}-precio_venta`] ? true : false}
                                             />
                                         </TableCell>
                                         <TableCell>
                                             <Input
-                                                variant="faded"
+                                                variant="bordered"
                                                 type="number"
                                                 name="stock_actual"
                                                 value={producto.stock_actual}
                                                 labelPlacement="outside"
                                                 onChange={(e) => handleInputChangeProducto(producto.key, 'stock_actual', e.target.value)}
+                                                errorMessage={errores[`${producto.key}-stock_actual`] ? errores[`${producto.key}-stock_actual`] : ""}
+                                                isInvalid={errores[`${producto.key}-stock_actual`] ? true : false}
                                             />
                                         </TableCell>
                                         <TableCell>
