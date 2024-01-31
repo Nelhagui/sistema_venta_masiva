@@ -61,9 +61,8 @@ const productoServices = {
                 'X-CSRF-TOKEN': csrfToken
             },
             body: JSON.stringify({
-                productos: productosSeleccionados,
+                productos: [...productosSeleccionados, ...nuevosProductos],
                 datosCompra: datosCompra,
-                nuevosProductos: nuevosProductos,
             })
         };
 

@@ -5,41 +5,17 @@ import productoServices from '../../../services/productoServices';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const columns = [
-    {
-        key: "name",
-        label: "TÍTULO",
-    },
-    {
-        key: "codigo_barra",
-        label: "CÓDIGO BARRA",
-    },
-    {
-        key: "precio_costo",
-        label: "PRECIO COSTO",
-    },
-    {
-        key: "precio_venta",
-        label: "PRECIO VENTA",
-    },
-    {
-        key: "stock_actual",
-        label: "STOCK",
-    }
-];
-
 export default function MainCrearProductos() {
-    const [nuevosProductos, setNuevosProductos] = useState([
-        {
-            key: Math.random(),
-            titulo: '',
-            codigo_barra: '',
-            precio_costo: '',
-            precio_venta: '',
-            stock_actual: '',
-            highlighted: false,
-        }
-    ]);
+    const nuevoProducto = {
+        key: Math.random(),
+        titulo: '',
+        codigo_barra: '',
+        precio_costo: '',
+        precio_venta: '',
+        stock_actual: '',
+        highlighted: false,
+    };
+    const [nuevosProductos, setNuevosProductos] = useState([nuevoProducto]);
     const [isLoading, setIsLoading] = useState(false)
     const [errores, setErrores] = useState([]);
 
@@ -106,17 +82,7 @@ export default function MainCrearProductos() {
                     theme: "light",
                 });
                 setErrores([]);
-                setNuevosProductos([
-                    {
-                        key: Math.random(),
-                        titulo: '',
-                        codigo_barra: '',
-                        precio_costo: '',
-                        precio_venta: '',
-                        stock_actual: '',
-                        highlighted: false,
-                    }
-                ]);
+                setNuevosProductos([nuevoProducto]);
             }
         } catch (error) {
             // Maneja el error si la creación de la venta falla
@@ -131,33 +97,18 @@ export default function MainCrearProductos() {
 
 
     const agregarProductoNuevo = () => {
-
-        // Crea un nuevo producto con valores iniciales o vacíos
-        const nuevoProducto = {
-            key: Math.random(),
-            titulo: '',
-            codigo_barra: '',
-            precio_costo: '',
-            precio_venta: '',
-            stock_actual: '',
-            highlighted: false,
-        };
-
-        // Agrega el nuevo producto a la lista de productos seleccionados
         setNuevosProductos([...nuevosProductos, nuevoProducto]);
         console.log(nuevosProductos)
     }
 
 
-
-    console.log('errrores', errores)
     return (
         <>
             <div className='d-flex' style={{textAlign: 'end', marginBlock: '0 10px'}}>
                 <Button color="danger" onClick={() => { handleConfirmCompra() }}>Cargar Compra</Button>
             </div>
            <Table aria-label="Tabla para crear productos">
-                <TableHeader columns={columns}>
+                <TableHeader>
                     <TableColumn>TÍTULO</TableColumn>
                     <TableColumn>CÓDIGO BARRA</TableColumn>
                     <TableColumn>PRECIO COSTO</TableColumn>

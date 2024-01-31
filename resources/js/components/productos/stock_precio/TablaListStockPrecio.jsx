@@ -12,45 +12,21 @@ const highlightedStyle = {
     transition: 'background-color 2s ease', // Animación de transición
 };
 
-
-const columns = [
-    {
-        key: "name",
-        label: "TÍTULO",
-    },
-    {
-        key: "codigo_barra",
-        label: "CÓDIGO BARRA",
-    },
-    {
-        key: "precio_costo",
-        label: "PRECIO COSTO",
-    },
-    {
-        key: "precio_venta",
-        label: "PRECIO VENTA",
-    },
-    {
-        key: "stock_actual",
-        label: "STOCK",
-    },
-    {
-        key: "usar_control_por_lote",
-        label: "CONTROL POR LOTE",
-    },
-    {
-        key: "fecha_vencimiento",
-        label: "FECHA VENCIMIENTO",
-    },
-    {
-        key: "inversor",
-        label: "INVERSOR",
-    },
-];
-
 const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const productosInicialesRef = useRef([]);
+    const nuevoProducto = {
+        key: Math.random(),
+        titulo: '',
+        codigo_barra: '',
+        precio_costo: '',
+        precio_venta: '',
+        stock_actual: '',
+        usar_control_por_lote: false,
+        fecha_vencimiento: '',
+        inversor_id: '',
+        highlighted: false,
+    };
 
     useEffect(() => {
         productosInicialesRef.current = productosIniciales;
@@ -61,20 +37,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
-    const [nuevosProductos, setNuevosProductos] = useState([
-        {
-            key: Math.random(),
-            titulo: '',
-            codigo_barra: '',
-            precio_costo: '',
-            precio_venta: '',
-            stock_actual: '',
-            usar_control_por_lote: false,
-            fecha_vencimiento: '',
-            inversor_id: '',
-            highlighted: false,
-        }
-    ]);
+    const [nuevosProductos, setNuevosProductos] = useState([nuevoProducto]);
     const [datosCompra, setDatosCompra] = useState({
         fechaCompra: "",
         proveedor: "",
@@ -267,20 +230,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                 theme: "light",
             });
             setProductosSeleccionados([]);
-            setNuevosProductos([
-                {
-                    key: Math.random(),
-                    titulo: '',
-                    codigo_barra: '',
-                    precio_costo: '',
-                    precio_venta: '',
-                    stock_actual: '',
-                    usar_control_por_lote: false,
-                    fecha_vencimiento: '',
-                    inversor_id: '',
-                    highlighted: false,
-                }
-            ]);
+            setNuevosProductos([nuevoProducto]);
             setDatosCompra({
                 fechaCompra: "",
                 proveedor: "",
@@ -290,22 +240,6 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     };
 
     const agregarProductoNuevo = () => {
-
-        // Crea un nuevo producto con valores iniciales o vacíos
-        const nuevoProducto = {
-            key: Math.random(),
-            titulo: '',
-            codigo_barra: '',
-            precio_costo: '',
-            precio_venta: '',
-            stock_actual: '',
-            usar_control_por_lote: false,
-            fecha_vencimiento: '',
-            inversor_id: '',
-            highlighted: false,
-        };
-
-        // Agrega el nuevo producto a la lista de productos seleccionados
         setNuevosProductos([...nuevosProductos, nuevoProducto]);
         console.log(nuevosProductos)
     }
@@ -406,7 +340,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                 (productosSeleccionados.length > 0 || nuevosProductos.length > 0) &&
                 <>
                     <Table aria-label="Tabla de Stock y Precio de productos">
-                        <TableHeader columns={columns}>
+                        <TableHeader>
                             <TableColumn>TÍTULO</TableColumn>
                             <TableColumn>CÓDIGO BARRA</TableColumn>
                             <TableColumn>PRECIO COSTO</TableColumn>

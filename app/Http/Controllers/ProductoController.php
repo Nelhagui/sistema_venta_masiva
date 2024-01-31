@@ -310,18 +310,6 @@ class ProductoController extends Controller
             $user = Auth::user();
             $id_comercio = $user->comercio_id;
 
-            // $messages = [
-            //     'productos.*.titulo.required' => 'El campo Título es obligatorio.',
-            //     'productos.*.titulo.unique' => 'El título ya está en uso.',
-            //     'productos.*.codigo_barra.numeric' => 'El campo requiere números.',
-            //     'productos.*.codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
-            // ];
-
-            // Validator::make($request->all(), [
-            //     'productos.*.titulo' => 'required|unique:productos,titulo,',
-            //     'productos.*.codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
-            // ])->validate();
-
             $productos = $request->input('productos', []);
             $errores = [];
 
@@ -392,40 +380,48 @@ class ProductoController extends Controller
     {
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
-        $productosSeleccionados = $request->productos;
-        $nuevosProductos = $request->nuevosProductos;
+        $productos = $request->productos;
         $datosCompra = $request->datosCompra;
 
-        // Convierte los datos a colecciones si no lo están
-        $coleccionProductos = collect($productosSeleccionados);
-        $coleccionNuevosProductos = collect($nuevosProductos);
+        $errores = [];
 
-        // Fusiona las colecciones
-        $productos = $coleccionProductos->merge($coleccionNuevosProductos)->all();
-        $messages = [
-            'precio_venta.required' => 'El campo Precio de venta es obligatorio.',
-            'precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
-            'precio_costo.required' => 'El campo Precio de costo es obligatorio.',
-            'precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
-            'stock_actual.required' => 'El campo Stock es obligatorio.',
-            'stock_actual.numeric' => 'El campo Stock debe ser un valor numérico.',
-        ];
+        foreach ($productos as $producto) {
+            $key =  $producto['key'] ?? $producto['id'];
+            $validator = Validator::make($producto, [
+                'titulo' => 'required|unique:productos,titulo',
+                'precio_costo' => 'required',
+                'precio_venta' => 'required',
+                'stock_actual' => 'required',
+                'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra'],
+                // Otras reglas de validación según tus necesidades
+            ]);
+    
+            // Personalizar mensajes de error
+            $validator->messages()->merge([
+                'required' => 'El campo :attribute es obligatorio.',
+                'unique' => 'El :attribute ya está en uso.',
+                'numeric' => 'El campo :attribute requiere números.',
+                // Personaliza los mensajes según tus necesidades
+            ]);
 
-        $rules = [
-            'productos.*.descripcion' => ['nullable', 'sometimes', 'string'],
-            'productos.*.precio_costo' => 'required|numeric',
-            'productos.*.precio_venta' => 'required|numeric',
-            'productos.*.stock_actual' => 'required|numeric',
-            'productos.*.usar_control_por_lote' => 'required|boolean',
-        ];
+    
+            if ($validator->fails()) {
+                foreach ($validator->errors()->toArray() as $campo => $mensajes) {
+                    foreach ($mensajes as $mensaje) {
+                        $errores[] = [
+                            'key' => $key,
+                            'campo' => $campo,
+                            'error' => $mensaje,
+                        ];
+                    }
+                }
+            }
 
-        $validator = Validator::make($request->all(), $rules, $messages);
+        }
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'errors' => $validator->errors()
-            ], 400); // Código HTTP 400 para peticiones incorrectas
+        if (!empty($errores)) {
+            // Devolver una respuesta JSON con los errores ordenados por clave de producto
+            return response()->json(['errors' => $errores], 422);
         }
 
         $totalCompra = 0; // Variable para almacenar el total de la compra
