@@ -19,7 +19,8 @@ class SesionCajaController extends Controller
     {
         $user = Auth::user();
         $ultimaSesion = $user->sesionesCaja()->latest()->first();
-        return view('cajas.show', compact('ultimaSesion'));
+        // return view('cajas.show', compact('ultimaSesion'));
+        return view('proximamente.index');
     }
     public function showDetalle(SesionCaja $sesionCaja)
     {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import TablaListProveedores from './TablaListProveedores';
+import MainProximamente from '../../proximamente/MainProximamente';
 
 export default function MainProveedores() {
     const [proveedores, setProveedores] = useState([])
@@ -27,11 +28,12 @@ export default function MainProveedores() {
     }, []);
     return (
         <>
-            {
+            {/* {
                 isLoading
                     ? "Cargando..."
                     : <TablaListProveedores proveedores={proveedores} />
-            }
+            } */}
+            <MainProximamente/>
         </>
     )
 }

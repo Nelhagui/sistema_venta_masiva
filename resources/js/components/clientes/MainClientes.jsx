@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import TablaListClientes from './TablaListClientes';
 import clienteServices from '../../services/clienteServices';
+import MainProximamente from '../proximamente/MainProximamente';
 
 export default function MainClientes() {
     const [clientes, setClientes] = useState([])
@@ -25,11 +26,12 @@ export default function MainClientes() {
     
     return (
         <>
-            {
+            {/* {
                 isLoading
                     ? "Cargando..."
                     : <TablaListClientes clientes={clientes} />
-            }
+            } */}
+            <MainProximamente/>
         </>
     )
 }
