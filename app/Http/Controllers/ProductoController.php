@@ -323,7 +323,7 @@ class ProductoController extends Controller
                     'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra'],
                     // Otras reglas de validación según tus necesidades
                 ]);
-        
+
                 // Personalizar mensajes de error
                 $validator->messages()->merge([
                     'required' => 'El campo :attribute es obligatorio.',
@@ -331,7 +331,7 @@ class ProductoController extends Controller
                     'numeric' => 'El campo :attribute requiere números.',
                     // Personaliza los mensajes según tus necesidades
                 ]);
-        
+
                 if ($validator->fails()) {
                     foreach ($validator->errors()->toArray() as $campo => $mensajes) {
                         foreach ($mensajes as $mensaje) {
@@ -344,12 +344,12 @@ class ProductoController extends Controller
                     }
                 }
             }
-        
+
             if (!empty($errores)) {
                 // Devolver una respuesta JSON con los errores ordenados por clave de producto
                 return response()->json(['errors' => $errores], 422);
             }
-        
+
 
             DB::beginTransaction(); // Inicia la transacción
 
@@ -386,7 +386,7 @@ class ProductoController extends Controller
         $errores = [];
 
         foreach ($productos as $producto) {
-            $key =  $producto['key'] ?? $producto['id'];
+            $key = $producto['key'] ?? $producto['id'];
             $validator = Validator::make($producto, [
                 'titulo' => 'required|unique:productos,titulo',
                 'precio_costo' => 'required',
@@ -395,7 +395,7 @@ class ProductoController extends Controller
                 'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra'],
                 // Otras reglas de validación según tus necesidades
             ]);
-    
+
             // Personalizar mensajes de error
             $validator->messages()->merge([
                 'required' => 'El campo :attribute es obligatorio.',
@@ -404,7 +404,7 @@ class ProductoController extends Controller
                 // Personaliza los mensajes según tus necesidades
             ]);
 
-    
+
             if ($validator->fails()) {
                 foreach ($validator->errors()->toArray() as $campo => $mensajes) {
                     foreach ($mensajes as $mensaje) {
@@ -548,6 +548,7 @@ class ProductoController extends Controller
     public function apiSubirExcel(Request $request)
     {
         $user = Auth::user();
+        $productosRepetidosEnSistema = [];
 
         // valida extension, tamaño y nro de columnas (deben ser 6)
         $pasaValidacion = $this->validaRequisitosObligatorios($request);
@@ -561,7 +562,7 @@ class ProductoController extends Controller
 
         if ($user->comercio->productos->count() > 0) {
             // valido si el ya existen productos similares cargados
-            $productosReptidosNoRepetidos = $this->obtenerProductosRepetidosEnSistema($productosValidosInvalidos);
+            $productosRepetidosEnSistema = $this->obtenerProductosRepetidosEnSistema($productosValidosInvalidos);
         } else {
             $productosValidos = $productosValidosInvalidos['productosValidos'];
             // Insertar productos válidos en lotes
@@ -619,9 +620,12 @@ class ProductoController extends Controller
         return response()->json(
             [
                 'productos_repetidos' => $productosValidosInvalidos['productosDuplicados'],
+                'productos_repetidos_en_sistema' => $productosRepetidosEnSistema,
                 'productos_invalidos' => $productosValidosInvalidos['productosInvalidos'],
                 'productos_validos' => count($productosValidosInvalidos['productosValidos'])
-            ], 200);
+            ],
+            200
+        );
     }
 
     private function obtenerProductosDesdeArchivo($file)
@@ -665,8 +669,8 @@ class ProductoController extends Controller
                 // Si el código de barras no es numérico y no contiene un guión "-", se considera inválido
                 $producto->codigo_barra = null; // O asigna el valor que consideres apropiado para indicar que es inválido
             }
-            
-            
+
+
             // Verificar si el código de barras ya ha sido procesado y es diferente de null o vacío
             if ($producto->codigo_barra !== null && $producto->codigo_barra !== '') {
                 if (isset($codigosBarras[$producto->codigo_barra])) {
@@ -717,6 +721,33 @@ class ProductoController extends Controller
             return 'stock';
 
         return 'codigo_barra';
+    }
+
+    private function obtenerProductosRepetidosEnSistema($productosRequest)
+    {
+        $user = Auth::user();
+        $productos = $productosRequest['productosValidos'];
+        $titulos = array_column($productos, 'titulo');
+        $codigos_barras = array_filter(array_column($productos, 'codigo_barra'));
+
+        $consulta = Producto::whereIn('titulo', $titulos)->where('comercio_id', $user->comercio_id);
+
+        if (!empty($codigos_barras)) {
+            $consulta->orWhereIn('codigo_barra', $codigos_barras);
+        }
+
+        // Ejecutar la consulta y obtener los resultados
+        $productosCoincidentes = $consulta->get();
+
+        // Filtrar el array de productos para eliminar aquellos que ya existen en la base de datos
+        $productosFiltrados = array_filter($productos, function ($producto) use ($productosCoincidentes) {
+            return $productosCoincidentes->contains(function ($productoCoincidente) use ($producto) {
+                return $producto['titulo'] === $productoCoincidente->titulo
+                    || $producto['codigo_barra'] === $productoCoincidente->codigo_barra;
+            });
+        });
+
+        return $productosFiltrados;
     }
 
     private function transformarComaAPunto($cadena)
