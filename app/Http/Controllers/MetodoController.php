@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\Metodo;
+use App\models\MetodoPago;
+use Illuminate\Support\Facades\Auth;
 
 
 class MetodoController extends Controller
@@ -11,7 +12,9 @@ class MetodoController extends Controller
     //LISTA
     public function index()
     {
-        $metodos = Metodo::all();
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+        $metodos = MetodoPago::where('comercio_id', $id_comercio)->get();
         return view('metodos.index', compact('metodos'));
     }
 
@@ -23,21 +26,23 @@ class MetodoController extends Controller
 
     public function store(Request $request)
     {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
         $messages = [
             'nombre.required' => 'El campo Nombre es obligatorio.',
             'nombre.unique' => 'El nombre ya está en uso.',
-            'comision.required' => 'El campo Comisión es obligatorio.',
-            'comision.numeric' => 'El campo Comisión debe ser un valor numérico.',
+           
         ];
 
         $request->validate([
-            'nombre' => 'required|unique:metodos,nombre',
-            'comision' => 'required|numeric',
+            'nombre' => 'required',
         ], $messages);
 
-        $metodo = new Metodo;
+        $metodo = new MetodoPago;
         $metodo->nombre = $request->nombre;
-        $metodo->comision = $request->comision;
+        $metodo->tipo_markup = 0;
+        $metodo->estado = 1;
+        $metodo->comercio_id = $id_comercio;
         $metodo->save();
         return redirect()->route('index.metodos');
         
@@ -46,7 +51,7 @@ class MetodoController extends Controller
     //EDITAR
     public function edit(string $id)
     {
-        $metodo = Metodo::find($id);
+        $metodo = MetodoPago::find($id);
         return view('metodos.edit', compact('metodo'));
     }
 
@@ -59,7 +64,7 @@ class MetodoController extends Controller
             'comision.numeric' => 'El campo Comisión debe ser un valor numérico.',
         ];
         
-        $metodo = Metodo::find($id); // Primero obtenemos el método
+        $metodo = MetodoPago::find($id); // Primero obtenemos el método
         
         $request->validate([
             'nombre' => 'required|unique:metodos,nombre,' . $metodo->id,

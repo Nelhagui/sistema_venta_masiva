@@ -15,7 +15,7 @@
                     <thead>
                         <tr>
                             <th class="text-left p-2 border border-slate-600">Nombre</th>
-                            <th class="text-left p-2 border border-slate-600">Comisión</th>
+                            <!-- <th class="text-left p-2 border border-slate-600">Comisión</th> -->
                             <th class="text-left p-2 border border-slate-600">Acción</th>
                         </tr>
                     </thead>
@@ -23,7 +23,7 @@
                         @foreach($metodos as $metodo)
                             <tr>
                                 <td class="p-2 border border-slate-600">{{ $metodo->nombre }}</td>
-                                <td class="p-2 border border-slate-600">{{ $metodo->comision }}</td>
+                                <!-- <td class="p-2 border border-slate-600">{{ $metodo->comision }}</td> -->
                                 <td class="p-2 border border-slate-600"><a href='{{route('edit.metodos', $metodo->id)}}'>Editar</a></td>
                             </tr>
                         @endforeach
