@@ -9,7 +9,7 @@ const InstructivoSinProductos = () => {
     return (
         <div>
             <div className="my-9" style={{marginTop: 25}}>
-                <h2 class="antialiased font-medium tracking-wide text-center" style={{ fontSize: 32 }}>
+                <h2 className="antialiased font-medium tracking-wide text-center" style={{ fontSize: 32 }}>
                     Agrega tus productos a la plataforma.
                 </h2>
                 <p className='text-center text-descripcion'>

@@ -2,33 +2,32 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T2VWG0L63T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-T2VWG0L63T');
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('public/assets/icon-shop.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('public/assets/icon-shop.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('public/assets/icon-shop.png') }}">
+
     <title>{{ config('app.name', 'RapidoVentas') }}</title>
-    
+
     @vite('resources/css/app.css')
     @vite('resources/css/dashboard.css')
     @viteReactRefresh
     @vite('resources/js/app.js')
-    @vite('resources/js/components/lector/MainLector.jsx')
-    @vite('resources/js/components/reportes/MainReportes.jsx')
-    @vite('resources/js/components/productos/MainProductos.jsx')
-    @vite('resources/js/components/productos/importar/MainImportarProductos.jsx')
-    @vite('resources/js/components/productos_base/MainProductosBase.jsx')
-    @vite('resources/js/components/ventas/MainVentas.jsx')
-    @vite('resources/js/components/clientes/MainClientes.jsx')
-    @vite('resources/js/components/clientes/ver/MainDetalleCliente.jsx')
-    @vite('resources/js/components/compras/MainCompras.jsx')
-    @vite('resources/js/components/inversores/lista/MainInversores.jsx')
-    @vite('resources/js/components/proveedores/reportes/MainProveedores.jsx')
-    @vite('resources/js/components/icons/SearchIcon.jsx')
-    @vite('resources/js/components/icons/VerticalDotsIcon.jsx')
-    @vite('resources/js/components/productos_stock/MainProductosActualizarStock.jsx')
-    @vite('resources/js/components/productos/stock_precio/MainStockPrecio.jsx')
-    @vite('resources/js/components/productos/crear/MainCrearProductos.jsx')
-    @vite('resources/js/components/proximamente/MainProximamente.jsx')
 </head>
 
 <body class="font-sans antialiased">

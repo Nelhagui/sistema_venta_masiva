@@ -662,7 +662,7 @@ class ProductoController extends Controller
             $producto->costo = $this->transformarComaAPunto($rowData[$i][1]);
             $producto->precio = $this->transformarComaAPunto($rowData[$i][2]);
             $producto->stock = $this->transformarComaAPunto($rowData[$i][3]);
-            $codigoBarra = $rowData[$i][4];
+            $codigoBarra = intval($rowData[$i][4]);
             $producto->descripcion = $rowData[$i][5];
 
             // Validar el código de barras

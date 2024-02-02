@@ -1,5 +1,8 @@
-export const BASE_URL = 'http://127.0.0.1:8000';
-export const API_BASE_URL = 'http://127.0.0.1:8000/api';
+// export const BASE_URL = 'http://127.0.0.1:8000';
+// export const API_BASE_URL = 'http://127.0.0.1:8000/api';
+export const BASE_URL = 'https://rapidoventas.com.ar';
+export const API_BASE_URL = 'https://rapidoventas.com.ar/api';
+
 
 export const endpoints = {
     ventas: {
@@ -44,6 +47,7 @@ export const urls = {
         importar: `${BASE_URL}/productos/importar`,
         stockPrecio: `${BASE_URL}/productos/stock-precio`,
         importarArchivo: `${BASE_URL}/productos/importar`
-    }
+    },
+    descargarExcelEjemplo: `${BASE_URL}/public/files/rapido-ventas-excel-ejemplo.xlsx`
 };
 

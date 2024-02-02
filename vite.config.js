@@ -6,7 +6,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
     plugins: [
         laravel([
-            // 'resources/css/app.css',
+            'resources/css/app.css',
+            'resources/css/dashboard.css',
             'resources/js/app.js',
             'resources/js/components/lector/MainLector.jsx',
             'resources/js/components/reportes/MainReportes.jsx',

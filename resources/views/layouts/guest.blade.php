@@ -2,9 +2,24 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T2VWG0L63T"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-T2VWG0L63T');
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('public/assets/icon-shop.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('public/assets/icon-shop.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('public/assets/icon-shop.png') }}">
     <title>{{ config('app.name', 'RapidoVentas') }}</title>
     @vite('resources/css/app.css')
 </head>
@@ -24,7 +39,8 @@
             {{-- Tu código HTML/Blade aquí --}}
             <p class="mt-10 text-center text-sm text-gray-500">
                 ¿No es un miembro?
-                <a href="{{ route('register') }}" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Comience ahora GRATIS!</a>
+                <a href="{{ route('register') }}"
+                    class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Comience ahora GRATIS!</a>
             </p>
         @endif
     </div>
