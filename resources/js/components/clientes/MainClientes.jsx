@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import TablaListClientes from './TablaListClientes';
 import clienteServices from '../../services/clienteServices';
-import MainProximamente from '../proximamente/MainProximamente';
+import { Button } from "@nextui-org/react";
+import ModalCrearCliente from './agregar/ModalCrearCliente';
 
 export default function MainClientes() {
     const [clientes, setClientes] = useState([])
@@ -23,15 +24,22 @@ export default function MainClientes() {
             setIsLoading(false);
         }
     };
-    
+    const irPaginaAgregarCliente = () => {
+        console.log('voy')
+    }
     return (
         <>
-            {/* {
+            {
                 isLoading
                     ? "Cargando..."
-                    : <TablaListClientes clientes={clientes} />
-            } */}
-            <MainProximamente/>
+                    :
+                    <>
+                        <div className='flex mb-4 justify-end'>
+                            <ModalCrearCliente/>
+                        </div>
+                        <TablaListClientes clientes={clientes} />
+                    </>
+            }
         </>
     )
 }

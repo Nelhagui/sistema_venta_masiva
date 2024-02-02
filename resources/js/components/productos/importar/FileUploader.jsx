@@ -1,14 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Button, Spinner } from "@nextui-org/react";
+import { Button, Spinner, Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import { UploadFileCloud } from '../../icons/UploadFileICloud';
 import productoServices from '../../../services/productoServices';
+import { InfoIcon } from '../../icons/InfoIcon';
+import { RepeatIcon } from '../../icons/RepeatIcon';
 
 const FileUploader = () => {
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [productosRepetidos, setProductosRepetidos] = useState([]);
+    const [productosRepetidos, setProductosRepetidos] = useState(0);
     const [productosInvalidos, setProductosInvalidos] = useState([]);
-    const [productosValidos, setProductosValidos] = useState(0);
+    const [productosEnviados, setProductosEnviados] = useState(0);
+    const [productosAgregados, setProductosAgregados] = useState(0);
     const [procesoFinalizado, setProcesoFinalizado] = useState(false);
     const [frases, setFrases] = useState([
         "Estamos procesando la información del archivo...",
@@ -69,9 +72,10 @@ const FileUploader = () => {
                 setMessage(data.message);
             } else {
                 // La petición fue exitosa, actualiza los productos
-                setProductosRepetidos(data?.productos_repetidos);
+                setProductosRepetidos(data?.productos_repetidos_en_sistema);
                 setProductosInvalidos(data?.productos_invalidos);
-                setProductosValidos(data?.productos_validos);
+                setProductosAgregados(data?.productos_cargados);
+                setProductosEnviados(data?.productos_enviados);
                 setProcesoFinalizado(true)
             }
         } catch (error) {
@@ -80,6 +84,10 @@ const FileUploader = () => {
             setIsLoading(false);
         }
     };
+    
+    const reset = () => {
+        window.location.reload();
+    }
 
     return (
         <div>
@@ -88,16 +96,60 @@ const FileUploader = () => {
                     ?
                     <>
                         <h3 className='titulo-seccion' style={{ fontSize: 23, fontWeight: 400 }}>Resultado del proceso de carga:</h3>
-                        <div className='flex justify-center gap-6' style={{ marginTop: 30 }}>
+                        <div className='flex' style={{ marginTop: 30, justifyContent: 'space-evenly' }}>
                             <div>
-                                <p className='text-descripcion' style={{ color: 'green' }}>{productosValidos} productos agregados</p>
+                                <p>{productosEnviados}</p>
+                                <p className='text-descripcion'>productos presentes <br />en el archivos</p>
+                            </div>
+                            {
+                                productosInvalidos?.length > 0
+                                    ?
+                                    <>
+                                        <div>
+                                            <p style={{ color: 'red' }}>{productosInvalidos?.length}</p>
+                                            <p className='text-descripcion' style={{ color: 'red' }}>omitidos <br />por campos erróneos</p>
+                                            <Popover placement="top" color="default" showArrow={true}>
+                                                <PopoverTrigger>
+                                                    <div className='flex justify-center mt-2'>
+                                                        <InfoIcon className="cursor-pointer" />
+                                                    </div>
+                                                </PopoverTrigger>
+                                                <PopoverContent>
+                                                    <div className="px-1 py-2" style={{ maxHeight: 250, overflowY: 'auto' }}>
+                                                        {
+
+                                                            productosInvalidos?.map(productoInvalido => {
+                                                                return (
+                                                                    <>
+                                                                        <div className="text-tiny mb-1">{productoInvalido?.titulo}  <span style={{ color: 'red' }}>{productoInvalido?.campo_invalido}</span> </div>
+                                                                    </>
+                                                                )
+                                                            })
+                                                        }
+                                                    </div>
+                                                </PopoverContent>
+                                            </Popover>
+
+
+                                        </div>
+                                    </>
+
+                                    : null
+                            }
+                            <div>
+                                <p style={{ color: 'green' }}>{productosAgregados}</p>
+                                <p className='text-descripcion' style={{ color: 'green' }}>productos agregados <br /> al sistema</p>
                             </div>
                             <div>
-                                <p className='text-descripcion' style={{ color: 'orange' }}>{productosRepetidos?.length} omitidos por repetición</p>
+                                <p style={{ color: 'orange' }}>{productosRepetidos?.length}</p>
+                                <p className='text-descripcion' style={{ color: 'orange' }}>ya se encontraban <br /> en el sistema</p>
                             </div>
-                            <div>
-                                <p className='text-descripcion' style={{ color: 'red' }}>{productosInvalidos?.length} omitidos por campos erróneos</p>
-                            </div>
+                        </div>
+                        <div className='mt-10 flex justify-center'>
+                            <RepeatIcon />
+                            <p className='text-descripcion ml-2' style={{ display: 'inline-block', paddingBottom: 4, cursor: 'pointer' }} onClick={()=> reset()}>
+                                Cargar otro archivo
+                            </p>
                         </div>
 
                     </>

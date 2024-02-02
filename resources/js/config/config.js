@@ -3,10 +3,12 @@ export const API_BASE_URL = 'http://127.0.0.1:8000/api';
 
 export const endpoints = {
     ventas: {
+        lista: `${API_BASE_URL}/ventas`,
         crear: `${API_BASE_URL}/ventas/crear`,
     },
     clientes: {
         lista: `${API_BASE_URL}/clientes`,
+        crear: `${API_BASE_URL}/clientes/crear`,
         detalle: `${API_BASE_URL}/clientes/detalle`,
         saldarDeudas: `${API_BASE_URL}/clientes/deudas/saldar`,
     },

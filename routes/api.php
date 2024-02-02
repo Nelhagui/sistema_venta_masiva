@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
     // CLIENTES
     Route::prefix('clientes')->group(function () {
         Route::get('/', [ClienteController::class, 'indexApi']);
+        Route::post('/crear', [ClienteController::class, 'storeApi']);
         Route::post('/deudas/saldar', [ClienteController::class, 'saldarDeudaApi']);
         Route::get('/detalle/{id}', [ClienteController::class, 'showApi']);
     });
@@ -71,7 +72,7 @@ Route::middleware('auth')->group(function () {
 
     // VENTAS
     Route::prefix('ventas')->group(function () {
-        Route::post('/', [VentaController::class, 'indexApi']);
+        Route::get('/', [VentaController::class, 'indexApi']);
         Route::post('/crear', [VentaController::class, 'storeApi']);
     });
 

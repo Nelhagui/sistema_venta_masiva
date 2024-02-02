@@ -2,38 +2,37 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import TablaListVentas from './TablaListVentas';
 import MainProximamente from '../proximamente/MainProximamente';
+import ventaServices from '../../services/ventaServices';
+
 
 export default function MainVentas() {
     const [ventas, setVentas] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+
     useEffect(() => {
-        // Realizar la solicitud GET a la API de ventas
-        fetch('/api/ventas')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de ventas
-                setVentas(data);
-            })
-            .finally(() => {
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
+        fetchModel()
     }, []);
+
+    const fetchModel = async () => {
+        setIsLoading(true);
+        try {
+            console.log('probando')
+            const response = await ventaServices.traerLista()
+            setVentas(response);
+        } catch (error) {
+            // Maneja el error si la creación de la venta falla
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return (
         <>
-            {/* {
+            {
                 isLoading
                     ? "Cargando..."
                     : <TablaListVentas ventas={ventas} />
-            } */}
-            <MainProximamente/>
+            }
+            {/* <MainProximamente/> */}
         </>
     )
 }

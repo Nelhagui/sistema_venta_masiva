@@ -17,6 +17,7 @@ import {
 import { SearchIcon } from "../icons/SearchIcon";
 import { VerticalDotsIcon } from "../icons/VerticalDotsIcon";
 import { PlusIcon } from "../icons/PlusIcon";
+import fechaUtils from "../../utils/fechaUtils";
 
 const columns = [
     {
@@ -34,6 +35,10 @@ const columns = [
     {
         key: "monto_total_venta",
         label: "TOTAL",
+    },
+    {
+        key: "cliente",
+        label: "CLIENTE",
     },
     {
         key: "user",
@@ -64,7 +69,15 @@ const TablaListVentas = ({ ventas }) => {
 
         switch (columnKey) {
             case "user":
-                return <span>{venta.user.nombre}</span>;
+                return <span>{venta?.sesion_caja?.cajero?.nombre}</span>;
+            case "monto_total_venta":
+                return <span>${venta?.monto_total_venta}</span>;
+            case "fecha_venta":
+                return <span>{fechaUtils.convertirFormatoFecha(venta?.fecha_hora_venta)}</span>;
+            case "cliente":
+                return <span>{venta?.cliente?.nombre}</span>
+            case "created_at":
+                return <span>{fechaUtils.convertirFormatoHora(venta?.fecha_hora_venta)}</span>;
             case "detalle":
                 return (
                     <div className="relative flex justify-end items-center gap-2">

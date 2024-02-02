@@ -548,6 +548,7 @@ class ProductoController extends Controller
     public function apiSubirExcel(Request $request)
     {
         $user = Auth::user();
+        $productosValidosParaCargar = [];
         $productosRepetidosEnSistema = [];
 
         // valida extension, tamaño y nro de columnas (deben ser 6)
@@ -562,67 +563,73 @@ class ProductoController extends Controller
 
         if ($user->comercio->productos->count() > 0) {
             // valido si el ya existen productos similares cargados
-            $productosRepetidosEnSistema = $this->obtenerProductosRepetidosEnSistema($productosValidosInvalidos);
+            $respuestaFiltroRepetidosNoRepetidos = $this->obtenerProductosRepetidosEnSistema($productosValidosInvalidos);
+            $productosRepetidosEnSistema = array_values($respuestaFiltroRepetidosNoRepetidos['productosCoincidentes']);
+            
+
+            $productosValidosParaCargar = $respuestaFiltroRepetidosNoRepetidos['productosNoCoincidentes'];
         } else {
-            $productosValidos = $productosValidosInvalidos['productosValidos'];
-            // Insertar productos válidos en lotes
-            $chunkSize = 100; // Tamaño del lote
-            $productosChunked = array_chunk($productosValidos, $chunkSize);
+            $productosValidosParaCargar = $productosValidosInvalidos['productosValidos'];
+        }
 
-            // Iniciar una transacción
-            DB::beginTransaction();
+        // Insertar productos válidos en lotes
+        $chunkSize = 100; // Tamaño del lote
+        $productosChunked = array_chunk($productosValidosParaCargar, $chunkSize);
 
-            try {
-                foreach ($productosChunked as $productosLote) {
-                    // Obtener datos de los productos del lote para inserción
-                    $datosProductosLote = [];
-                    foreach ($productosLote as $producto) {
-                        $datosProductosLote[] = [
-                            'comercio_id' => $user->comercio_id,
-                            'titulo' => $producto->titulo,
-                            'precio_costo' => $producto->costo,
-                            'precio_venta' => $producto->precio,
-                            'stock_actual' => $producto->stock,
-                            'codigo_barra' => $producto->codigo_barra !== null && $producto->codigo_barra !== "" ? $producto->codigo_barra : null,
-                            'descripcion' => $producto->descripcion,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ];
-                    }
+        // Iniciar una transacción
+        DB::beginTransaction();
 
-                    // Insertar productos del lote en la base de datos
-                    Producto::insert($datosProductosLote);
+        try {
+            foreach ($productosChunked as $productosLote) {
+                // Obtener datos de los productos del lote para inserción
+                $datosProductosLote = [];
+                foreach ($productosLote as $producto) {
+                    $datosProductosLote[] = [
+                        'comercio_id' => $user->comercio_id,
+                        'titulo' => $producto->titulo,
+                        'precio_costo' => $producto->costo,
+                        'precio_venta' => $producto->precio,
+                        'stock_actual' => $producto->stock,
+                        'codigo_barra' => $producto->codigo_barra !== null && $producto->codigo_barra !== "" ? $producto->codigo_barra : null,
+                        'descripcion' => $producto->descripcion,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
 
-                // Confirmar la transacción si todas las inserciones son exitosas
-                DB::commit();
-            } catch (\Illuminate\Database\QueryException $e) {
-                // Capturar mensaje de error de la base de datos
-                $errorMessage = $e->getMessage();
-
-                // Log del mensaje de error
-                // Log::error('Error al insertar productos en lote: ' . $errorMessage);
-                $errorMessage = "Error al procesar los datos. Error A89E";
-
-                // Revertir la transacción y manejar la excepción
-                DB::rollBack();
-                return response()->json(['message' => $errorMessage], 500);
-            } catch (\Exception $e) {
-                // Capturar otras excepciones
-                // ...
-
-                // Revertir la transacción y manejar la excepción
-                DB::rollBack();
-                return response()->json(['message' => 'Error al procesar la solicitud'], 500);
+                // Insertar productos del lote en la base de datos
+                Producto::insert($datosProductosLote);
             }
+
+            // Confirmar la transacción si todas las inserciones son exitosas
+            DB::commit();
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Capturar mensaje de error de la base de datos
+            $errorMessage = $e->getMessage();
+
+            // Log del mensaje de error
+            // Log::error('Error al insertar productos en lote: ' . $errorMessage);
+            $errorMessage = "Error al procesar los datos. Error A89E";
+
+            // Revertir la transacción y manejar la excepción
+            DB::rollBack();
+            return response()->json(['message' => $errorMessage], 500);
+        } catch (\Exception $e) {
+            // Capturar otras excepciones
+            // ...
+
+            // Revertir la transacción y manejar la excepción
+            DB::rollBack();
+            return response()->json(['message' => 'Error al procesar la solicitud'], 500);
         }
 
         return response()->json(
             [
-                'productos_repetidos' => $productosValidosInvalidos['productosDuplicados'],
+                'productos_enviados' => count($productosValidosInvalidos['productosValidos']) + count($productosValidosInvalidos['productosInvalidos']),
+                'productos_repetidos_en_archivo' => $productosValidosInvalidos['productosDuplicados'],
                 'productos_repetidos_en_sistema' => $productosRepetidosEnSistema,
                 'productos_invalidos' => $productosValidosInvalidos['productosInvalidos'],
-                'productos_validos' => count($productosValidosInvalidos['productosValidos'])
+                'productos_cargados' => count($productosValidosParaCargar)
             ],
             200
         );
@@ -739,7 +746,7 @@ class ProductoController extends Controller
         // Ejecutar la consulta y obtener los resultados
         $productosCoincidentes = $consulta->get();
 
-        // Filtrar el array de productos para eliminar aquellos que ya existen en la base de datos
+        // Filtrar el array de productos para obtener solo los productos que coinciden con los existentes en la base de datos
         $productosFiltrados = array_filter($productos, function ($producto) use ($productosCoincidentes) {
             return $productosCoincidentes->contains(function ($productoCoincidente) use ($producto) {
                 return $producto['titulo'] === $productoCoincidente->titulo
@@ -747,7 +754,15 @@ class ProductoController extends Controller
             });
         });
 
-        return $productosFiltrados;
+        // Filtrar el array de productos para obtener solo los productos que no coinciden con los existentes en la base de datos
+        $productosNoCoincidentes = array_filter($productos, function ($producto) use ($productosFiltrados) {
+            return !in_array($producto, $productosFiltrados, true);
+        });
+
+        return [
+            'productosCoincidentes' => $productosFiltrados,
+            'productosNoCoincidentes' => $productosNoCoincidentes,
+        ];
     }
 
     private function transformarComaAPunto($cadena)

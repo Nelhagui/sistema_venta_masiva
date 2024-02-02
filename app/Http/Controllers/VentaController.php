@@ -103,7 +103,11 @@ class VentaController extends Controller
     {
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
-        $ventas = Comercio::find($id_comercio)->ventas;
+        $ventas = Venta::where('comercio_id', $id_comercio)
+            ->whereHas('cliente') // Filtra las ventas que tienen un cliente asociado
+            ->orWhereNull('cliente_id') // Incluye las ventas donde el cliente es nulo
+            ->with(['cliente', 'sesionCaja.cajero']) // Carga los datos del cliente asociado, si existe
+            ->get();
         return $ventas;
     }
     public function storeApi(Request $request)
@@ -137,9 +141,9 @@ class VentaController extends Controller
             // 2 CREO DETALLE DE VENTAS
             foreach ($request->productos as $producto) {
                 $productoEnDb = Producto::find($producto['id']);
-                if(!$productoEnDb) {
+                if (!$productoEnDb) {
                     DB::rollBack(); // Revierte la transacción si un producto no se encuentra
-                    throw new \Exception('Producto no encontrado: '.$producto['id'] );
+                    throw new \Exception('Producto no encontrado: ' . $producto['id']);
                 }
 
                 $detalle_venta = new DetalleVenta;
@@ -154,7 +158,7 @@ class VentaController extends Controller
                 // Resto cantidad vendida del stock
                 $productoEnDb->stock_actual -= $producto['cantidad'];
                 $productoEnDb->save();
-                
+
 
                 $lote = Lote::where('cantidad_restante', '>', 0)
                     ->where('producto_id', $productoEnDb->id)
@@ -170,7 +174,7 @@ class VentaController extends Controller
                 }
             }
 
-            if($venta->estado_pago == Venta::PARCIALMENTE_COBRADA) {
+            if ($venta->estado_pago == Venta::PARCIALMENTE_COBRADA) {
                 $pago = new Pago;
                 $pago->venta_id = $venta->id;
                 $pago->fecha_pago = now();

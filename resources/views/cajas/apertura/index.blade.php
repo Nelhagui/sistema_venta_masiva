@@ -5,7 +5,7 @@
                 {{ __('Apertura de caja') }}
             </h2>
             <div class="dark:text-gray-200">
-                <a href="{{route('index.cajas')}}" class="bg-gray-100 text-gray-800 p-2 rounded">Historial</a>
+                <a href="{{ route('index.cajas') }}" class="bg-gray-100 text-gray-800 p-2 rounded">Historial</a>
             </div>
         </div>
     </x-slot>
@@ -23,13 +23,18 @@
         <div class="flex justify-center w-100 mt-3 max-w-2xl">
             <form action="{{ route('store.aperturaCaja') }}" method="POST">
                 @csrf
-                <div class="flex items-center ">
-                    <div class="flex flex-col mb-5 w-52">
-                        <label for="">Efectivo en caja al iniciar</label>
-                        <input type="number" name="monto" step="0.01" required>
-                        @error('monto')
-                            <p class="text-red-500">{{ $message }}</p>
-                        @enderror
+                <div class="flex items-end">
+                    <div class="sm:col-span-3">
+                        <label for="monto" class="block text-sm font-medium leading-6 text-gray-900">Efectivo en
+                            caja al iniciar</label>
+                        <div class="mt-2">
+                            <input type="number" name="monto" id="monto" step="0.01"
+                                value="{{ old('monto') }}" autofocus required
+                                class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            @error('monto')
+                                <p class="text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                     <div class="ml-3">
                         <button type="submit" class="bg-gray-300 hover:bg-gray-400 hover:text-white px-3 py-2 rounded">

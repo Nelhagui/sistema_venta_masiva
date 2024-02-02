@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/detalle/{id}', [ClienteController::class, 'show'])->name('show.clientes');
             Route::get('/editar/{id}', [ClienteController::class, 'edit'])->name('edit.clientes');
             Route::post('/editar/{id}', [ClienteController::class, 'update'])->name('update.clientes');
+            Route::get('/importar', [ClienteController::class, 'updateFileView'])->name('create.clientes.fileUpdate');
         });
 
         //INVERSORES

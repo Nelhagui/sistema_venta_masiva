@@ -85,6 +85,11 @@ class ClienteController extends Controller
         //
     }
 
+    public function updateFileView()
+    {
+        return view('clientes.importador.create');
+    }
+
 
     //API
     public function indexApi()
@@ -109,6 +114,19 @@ class ClienteController extends Controller
         $cliente->deudas = $deudas;
         $cliente->ventas = $ventas;
         return $cliente;
+    }
+
+    public function storeApi(Request $request)
+    {
+        $user = Auth::user();
+        $cliente = new Cliente;
+        $cliente->comercio_id = $user->comercio_id;
+        $cliente->nombre = $request->nombre;
+        $cliente->telefono = $request->telefono;
+        $cliente->whatsapp = $request->whatsapp;
+        $cliente->nota = $request->nota;
+
+        return $cliente->save();
     }
 
     public function saldarDeudaApi(Request $request)

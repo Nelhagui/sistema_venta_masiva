@@ -21,7 +21,7 @@
                     <x-nav-link :href="route('index.productos')" :active="request()->routeIs(['index.productos', 'index.productosBase', 'create.productos', 'create.productosStock', 'create.productos.fileUpdate', 'create.stockPrecio'])">
                         {{ __('Productos') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('index.clientes')" :active="request()->routeIs('index.clientes')">
+                    <x-nav-link :href="route('index.clientes')" :active="request()->routeIs(['index.clientes', 'create.clientes.fileUpdate'])">
                         {{ __('Clientes') }}
                     </x-nav-link>
                     <!-- <x-nav-link :href="route('index.compras')" :active="request()->routeIs('index.compras')">
