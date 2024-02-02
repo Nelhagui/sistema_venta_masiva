@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\models\MetodoPago;
+use App\Models\MetodoPago;
 use Illuminate\Support\Facades\Auth;
 
 
