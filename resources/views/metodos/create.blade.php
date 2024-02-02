@@ -19,11 +19,6 @@
                         <div class="alert alert-danger">{{ $message }}</div>
                     @enderror
 
-                    <label for="comision">Comisión</label><br>
-                    <input type="number" name="comision" required value={{old('comision')}}><br>
-                    @error('comision')
-                        <div class="alert alert-danger">{{ $message }}</div>
-                    @enderror
 
                     <button type="submit">Guardar método de pago</button>
                 </form>
