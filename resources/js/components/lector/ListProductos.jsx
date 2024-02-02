@@ -236,7 +236,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     style={styles.listContainer}
                     onFocus={handleInputFocus}
                 >
-                    <div className=''>
+                    <div>
                         <div>
                             <Input
                                 isClearable

@@ -41,7 +41,6 @@ const ResumenPedido = () => {
 
     return (
         <>
-            <ExtraValueConfiguration />
             <div style={{
                 backgroundColor: "rgb(226 232 240)",
                 maxWidth: '100%',
@@ -59,6 +58,9 @@ const ResumenPedido = () => {
                 }}>
                     <div className='flex items-center'>
                         <ViewTotalAumentoDescuento/>
+                    </div>
+                    <div className=''>
+                        <ExtraValueConfiguration />
                     </div>
                     <Tooltip
                         delay={500}

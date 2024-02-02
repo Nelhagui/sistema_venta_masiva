@@ -90,8 +90,8 @@ const ExtraValueConfiguration = () => {
                 subtitle="Vuelto, Aumentos y Descuentos"
             >
                 <div className='flex mb-4 justify-between'>
-                    <div className='flex items-center'>
-                        <Input
+                    <div className='flex gap-3'>
+                    <Input
                             className='w-2/5'
                             type="number"
                             size='sm'
@@ -119,8 +119,6 @@ const ExtraValueConfiguration = () => {
                                     </div>
                                     : null
                         }
-                    </div>
-                    <div className='flex gap-4'>
                         <Input
                             label="Aumento"
                             className='w-2/5'
