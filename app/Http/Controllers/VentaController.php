@@ -103,12 +103,26 @@ class VentaController extends Controller
     {
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
-        $ventas = Venta::where('comercio_id', $id_comercio)
+        // Obtener las ventas del mismo comercio con clientes
+        $ventasConClientes = Venta::where('comercio_id', $id_comercio)
             ->whereHas('cliente') // Filtra las ventas que tienen un cliente asociado
-            ->orWhereNull('cliente_id') // Incluye las ventas donde el cliente es nulo
-            ->with(['cliente', 'sesionCaja.cajero']) // Carga los datos del cliente asociado, si existe
+            ->with(['cliente', 'sesionCaja.cajero'])
             ->get();
-        return $ventas;
+
+        // Obtener las ventas del mismo comercio sin clientes
+        $ventasSinClientes = Venta::where('comercio_id', $id_comercio)
+            ->whereDoesntHave('cliente') // Filtra las ventas que no tienen un cliente asociado
+            ->with(['sesionCaja.cajero'])
+            ->get();
+
+        // Combinar los resultados en una sola colección
+        $ventasCombinadas = $ventasConClientes->merge($ventasSinClientes);
+
+        $ventasOrdenadas = $ventasCombinadas->sortByDesc(function ($venta) {
+            return $venta->created_at; // Suponiendo que la fecha de creación sea relevante para ordenar
+        })->values(); // Utiliza values() para obtener un array de objetos
+        
+        return $ventasOrdenadas;
     }
     public function storeApi(Request $request)
     {
@@ -136,6 +150,12 @@ class VentaController extends Controller
             $venta->metodos_de_pago = $request['metodoPago'] ?? 1;
             $venta->estado_pago = $request['estadoPago'] ?? "cobrada";
             $venta->comercio_id = $user->comercio_id;
+
+            $venta->aumento = $request['aumento'];
+            $venta->descuento = $request['descuento'];
+            $venta->tipo_aumento = $request['tipo_aumento'];
+            $venta->tipo_descuento = $request['tipo_descuento'];
+
             $venta->save();
 
             // 2 CREO DETALLE DE VENTAS

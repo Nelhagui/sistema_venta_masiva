@@ -326,7 +326,7 @@ class ProductoController extends Controller
 
                 // Personalizar mensajes de error
                 $validator->messages()->merge([
-                    'required' => 'El campo :attribute es obligatorio.',
+                    'required' => 'Campo obligatorio.',
                     'unique' => 'El :attribute ya está en uso.',
                     'numeric' => 'El campo :attribute requiere números.',
                     // Personaliza los mensajes según tus necesidades

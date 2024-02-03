@@ -42,7 +42,7 @@ const ResumenPedido = () => {
     return (
         <>
             <div style={{
-                backgroundColor: "rgb(226 232 240)",
+                backgroundColor: "#d6d7e9",
                 maxWidth: '100%',
                 margin: 'auto',
                 padding: 35,
@@ -60,7 +60,7 @@ const ResumenPedido = () => {
                         <ViewTotalAumentoDescuento/>
                     </div>
                     <div className=''>
-                        <ExtraValueConfiguration />
+                        {/* <ExtraValueConfiguration /> */}
                     </div>
                     <Tooltip
                         delay={500}

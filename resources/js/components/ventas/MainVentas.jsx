@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import TablaListVentas from './TablaListVentas';
 import MainProximamente from '../proximamente/MainProximamente';
 import ventaServices from '../../services/ventaServices';
+import TablaListaVentas from './TablaListaVentas';
 
 
 export default function MainVentas() {
@@ -30,7 +31,7 @@ export default function MainVentas() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <TablaListVentas ventas={ventas} />
+                    : <TablaListaVentas ventas={ventas} />
             }
             {/* <MainProximamente/> */}
         </>

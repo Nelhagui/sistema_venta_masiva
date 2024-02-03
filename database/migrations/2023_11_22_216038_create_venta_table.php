@@ -18,8 +18,10 @@ return new class extends Migration
             $table->decimal('monto_total_costo', 8, 2);
             $table->datetime('fecha_hora_venta');
             $table->string('metodos_de_pago');
-            $table->decimal('markup', 8, 2)->nullable();
-            $table->string('tipo_markup')->nullable(); 
+            $table->decimal('aumento', 8, 2)->nullable();
+            $table->decimal('descuento', 8, 2)->nullable();
+            $table->enum('tipo_aumento', ['porcentaje','monto_fijo'])->nullable();
+            $table->enum('tipo_descuento', ['porcentaje','monto_fijo'])->nullable();
             $table->softDeletes();
             $table->timestamps();
 

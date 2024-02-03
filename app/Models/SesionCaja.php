@@ -23,6 +23,12 @@ class SesionCaja extends Model
         return $this->hasMany(Venta::class);
     }
 
+    public function comercio()
+    {
+        return $this->belongsTo(Comercio::class, 'comercio_id');
+    }
+    
+
     /**
      * Una sesión de caja puede tener muchos movimientos.
      */

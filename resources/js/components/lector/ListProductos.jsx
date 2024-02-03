@@ -23,10 +23,18 @@ import {
 } from "@nextui-org/react";
 
 function ListProductos({ productos, metodosDePago, clientes }) {
-    const { productosSeleccionados, setProductosSeleccionados, montoAbonado, setMontoAbonado, resetAll } = useLectorContext();
+    const {
+        productosSeleccionados,
+        setProductosSeleccionados,
+        montoAbonado,
+        setMontoAbonado,
+        resetAll,
+        aumento,
+        descuento
+    } = useLectorContext();
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
     const [estadoDelPago, setEstadoDelPago] = useState(null)
-    const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = React.useState("");
+    const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = React.useState("0");
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
@@ -51,7 +59,15 @@ function ListProductos({ productos, metodosDePago, clientes }) {
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
-            await lectorServices.crearVenta(productosSeleccionados, clienteSeleccionado, estadoDelPago, metodoPagoSeleccionado, montoAbonado);
+            await lectorServices.crearVenta(
+                productosSeleccionados,
+                clienteSeleccionado,
+                estadoDelPago,
+                metodoPagoSeleccionado,
+                montoAbonado,
+                aumento,
+                descuento
+            );
             // Realiza alguna acción adicional después de completar la creación de la venta, si es necesario
         } catch (error) {
             // Maneja el error si la creación de la venta falla
@@ -80,9 +96,9 @@ function ListProductos({ productos, metodosDePago, clientes }) {
     };
 
     useEffect(() => {
-        if(metodosDePago.length > 0) {
+        if (metodosDePago.length > 0) {
             metodosDePago.forEach(metodo => {
-                if(metodo.predeterminado){
+                if (metodo.predeterminado) {
                     setMetodoPagoSeleccionado(metodo.id)
                 }
             });
@@ -229,7 +245,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 
     return (
         <>
-            <TeclaDetector onKeyPress={onOpen} />
+            {/* <TeclaDetector onKeyPress={onOpen} /> */}
             <div className='flex justify-between'>
                 {/* BUSCADOR */}
                 <div
@@ -360,85 +376,96 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                 productosSeleccionados.length > 0
                     ?
                     <>
-                        <div className='flex gap-3 mb-4'>
-                            <div className="flex max-w-xs flex-wrap md:flex-nowrap gap-4">
-                                <Autocomplete
-                                    label="Cliente"
-                                    className="max-w-xs"
-                                    size='sm'
-                                    defaultSelectedKeys={["1"]}
-                                    onSelectionChange={onSelectionChange}
-                                >
-                                    {clientes.map((cliente) => (
-                                        <AutocompleteItem key={cliente.id} value={cliente.id}>
-                                            {cliente.nombre}
-                                        </AutocompleteItem>
-                                    ))}
-                                </Autocomplete>
+                        <div className='flex gap-3'>
+                            <div className='w-full'>
+
+                                <ResumenPedido />
                             </div>
+                            <div className='flex flex-col min-w-max gap-2 px-3'>
+                                <div className='flex flex-col gap-2 p-3 rounded' style={{ backgroundColor: '#fcfcfc', borderWidth: 1, borderColor: "#e7e8ff" }}>
 
-                            <Select
-                                isRequired
-                                label="Método de pago"
-                                className="max-w-xs"
-                                size='sm'
-                                onChange={handleSelectionChange}
-                                defaultSelectedKeys={[`${metodoPagoSeleccionado}`]}
-                            >
-                                {metodosDePago.map((metodo) => (
-                                    <SelectItem key={metodo.id} value={metodo.id}>
-                                        {metodo.nombre}
-                                    </SelectItem>
-                                ))}
-                            </Select>
+                                    <Autocomplete
+                                        label="Cliente"
+                                        variant="bordered"
+                                        fullWidth
+                                        className="bg-white"
+                                        size='sm'
+                                        defaultSelectedKeys={["1"]}
+                                        onSelectionChange={onSelectionChange}
+                                    >
+                                        {clientes.map((cliente) => (
+                                            <AutocompleteItem key={cliente.id} value={cliente.id}>
+                                                {cliente.nombre}
+                                            </AutocompleteItem>
+                                        ))}
+                                    </Autocomplete>
 
-                            {
-                                clienteSeleccionado
-                                    ?
-                                    <>
-                                        <Select
-                                            isRequired
-                                            size='sm'
-                                            defaultSelectedKeys={["3"]}
-                                            className="max-w-xs"
-                                            onChange={handleSelectionChangeEstadoPago}
-                                        >
-                                            <SelectItem key="1" value="1">
-                                                Cobrada
+                                    <Select
+                                        isRequired
+                                        label="Método de pago"
+                                        className="min-w-min bg-white"
+                                        size='sm'
+                                        variant="bordered"
+                                        fullWidth
+                                        onChange={handleSelectionChange}
+                                        defaultSelectedKeys={[`${metodoPagoSeleccionado}`]}
+                                    >
+                                        {metodosDePago.map((metodo) => (
+                                            <SelectItem key={metodo.id} value={metodo.id}>
+                                                {metodo.nombre}
                                             </SelectItem>
-                                            <SelectItem key="2" value="2">
-                                                No Cobrada
-                                            </SelectItem>
-                                            <SelectItem key="3" value="4">
-                                                Parcialmente Cobrada
-                                            </SelectItem>
+                                        ))}
+                                    </Select>
 
-                                        </Select>
-                                        {
-                                            estadoDelPago === "3"
-                                                ?
-                                                <Input
-                                                    className="max-w-xs"
-                                                    type="number"
-                                                    label="Importe"
-                                                    placeholder="0.00"
-                                                    onChange={handleInputImporte}
-                                                    value={montoAbonado}
+                                    {
+                                        clienteSeleccionado
+                                            ?
+                                            <>
+                                                <Select
+                                                    isRequired
                                                     size='sm'
-                                                    startContent={
-                                                        <div className="pointer-events-none flex items-center">
-                                                            <span className="text-default-400 text-small">$</span>
-                                                        </div>
-                                                    }
-                                                />
-                                                : ""
-                                        }
-                                    </>
-                                    : ''
-                            }
+                                                    defaultSelectedKeys={["3"]}
+                                                    className="max-w-xs bg-white"
+                                                    variant="bordered"
+                                                    onChange={handleSelectionChangeEstadoPago}
+                                                >
+                                                    <SelectItem key="1" value="1">
+                                                        Cobrada
+                                                    </SelectItem>
+                                                    <SelectItem key="2" value="2">
+                                                        No Cobrada
+                                                    </SelectItem>
+                                                    <SelectItem key="3" value="4">
+                                                        Parcialmente Cobrada
+                                                    </SelectItem>
 
+                                                </Select>
+                                                {
+                                                    estadoDelPago === "3"
+                                                        ?
+                                                        <Input
+                                                            variant="bordered"
+                                                            className="max-w-xs bg-white"
+                                                            type="number"
+                                                            label="Importe"
+                                                            placeholder="0.00"
+                                                            onChange={handleInputImporte}
+                                                            value={montoAbonado}
+                                                            size='sm'
+                                                            startContent={
+                                                                <div className="pointer-events-none flex items-center">
+                                                                    <span className="text-default-400 text-small">$</span>
+                                                                </div>
+                                                            }
+                                                        />
+                                                        : ""
+                                                }
+                                            </>
+                                            : ''
+                                    }
+                                </div>
+                            </div>
                         </div>
-                        <ResumenPedido />
 
                     </>
                     :

@@ -72,7 +72,19 @@ class MetodoPagoController extends Controller
     {
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
-        $productos = Comercio::find($id_comercio)->metodosDePago;
-        return $productos;
+
+        // Obtener los métodos de pago asociados al comercio
+        $metodosDePago = Comercio::find($id_comercio)->metodosDePago;
+
+        // Agregar un método de pago genérico adicional
+        $metodoPagoGenerico = [
+            'id' => 0, // Puedes usar cualquier identificador único que desees
+            'nombre' => 'Efectivo',
+        ];
+
+        // Agregar el método de pago genérico a la lista de métodos de pago
+        $metodosDePago[] = $metodoPagoGenerico;
+
+        return $metodosDePago;
     }
 }

@@ -3,14 +3,16 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const LectorContext = createContext();
 
 const LectorContextProvider = ({ children }) => {
+    const tipoMontoFijo = 1;
+    const tipoPorcentaje = 2;
     const [vuelto, setVuelto] = useState(0)
     const [total, setTotal] = useState(0);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
     const [montoAbonado, setMontoAbonado] = useState('')
     const [aumento, setAumento] = useState('')
     const [descuento, setDescuento] = useState('')
-    const [tipoVariableDescuento, setTipoVariableDescuento] = useState("$")
-    const [tipoVariableAumento, setTipoVariableAumento] = useState('$')
+    const [tipoVariableDescuento, setTipoVariableDescuento] = useState(tipoMontoFijo)
+    const [tipoVariableAumento, setTipoVariableAumento] = useState(tipoMontoFijo)
 
     const sacarProducto = (productoId) => {
         const filtrados = productosSeleccionados.filter((item) => item.id !== productoId)
@@ -61,7 +63,7 @@ const LectorContextProvider = ({ children }) => {
     }, [tipoVariableAumento])
 
     const calcularValorAumento = () => {
-        if (tipoVariableAumento === "%") {
+        if (tipoVariableAumento === tipoPorcentaje) {
             calcularPorcentajeAumento();
         } else {
             calcularTotalAumento();
@@ -99,7 +101,9 @@ const LectorContextProvider = ({ children }) => {
                 tipoVariableAumento,
                 setTipoVariableAumento,
                 montoAbonado, 
-                setMontoAbonado
+                setMontoAbonado,
+                tipoMontoFijo,
+                tipoPorcentaje
             }}
         >
             {children}

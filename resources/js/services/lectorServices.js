@@ -1,6 +1,6 @@
 import { endpoints } from "../config/config";
 const lectorServices = {
-    crearVenta: async (productosSeleccionados, clienteSeleccionado, estadoDelPago, metodoPagoSeleccionado, montoAbonado) => {
+    crearVenta: async (productosSeleccionados, clienteSeleccionado, estadoDelPago, metodoPagoSeleccionado, montoAbonado, aumento = null, descuento = null, tipoAumento = null, tipoDescuento = null) => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const url = endpoints.ventas.crear;
 
@@ -17,7 +17,11 @@ const lectorServices = {
                 cliente: clienteSeleccionado,
                 estadoPago: estadoDelPago,
                 metodoPago: metodoPagoSeleccionado,
-                montoAbonado: Number(montoAbonado)
+                montoAbonado: Number(montoAbonado),
+                aumento: Number(aumento), 
+                descuento: Number(descuento),
+                TipoAumento: tipoAumento, 
+                tipoDescuento: tipoDescuento
             })
         };
 

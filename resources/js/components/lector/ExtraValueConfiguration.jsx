@@ -19,7 +19,9 @@ const ExtraValueConfiguration = () => {
         tipoVariableDescuento,
         setTipoVariableDescuento,
         tipoVariableAumento,
-        setTipoVariableAumento
+        setTipoVariableAumento,
+        tipoMontoFijo,
+        tipoPorcentaje
     } = useLectorContext()
     const [vueltoInitial, setVueltoInitial] = useState('')
     const [cambioIngresado, setCambioIngresado] = useState(0);
@@ -31,21 +33,11 @@ const ExtraValueConfiguration = () => {
 
 
     const cambioTipoAumento = (e) => {
-        const value = e.target.value;
-        if (value === '1') {
-            setTipoVariableAumento('$')
-        } else {
-            setTipoVariableAumento('%')
-        }
+        setTipoVariableAumento(e.target.value)
     }
 
     const cambioTipoDescuento = (e) => {
-        const value = e.target.value;
-        if (value === '1') {
-            setTipoVariableDescuento('$')
-        } else {
-            setTipoVariableDescuento('%')
-        }
+        setTipoVariableDescuento(e.target.value)
     }
 
     const handleVueltoChange = (e) => {
@@ -91,7 +83,7 @@ const ExtraValueConfiguration = () => {
             >
                 <div className='flex mb-4 justify-between'>
                     <div className='flex gap-3'>
-                    <Input
+                        <Input
                             className='w-2/5'
                             type="number"
                             size='sm'
@@ -143,8 +135,8 @@ const ExtraValueConfiguration = () => {
                                         name="aumento"
                                         onChange={(e) => cambioTipoAumento(e)}
                                     >
-                                        <option value="1">$</option>
-                                        <option value="2">%</option>
+                                        <option value="$">$</option>
+                                        <option value="%">%</option>
                                     </select>
                                 </div>
                             }
