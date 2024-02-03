@@ -1,3 +1,17 @@
+.input-text:active {
+    border: solid  2px rgb(42, 42, 42); 
+    /* Cambia el color del borde al enfocar el input */
+}
+.input-text:hover {
+    border: solid  2px rgb(42, 42, 42); 
+}
+
+.input-text {
+    border: solid 2px #e4e4e7;
+    border-radius: 7px;
+    padding: 4px 7px;
+}
+
 .text-descripcion {
     color: #0000008c;
     line-height: 21px;

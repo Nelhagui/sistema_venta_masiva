@@ -50,7 +50,7 @@
         <nav id="nav">
             <ul>
                 <li><a href="#intro" class="active">¿Qué es RápidoVentas?</a></li>
-                <li><a href="#first">¿Qué es Ofrecemos?</a></li>
+                <li><a href="#first">¿Qué Ofrecemos?</a></li>
                 <li><a href="#second">Explora la versión beta</a></li>
                 <li><a href="#cta">Registrame</a></li>
             </ul>
@@ -145,7 +145,7 @@
             <section>
                 <h2>Contacto</h2>
                 <dl class="alt">
-                    <dt>WhatSapp</dt>
+                    <dt>WhatsApp</dt>
                     <dd>
 
                         11 4078-7519

@@ -32,3 +32,4 @@ resources/js/.DS_Store
 resources/views/.DS_Store
 storage/framework/.DS_Store
 tests/.DS_Store
+public/.DS_Store

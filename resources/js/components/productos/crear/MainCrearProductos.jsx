@@ -5,71 +5,28 @@ import productoServices from '../../../services/productoServices';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import FilaNuevoProducto from './FilaNuevoProducto';
-
 export default function MainCrearProductos() {
 
-    //NELSON
-    const [arrayProductosCreados, setArrayProductosCreados] = useState([])
-    const [cantFilas, setCantFilas] = useState(1)
-    //FIN NELSON
-    const nuevoProducto = {
-        key: Math.random(),
-        titulo: '',
-        codigo_barra: '',
-        precio_costo: '',
-        precio_venta: '',
-        stock_actual: '',
-        highlighted: false,
-    };
-    const [nuevosProductos, setNuevosProductos] = useState([nuevoProducto]);
+    const [filas, setFilas] = useState([]);
+    const [valoresInputs, setValoresInputs] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
     const [errores, setErrores] = useState([]);
 
-    // const handleInputChangeProducto = (id, campo, valor) => {
+    // Crear la fila por defecto
+    useEffect(() => {
+        agregarFila();
+    }, []); // Se ejecuta solo una vez al montar el componente
 
-    //     setNuevosProductos(prevNuevosProductos => {
-    //         return prevNuevosProductos.map(nuevoProducto => {
-    //             if (nuevoProducto.key === id) {
-    //                 return actualizarProducto(nuevoProducto, campo, valor);
-    //             }
-    //             return nuevoProducto;
-    //         });
-    //     });
-    // };
-
-    // const actualizarProducto = (producto, campo, valor) => {
-    //     let updatedProducto = {
-    //         ...producto,
-    //         [campo]: valor
-    //     };
-
-    //     // Si el campo que se está modificando es "precio_costo", actualizamos "precio_venta"
-    //     if (campo === 'precio_costo') {
-    //         const porcentaje = 1.50; // Aumentamos en un 10%
-    //         const nuevoPrecio = valor * porcentaje;
-    //         updatedProducto.precio_venta = `${(Math.round(nuevoPrecio / 5) * 5)}.00`;
-    //     }
-
-    //     return updatedProducto;
-    // };
-
-
+   
     const handleConfirmCompra = () => {
         handleSubmit();
     };
-
-    // const handleValue = (event) => {
-    //     const { value, name } = event.target;
-    //     setData({ ...data, [name]: value })
-    // }
-
 
 
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
-            const response = await productoServices.crear(nuevosProductos);
+            const response = await productoServices.crear();
             const data = await response.json();
             if (response.status !== 200) {
                 if (data?.errors?.length > 0) {
@@ -95,7 +52,6 @@ export default function MainCrearProductos() {
                     theme: "light",
                 });
                 setErrores([]);
-                setNuevosProductos([nuevoProducto]);
             }
         } catch (error) {
             // Maneja el error si la creación de la venta falla
@@ -104,113 +60,111 @@ export default function MainCrearProductos() {
         }
     };
 
-    useEffect(() => {
-        console.log(errores)
-    }, [errores])
 
+    const agregarFila = () => {
+        setFilas([...filas, {
+            columnaTitulo: 'titulo',
+            columnaCodigoBarra: 'codigo_barra',
+            columnaPrecioCosto: 'precio_costo',
+            columnaPrecioVenta: 'precio_venta',
+            columnaStock: 'stock'
+        }]);
+        setValoresInputs([...valoresInputs, {
+            columnaTitulo: '',
+            columnaCodigoBarra: '',
+            columnaPrecioCosto: '',
+            columnaPrecioVenta: '',
+            columnaStock: ''
+        }]);
+    };
 
-    const agregarProductoNuevo = () => {
-        setNuevosProductos([...nuevosProductos, nuevoProducto]);
-        console.log(nuevosProductos)
-    }
+    const eliminarFila = (index) => {
+        const nuevasFilas = [...filas];
+        nuevasFilas.splice(index, 1);
+        setFilas(nuevasFilas);
 
+        const nuevosValoresInputs = [...valoresInputs];
+        nuevosValoresInputs.splice(index, 1);
+        setValoresInputs(nuevosValoresInputs);
+    };
 
-    const [data, setData] = useState({
-        titulo: '',
-        codigo_barra: '',
-        precio_costo: '',
-        precio_venta: '',
-        stock_actual: '',
-    })
-
+    const handleInputChange = (e, index, columna) => {
+        const nuevosValoresInputs = [...valoresInputs];
+        nuevosValoresInputs[index][columna] = e.target.value;
+        console.log(e.target.value);
+        setValoresInputs(nuevosValoresInputs);
+    };
 
     return (
         <>
             <div className='d-flex' style={{ textAlign: 'end', marginBlock: '0 10px' }}>
                 <Button color="danger" onClick={() => { handleConfirmCompra() }}>Cargar Compra</Button>
             </div>
-            <Table aria-label="Tabla para crear productos">
-                <TableHeader>
-                    <TableColumn>TÍTULO</TableColumn>
-                    <TableColumn>CÓDIGO BARRA</TableColumn>
-                    <TableColumn>PRECIO COSTO</TableColumn>
-                    <TableColumn>PRECIO VENTA</TableColumn>
-                    <TableColumn>STOCK</TableColumn>
-                </TableHeader>
-                <TableBody>
-                    {
-                        cantFilas.map((cantFila, index) =>
-                        (
-                            <TableRow key={index}>
-                                <TableCell>
-                                    <Input
-                                        variant="bordered"
+            <div className='p-4 z-0 flex flex-col relative justify-between gap-4 bg-content1 overflow-auto rounded-large shadow-small w-full'>
+                <table className='min-w-full h-auto table-auto w-full'>
+                    <thead className='[&>tr]:first:rounded-lg'>
+                        <tr className='group outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
+                            <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>TÍTULO</th>
+                            <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>CÓDIGO BARRA</th>
+                            <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>PRECIO COSTO</th>
+                            <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>PRECIO VENTA</th>
+                            <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>STOCK</th>
+                            <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filas.map((fila, index) => (
+                            <tr key={index} className='group outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
+                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    <input
                                         type="text"
-                                        value={data[index].titulo}
-                                        labelPlacement="outside"
-                                        isRequired
-                                        name={`${producto.key}-titulo`}
-                                        onChange={(e) => handleInputChangeProducto(producto.key, 'titulo', e.target.value)}
-                                        errorMessage={errores[`${producto.key}-titulo`] ? errores[`${producto.key}-titulo`] : ""}
-                                        isInvalid={errores[`${producto.key}-titulo`] ? true : false}
-
+                                        className='input-text'
+                                        value={valoresInputs[index].columnaTitulo}
+                                        onChange={(e) => handleInputChange(e, index, 'columnaTitulo')}
                                     />
-                                </TableCell>
-                                <TableCell>
-                                    <Input
-                                        variant="bordered"
-                                        isInvalid={false}
+                                </td>
+                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    <input
                                         type="number"
-                                        value={producto.codigo_barra}
-                                        name="codigo_barra"
-                                        labelPlacement="outside"
-                                        onChange={(e) => handleInputChangeProducto(producto.key, 'codigo_barra', e.target.value)}
+                                        className='input-text'
+                                        value={valoresInputs[index].columnaCodigoBarra}
+                                        onChange={(e) => handleInputChange(e, index, 'columnaCodigoBarra')}
                                     />
-                                </TableCell>
-                                <TableCell>
-                                    <Input
-                                        variant="bordered"
+                                </td>
+                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    <input
                                         type="number"
-                                        labelPlacement="outside"
-                                        value={producto.precio_costo}
-                                        name="precio_costo"
-                                        onChange={(e) => handleInputChangeProducto(producto.key, 'precio_costo', e.target.value)}
-                                        errorMessage={errores[`${producto.key}-precio_costo`] ? errores[`${producto.key}-precio_costo`] : ""}
-                                        isInvalid={errores[`${producto.key}-precio_costo`] ? true : false}
+                                        className='input-text'
+                                        value={valoresInputs[index].columnaPrecioCosto}
+                                        onChange={(e) => handleInputChange(e, index, 'columnaPrecioCosto')}
                                     />
-                                </TableCell>
-                                <TableCell>
-                                    <Input
-                                        variant="bordered"
+                                </td>
+                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    <input
                                         type="number"
-                                        labelPlacement="outside"
-                                        value={producto.precio_venta}
-                                        name="precio_venta"
-                                        onChange={(e) => handleInputChangeProducto(producto.key, 'precio_venta', e.target.value)}
-                                        errorMessage={errores[`${producto.key}-precio_venta`] ? errores[`${producto.key}-precio_venta`] : ""}
-                                        isInvalid={errores[`${producto.key}-precio_venta`] ? true : false}
+                                        className='input-text'
+                                        value={valoresInputs[index].columnaPrecioVenta}
+                                        onChange={(e) => handleInputChange(e, index, 'columnaPrecioVenta')}
                                     />
-                                </TableCell>
-                                <TableCell>
-                                    <Input
-                                        variant="bordered"
+                                </td>
+                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    <input
                                         type="number"
-                                        name="stock_actual"
-                                        value={producto.stock_actual}
-                                        labelPlacement="outside"
-                                        onChange={(e) => handleInputChangeProducto(producto.key, 'stock_actual', e.target.value)}
-                                        errorMessage={errores[`${producto.key}-stock_actual`] ? errores[`${producto.key}-stock_actual`] : ""}
-                                        isInvalid={errores[`${producto.key}-stock_actual`] ? true : false}
+                                        className='input-text'
+                                        value={valoresInputs[index].columnaStock}
+                                        onChange={(e) => handleInputChange(e, index, 'columnaStock')}
                                     />
-                                </TableCell>
-                            </TableRow>
-                        ))
-                    }
-                    {/* <FilaNuevoProducto setArrayProductosCreados={setArrayProductosCreados} /> */}
-                </TableBody>
-            </Table>
+                                </td>
+                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    <button onClick={() => eliminarFila(index)}>Eliminar</button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
             <div className='d-flex text-center mt-4'>
-                <Button variant="ghost" onClick={() => { agregarProductoNuevo() }}>Agregar Nuevo Producto</Button>
+                <Button variant="ghost" onClick={() => agregarFila()}>Agregar Nuevo Producto</Button>
             </div>
             <ToastContainer />
         </>
