@@ -16,6 +16,8 @@ import MainProductosActualizarStock from './components/productos_stock/MainProdu
 import MainStockPrecio from './components/productos/stock_precio/MainStockPrecio.jsx';
 import MainCrearProductos from './components/productos/crear/MainCrearProductos.jsx';
 import MainProximamente from './components/proximamente/MainProximamente.jsx';
+import MainMetodosPago from './components/metodosPago/MainMetodosPago.jsx';
+
 
 window.Alpine = Alpine;
 

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import MainProximamente from '../proximamente/MainProximamente';
 import ventaServices from '../../services/ventaServices';
 import TablaListVentas from './TablaListVentas';
+import InstructivoSinVentas from './instructivos/InstructivoSinVentas';
 
 
 export default function MainVentas() {
@@ -16,7 +17,6 @@ export default function MainVentas() {
     const fetchModel = async () => {
         setIsLoading(true);
         try {
-            console.log('probando')
             const response = await ventaServices.traerLista()
             setVentas(response);
         } catch (error) {
@@ -30,9 +30,15 @@ export default function MainVentas() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <TablaListVentas ventas={ventas} />
+                    :
+                    <>
+                        {
+                            ventas.length > 0
+                                ?  <TablaListVentas ventas={ventas} />
+                                : <InstructivoSinVentas />
+                        }
+                    </>
             }
-            {/* <MainProximamente/> */}
         </>
     )
 }

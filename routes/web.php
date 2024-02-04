@@ -8,7 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\LectorController;
 use App\Http\Controllers\VentaController;
-use App\Http\Controllers\MetodoController;
+use App\Http\Controllers\MetodoPagoController;
 use App\Http\Controllers\InversorController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\LoteController;
@@ -116,11 +116,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/lotes/productos/{producto}', [LoteController::class, 'show'])->name('show.lote');
 
         //METODOS
-        Route::get('/metodos', [MetodoController::class, 'index'])->name('index.metodos');
-        Route::get('/metodos/agregar', [MetodoController::class, 'create'])->name('create.metodos');
-        Route::post('/metodos/agregar', [MetodoController::class, 'store'])->name('store.metodos');
-        Route::get('/metodos/editar/{id}', [MetodoController::class, 'edit'])->name('edit.metodos');
-        Route::post('/metodos/editar/{id}', [MetodoController::class, 'update'])->name('update.metodos');
+        Route::get('/metodos', [MetodoPagoController::class, 'index'])->name('index.metodos');
+        Route::get('/metodos/agregar', [MetodoPagoController::class, 'create'])->name('create.metodos');
+        Route::post('/metodos/agregar', [MetodoPagoController::class, 'store'])->name('store.metodos');
+        Route::get('/metodos/editar/{id}', [MetodoPagoController::class, 'edit'])->name('edit.metodos');
+        Route::post('/metodos/editar/{id}', [MetodoPagoController::class, 'update'])->name('update.metodos');
 
         //PROVEEDORES
         Route::get('/proveedores', [ProveedorController::class, 'index'])->name('index.proveedores');

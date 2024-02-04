@@ -29,10 +29,14 @@ export const endpoints = {
     },
     metodosDePago: {
         lista: `${API_BASE_URL}/metodos-pago`,
+        crear: `${API_BASE_URL}/metodos-pago`
     },
 };
 
 export const urls = {
+    lector: {
+        ver: `${BASE_URL}/lector`
+    },
     ventas: {
         lista: `${BASE_URL}/ventas`,
         ver: `${BASE_URL}/ventas/ver`,
@@ -40,6 +44,9 @@ export const urls = {
     clientes: {
         lista: `${BASE_URL}/clientes`,
         detalle: `${BASE_URL}/clientes/detalle`,
+    },
+    metodosDePago: {
+        editar: `${BASE_URL}/metodos/editar`
     },
     productos: {
         lista: `${BASE_URL}/productos`,

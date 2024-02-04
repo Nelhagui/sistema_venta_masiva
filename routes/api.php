@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
 
     // METODOS DE PAGO
     Route::get('/metodos-pago', [MetodoPagoController::class, 'indexApi']);
+    Route::post('/metodos-pago', [MetodoPagoController::class, 'storeApi']);
 
     // VENTAS
     Route::prefix('ventas')->group(function () {
