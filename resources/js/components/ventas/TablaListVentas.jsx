@@ -100,12 +100,12 @@ const TablaListVentas = ({ ventas }) => {
                 <table className='min-w-full h-auto table-auto w-full' >
                     <thead className='[&>tr]:first:rounded-lg'>
                         <tr className='group outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
-                            <th className='group px-3 h-10 text-left align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>FECHA</th>
-                            <th style={{textAlign: 'right', backgroundColor: '#979ac2'}} className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>HORA</th>
-                            <th style={{textAlign: 'right', backgroundColor: '#979ac2'}}  className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>TOTAL</th>
-                            <th className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>CAJERO</th>
-                            <th className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>CLIENTE</th>
-                            <th className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>ACCION</th>
+                            <th style={{textAlign: 'left', backgroundColor: '#999cbe', color: 'white'}} className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>FECHA</th>
+                            <th style={{textAlign: 'right', backgroundColor: '#999cbe', color: 'white'}} className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>HORA</th>
+                            <th style={{textAlign: 'right', backgroundColor: '#999cbe', color: 'white'}}  className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>TOTAL</th>
+                            <th style={{textAlign: 'center', backgroundColor: '#999cbe', color: 'white'}} className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>CAJERO</th>
+                            <th style={{textAlign: 'center', backgroundColor: '#999cbe', color: 'white'}} className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>CLIENTE</th>
+                            <th style={{textAlign: 'center', backgroundColor: '#999cbe', color: 'white'}} className='group px-3 h-10 text-rigth align-middle whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>ACCION</th>
                         </tr>
                     </thead>
                     <tbody>
