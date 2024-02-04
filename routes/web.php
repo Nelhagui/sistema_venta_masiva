@@ -88,7 +88,7 @@ Route::middleware('auth')->group(function () {
 
         // VENTAS
         Route::get('/ventas', [VentaController::class, 'index'])->name('index.ventas');
-        Route::get('/ventas/{id}', [VentaController::class, 'show'])->name('show.ventas');
+        Route::get('/ventas/ver/{id}', [VentaController::class, 'show'])->name('show.ventas');
 
         // CAJA
         Route::get('/cajas', [SesionCajaController::class, 'index'])->name('index.cajas');

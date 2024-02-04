@@ -5,41 +5,35 @@ import { LectorContextProvider } from '../../context/LectorContext';
 import metodoPagoServices from '../../services/metodoPagoServices';
 import clienteServices from '../../services/clienteServices';
 import productoServices from '../../services/productoServices';
+import InstructivoSinProductos from '../productos/instructivo/InstructivoSinProductos';
 
 export default function MainLector() {
     const [productos, setProductos] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const [metodosDePago, setMetodosDePago] = useState([])
     const [clientes, setClientes] = useState([])
 
     const fetchMetodosDePago = async () => {
-        setIsLoading(true);
         try {
             const response = await metodoPagoServices.traerLista(); // Agrega paréntesis para invocar la función
             setMetodosDePago(response); // Establece el estado con los datos de la respuesta
         } catch (error) {
             // Maneja el error de alguna manera, por ejemplo, mostrando un mensaje de error al usuario
             console.error('Error al obtener la lista de métodos de pago:', error);
-        } finally {
-            setIsLoading(false);
         }
     };
 
     const fetchListaClientes = async () => {
-        setIsLoading(true);
         try {
             const response = await clienteServices.traerLista(); // Agrega paréntesis para invocar la función
             setClientes(response); // Establece el estado con los datos de la respuesta
         } catch (error) {
             // Maneja el error de alguna manera, por ejemplo, mostrando un mensaje de error al usuario
             console.error('Error al obtener la lista de métodos de pago:', error);
-        } finally {
-            setIsLoading(false);
         }
     };
 
     const fetchListaProductos = async () => {
-        setIsLoading(true);
         try {
             const response = await productoServices.traerLista();
             setProductos(response)
@@ -58,8 +52,11 @@ export default function MainLector() {
     }, []);
 
     return (
-        productos.length > 0
-            ? <ListProductos productos={productos} metodosDePago={metodosDePago} clientes={clientes}></ListProductos>
+        !isLoading
+            ?
+            productos.length > 0
+                ? <ListProductos productos={productos} metodosDePago={metodosDePago} clientes={clientes}></ListProductos>
+                : <InstructivoSinProductos />
             : null
     )
 }

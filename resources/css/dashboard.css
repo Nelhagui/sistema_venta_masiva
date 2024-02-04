@@ -5,6 +5,15 @@
 .input-text:hover {
     border: solid  2px rgb(42, 42, 42); 
 }
+/* Estilo para filas impares */
+.odd-row {
+    background-color: #ffffff; /* Cambia el color de fondo según lo necesites */
+  }
+  
+  /* Estilo para filas pares */
+  .even-row {
+    background-color: #f0f0f0; /* Cambia el color de fondo según lo necesites */
+  }
 
 .input-text {
     border: solid 2px #e4e4e7;

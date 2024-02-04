@@ -4,6 +4,7 @@ import TablaListClientes from './TablaListClientes';
 import clienteServices from '../../services/clienteServices';
 import { Button } from "@nextui-org/react";
 import ModalCrearCliente from './agregar/ModalCrearCliente';
+import InstructivoSinClientes from './instructivos/InstructivoSinClientes';
 
 export default function MainClientes() {
     const [clientes, setClientes] = useState([])
@@ -34,10 +35,16 @@ export default function MainClientes() {
                     ? "Cargando..."
                     :
                     <>
-                        <div className='flex mb-4 justify-end'>
-                            <ModalCrearCliente/>
-                        </div>
-                        <TablaListClientes clientes={clientes} />
+                        {
+                            clientes.length > 0
+                                ? <>
+                                    <div className='flex mb-4 justify-end'>
+                                        <ModalCrearCliente />
+                                    </div>
+                                    <TablaListClientes clientes={clientes} />
+                                </>
+                                : <InstructivoSinClientes />
+                        }
                     </>
             }
         </>

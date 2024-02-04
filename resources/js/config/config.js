@@ -35,6 +35,7 @@ export const endpoints = {
 export const urls = {
     ventas: {
         lista: `${BASE_URL}/ventas`,
+        ver: `${BASE_URL}/ventas/ver`,
     },
     clientes: {
         lista: `${BASE_URL}/clientes`,
