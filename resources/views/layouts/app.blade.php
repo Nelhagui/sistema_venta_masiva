@@ -22,7 +22,13 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('public/assets/icon-shop.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('public/assets/icon-shop.png') }}">
 
-    <title>{{ config('app.name', 'RapidoVentas') }}</title>
+    <title>
+        @isset($title)
+            {{ $title }}
+        @else
+            {{ config('app.name', 'RapidoVentas') }}
+        @endisset
+    </title>
 
     @vite('resources/css/app.css')
     @vite('resources/css/dashboard.css')

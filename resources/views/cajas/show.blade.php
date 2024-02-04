@@ -1,5 +1,7 @@
 <x-app-layout>
-    
+    <x-slot:title>
+        Mostrar Caja
+    </x-slot>
     <div class="py-12">
         <div class="flex justify-between max-w-7xl mx-auto sm:px-6 lg:px-8">
             
