@@ -19,35 +19,39 @@ import {
 } from "@nextui-org/react";
 
 import { PlusIcon } from "../icons/PlusIcon";
-import { VerticalDotsIcon } from "../icons/VerticalDotsIcon";
 import { SearchIcon } from "../icons/SearchIcon";
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
-// import {columns, users, statusOptions} from "./DataProductos";
-import DataProductos, { columns, statusOptions } from "./DataProductos";
 import { capitalize } from "../../utils/utils";
 import { formatearAMoneda } from "../../utils/utils";
 import { EyeIcon } from "../icons/EyeIcon";
 import { DeleteIcon } from "../icons/DeleteIcon";
 import { EditIcon } from "../icons/EditIcon";
+import { urls } from "../../config/config";
+import { InventoryIcon } from "../icons/InventoryIcon";
+import { UploadFileIcon } from "../icons/UploadFileIcon";
 
-const statusColorMap = {
-    active: "success",
-    paused: "danger",
-    vacation: "warning",
-};
 
 const INITIAL_VISIBLE_COLUMNS = ["titulo", "precio_costo", "precio_venta", "stock_actual", "acciones"];
 
 export default function TablaListProductos({ productos }) {
     const [filterValue, setFilterValue] = React.useState("");
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
     const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-    //   const [statusFilter, setStatusFilter] = React.useState("all");
     const [rowsPerPage, setRowsPerPage] = React.useState(15);
     const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "age",
         direction: "ascending",
     });
+
+    const columns = [
+        { name: "ID", uid: "id", sortable: true },
+        { name: "TITULO", uid: "titulo", sortable: true },
+        { name: "CODIGO BARRA", uid: "codigo_barra" },
+        { name: "PRECIO COSTO", uid: "precio_costo", sortable: true },
+        { name: "PRECIO VENTA", uid: "precio_venta", sortable: true },
+        { name: "STOCK", uid: "stock_actual", sortable: true },
+        { name: "ACCIONES", uid: "acciones" },
+    ];
+
     const [page, setPage] = React.useState(1);
 
     const hasSearchFilter = Boolean(filterValue);
@@ -66,14 +70,8 @@ export default function TablaListProductos({ productos }) {
                 item.titulo.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-        // if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
-        //   filteredUsers = filteredUsers.filter((user) =>
-        //     Array.from(statusFilter).includes(productos.status),
-        //   );
-        // }
-
         return filteredUsers;
-    }, [productos, filterValue /*, statusFilter */]);
+    }, [productos, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -94,6 +92,14 @@ export default function TablaListProductos({ productos }) {
         });
     }, [sortDescriptor, items]);
 
+    function irPaginaStockPrecio() {
+        window.location.href = `${urls.productos.stockPrecio}`
+    }
+
+    function irPaginaAgregarProducto() {
+        window.location.href = `${urls.productos.crear}`
+    }
+
     const renderCell = React.useCallback((item, columnKey) => {
         const cellValue = item[columnKey];
 
@@ -113,12 +119,6 @@ export default function TablaListProductos({ productos }) {
                             ${formatearAMoneda(item.precio_venta)}
                         </p>
                     </div>
-                );
-            case "status":
-                return (
-                    <Chip className="capitalize" color={statusColorMap[item.status]} size="sm" variant="flat">
-                        {cellValue}
-                    </Chip>
                 );
             case "acciones":
                 return (
@@ -178,29 +178,26 @@ export default function TablaListProductos({ productos }) {
 
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-10">
                 <div className="flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[44%]"
-                        placeholder="Search by name..."
-                        startContent={<SearchIcon />}
-                        value={filterValue}
-                        onClear={() => onClear()}
-                        onValueChange={onSearchChange}
-                    />
+                    <div className='w-full'>
+                        <Input
+                            isClearable
+                            variant="bordered"
+                            className="max-w-md"
+                            placeholder="Buscar por nombre..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onClear={() => onClear()}
+                            onValueChange={onSearchChange}
+                            size="sm"
+                        />
+                    </div>
                     <div className="flex gap-3">
                         <Dropdown>
                             <DropdownTrigger className="hidden sm:flex">
                                 <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                                    Status
-                                </Button>
-                            </DropdownTrigger>
-                        </Dropdown>
-                        <Dropdown>
-                            <DropdownTrigger className="hidden sm:flex">
-                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
-                                    Columns
+                                    Columnas
                                 </Button>
                             </DropdownTrigger>
                             <DropdownMenu
@@ -218,9 +215,23 @@ export default function TablaListProductos({ productos }) {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <Button color="primary" endContent={<PlusIcon />}>
-                            Add New
-                        </Button>
+                        <div className='flex gap-2'>
+                            <Button
+                                className="bg-foreground text-background"
+                                endContent={<InventoryIcon />}
+                                onPress={() => irPaginaStockPrecio()}
+                            >
+                                Stock - Precio
+                            </Button>
+                            <Button
+                                className="bg-foreground text-background"
+                                // color="danger"
+                                endContent={<PlusIcon />}
+                                onPress={() => irPaginaAgregarProducto()}
+                            >
+                                Nuevo Producto
+                            </Button>
+                        </div>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -230,11 +241,13 @@ export default function TablaListProductos({ productos }) {
                         <select
                             className="bg-transparent outline-none text-default-400 text-small"
                             onChange={onRowsPerPageChange}
-                            defaultValue={15}
+                            defaultValue={10}
                         >
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="15" >15</option>
+                            <option value="50" >50</option>
+                            <option value={productos.length} >Todos</option>
                         </select>
                     </label>
                 </div>
@@ -252,16 +265,13 @@ export default function TablaListProductos({ productos }) {
     const bottomContent = React.useMemo(() => {
         return (
             <div className="py-2 px-2 flex justify-between items-center">
-                <span className="w-[30%] text-small text-default-400">
-                    {selectedKeys === "all"
-                        ? "All items selected"
-                        : `${selectedKeys.size} of ${filteredItems.length} selected`}
-                </span>
                 <Pagination
                     isCompact
                     showControls
                     showShadow
-                    color="primary"
+                    classNames={{
+                        cursor: "bg-foreground text-background",
+                    }}
                     page={page}
                     total={pages}
                     onChange={setPage}
@@ -281,7 +291,7 @@ export default function TablaListProductos({ productos }) {
     return (
         <Table
             aria-label="Example table with custom cells, pagination and sorting"
-            isHeaderSticky
+            isHeaderSticky={true}
             isStriped
             bottomContent={bottomContent}
             bottomContentPlacement="outside"
@@ -291,21 +301,22 @@ export default function TablaListProductos({ productos }) {
             sortDescriptor={sortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"
-            onSelectionChange={setSelectedKeys}
             onSortChange={setSortDescriptor}
+            
         >
             <TableHeader columns={headerColumns}>
                 {(column) => (
                     <TableColumn
                         key={column.uid}
-                        align={column.uid === "actions" ? "center" : "start"}
+                        align={
+                            column.uid === "acciones" ? "center" : "start"}
                         allowsSorting={column.sortable}
                     >
                         {column.name}
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={"No users found"} items={sortedItems}>
+            <TableBody emptyContent={"Sin resultados que coincidan"} items={sortedItems}>
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
