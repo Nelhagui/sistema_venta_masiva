@@ -29,7 +29,8 @@ export const endpoints = {
     },
     metodosDePago: {
         lista: `${API_BASE_URL}/metodos-pago`,
-        crear: `${API_BASE_URL}/metodos-pago`
+        crear: `${API_BASE_URL}/metodos-pago`,
+        eliminar:  `${API_BASE_URL}/metodos-pago/eliminar`
     },
 };
 

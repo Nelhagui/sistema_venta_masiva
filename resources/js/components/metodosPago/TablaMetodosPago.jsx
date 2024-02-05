@@ -13,6 +13,7 @@ import { EyeIcon } from '../icons/EyeIcon';
 import { urls } from '../../config/config';
 import { EditIcon } from '../icons/EditIcon';
 import { DeleteIcon } from '../icons/DeleteIcon';
+import ModalEliminarMetodoPago from './eliminar/ModalEliminarMetodoPago';
 
 const TablaMetodosPago = ({ metodosDePago }) => {
     function irPaginaEditMetodoPago(metodoId) {
@@ -62,11 +63,12 @@ const TablaMetodosPago = ({ metodosDePago }) => {
                                                     <EditIcon onClick={() => irPaginaEditMetodoPago(metodoDePago?.id)} />
                                                 </span>
                                             </Tooltip>
-                                            {/* <Tooltip color="danger" content="Borrar">
-                                                <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
+                                            <Tooltip color="danger" content="Borrar">
+                                                <ModalEliminarMetodoPago item={metodoDePago}/>
+                                                {/* <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
                                                     <DeleteIcon />
-                                                </span>
-                                            </Tooltip> */}
+                                                </span> */}
+                                            </Tooltip>
                                         </div> : <></>
                                 }
                                 

@@ -32,10 +32,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 
-
-
-
-
 Route::get('/productos-base/busqueda/{busqueda}', [ProductoController::class, 'busquedaProductosBase']);
 Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busqueda']);
 
@@ -70,6 +66,7 @@ Route::middleware('auth')->group(function () {
     // METODOS DE PAGO
     Route::get('/metodos-pago', [MetodoPagoController::class, 'indexApi']);
     Route::post('/metodos-pago', [MetodoPagoController::class, 'storeApi']);
+    Route::post('/metodos-pago/eliminar/{metodoPagoId}', [MetodoPagoController::class, 'destroy']);
 
     // VENTAS
     Route::prefix('ventas')->group(function () {

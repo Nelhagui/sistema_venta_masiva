@@ -55,31 +55,19 @@ class MetodoPagoController extends Controller
     {
         $messages = [
             'nombre.required' => 'El campo Nombre es obligatorio.',
-            'nombre.unique' => 'El nombre ya está en uso.',
-            'comision.required' => 'El campo Comisión es obligatorio.',
-            'comision.numeric' => 'El campo Comisión debe ser un valor numérico.',
         ];
         
         $metodo = MetodoPago::find($id); // Primero obtenemos el método
         
         $request->validate([
-            'nombre' => 'required|unique:metodos,nombre,' . $metodo->id,
-            'comision' => 'required|numeric',
+            'nombre' => 'required' ,
         ], $messages);
         
         $metodo->nombre = $request->nombre;
-        $metodo->comision = $request->comision;
         $metodo->save(); // Utiliza save() para actualizar en lugar de update()
         return redirect()->route('index.metodos');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(MetodoPago $metodoPago)
-    {
-        //
-    }
 
     //API
     public function indexApi()
@@ -125,7 +113,16 @@ class MetodoPagoController extends Controller
 
         return $metodoDePago->save();
 
-        
+    }
+
+    public function destroy(string $metodoPagoId) 
+    {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+
+        $metodoPago = MetodoPago::where('id', $metodoPagoId)->where('comercio_id', $id_comercio)->first();
+
+        return $metodoPago->delete();
 
     }
 }
