@@ -1,9 +1,10 @@
 import { createRoot } from 'react-dom/client';
-import { Input, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, input } from "@nextui-org/react";
+import { Button, Tooltip, Select, SelectItem } from "@nextui-org/react";
 import { useEffect, useState } from 'react';
 import productoServices from '../../../services/productoServices';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { InfoIcon } from '../../icons/InfoIcon';
 
 export default function MainCrearProductos() {
 
@@ -84,6 +85,7 @@ export default function MainCrearProductos() {
         setFilas(prevFilas => [...prevFilas, {
             key: id,
             columnaTitulo: 'titulo',
+            columnaTipo: 'tipo',
             columnaCodigoBarra: 'codigo_barra',
             columnaPrecioCosto: 'precio_costo',
             columnaPrecioVenta: 'precio_venta',
@@ -92,6 +94,7 @@ export default function MainCrearProductos() {
         setValoresInputs(prevValores => [...prevValores, {
             key: id,
             titulo: '',
+            tipo: '',
             codigo_barra: '',
             precio_costo: '',
             precio_venta: '',
@@ -125,7 +128,23 @@ export default function MainCrearProductos() {
                     <thead className='[&>tr]:first:rounded-lg'>
                         <tr className='group outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
                             <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>TÍTULO</th>
-                            <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>TIPO</th>
+                            <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
+                                <div className='flex gap-2'>
+                                    TIPO 
+                                    <Tooltip 
+                                        content={
+                                            <div className="px-1 py-2">
+                                              <div className="text-small font-bold">Custom Content</div>
+                                              <div className="text-tiny">This is a custom tooltip content</div>
+                                            </div>
+                                        }
+                                    >
+                                        <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                            <InfoIcon />
+                                        </span>
+                                    </Tooltip>
+                                </div>
+                            </th>
                             <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>CÓDIGO BARRA</th>
                             <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>PRECIO COSTO</th>
                             <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>PRECIO VENTA</th>
@@ -146,16 +165,38 @@ export default function MainCrearProductos() {
                                     <p style={{color: 'red'}}>{errores[`${fila.key}-titulo`] ?? ""}</p>
                                 </td>
                                 <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
-                                    <select>
-                                        
-                                    </select>
-                                    <input
-                                        type="text"
-                                        className='input-text'
-                                        value={valoresInputs[index].titulo}
-                                        onChange={(e) => handleInputChange(e, index, 'titulo')}
-                                    />
-                                    <p style={{color: 'red'}}>{errores[`${fila.key}-titulo`] ?? ""}</p>
+                                    <Select
+                                        placeholder="Seleccione tipo"
+                                        labelPlacement="outside"
+                                        variant='bordered'
+                                        aria-label="Tipo de Producto"
+                                        onChange={(e) => handleInputChange(e, index, 'tipo')}
+                                        className='min-w-max'
+                                    >
+                                        <SelectItem key="unidad" textValue="Unidad">
+                                            <div className="flex gap-2 items-center">
+                                                <div className="flex flex-col">
+                                                    <span className="text-small">Unidad</span>
+                                                    <span className="text-tiny text-default-400"></span>
+                                                </div>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem key="fraccion" textValue="Fracción">
+                                            <div className="flex gap-2 items-center">
+                                                <div className="flex flex-col">
+                                                    <span className="text-small">Fracción</span>
+                                                </div>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem key="costo_adicional" textValue="Costo Adicional">
+                                            <div className="flex gap-2 items-center">
+                                                <div className="flex flex-col">
+                                                    <span className="text-small">Costo Adicional</span>
+                                                    <span className="text-tiny text-default-400"></span>
+                                                </div>
+                                            </div>
+                                        </SelectItem>
+                                    </Select>
                                 </td>
                                 <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                     <input
