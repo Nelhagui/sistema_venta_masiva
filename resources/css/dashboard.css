@@ -21,8 +21,19 @@
 
 /* Estilos para las filas al pasar el ratón por encima */
 .row-hover {
-    background-color: #cbcde4; /* Cambia el color de fondo al pasar el ratón por encima */
-    transition: background-color 0.3s ease, border-color 0.3s ease; /* Transición suave */
+    background-color: #cbcde4;
+    /* Cambia el color de fondo al pasar el ratón por encima */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    /* Transición suave */
+}
+
+.tipo-producto {
+    border: 1px solid #495afb;
+    padding: 1px 4px;
+    border-radius: 5px;
+    color: white;
+    background-color: #818cf8;
+    margin-right: 9px;
 }
 
 .input-text {

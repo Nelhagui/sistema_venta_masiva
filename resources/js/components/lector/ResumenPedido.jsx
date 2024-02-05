@@ -39,6 +39,10 @@ const ResumenPedido = () => {
         }
     };
 
+    const  tieneProductoFraccion = () => {
+        return productosSeleccionados.some(producto => producto.tipo === 'fraccion');
+      }
+
     return (
         <>
             <div style={{
@@ -57,7 +61,7 @@ const ResumenPedido = () => {
                     width: '100%'
                 }}>
                     <div className='flex items-center'>
-                        <ViewTotalAumentoDescuento/>
+                        <ViewTotalAumentoDescuento />
                     </div>
                     <div className=''>
                         {/* <ExtraValueConfiguration /> */}
@@ -79,6 +83,7 @@ const ResumenPedido = () => {
                 <div className='flex flex-col' style={{ padding: 20 }}>
                     <Table isStriped aria-label="Example static collection table">
                         <TableHeader>
+                            <TableColumn></TableColumn>
                             <TableColumn>CANT</TableColumn>
                             <TableColumn>PRODUCTO</TableColumn>
                             <TableColumn>UNITARIO</TableColumn>
@@ -88,7 +93,29 @@ const ResumenPedido = () => {
                         <TableBody>
                             {
                                 productosSeleccionados.map((productoSeleccionado) => (
-                                    <TableRow key={Math.random()}>
+                                    <TableRow key={productoSeleccionado.id}>
+                                        <TableCell
+                                        style={{maxWidth: '1.1rem'}}
+                                        >
+                                            {
+                                                productoSeleccionado.tipo === "fraccion"
+                                                    ?
+                                                    <Tooltip
+                                                        content={
+                                                            <div className="px-1 py-2">
+                                                                <div className="text-small font-bold">Fracción</div>
+                                                                <div className="text-tiny">0.100 para 100gr</div>
+                                                                <div className="text-tiny">1 para 1kg</div>
+                                                            </div>
+                                                        }
+                                                    >
+                                                        <span className='tipo-producto'>
+                                                            F
+                                                        </span>
+                                                    </Tooltip>
+                                                    : null
+                                            }
+                                        </TableCell>
                                         <TableCell>
                                             <input type="number"
                                                 value={productoSeleccionado?.cantidad}
