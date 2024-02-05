@@ -363,6 +363,7 @@ class ProductoController extends Controller
             foreach ($request->input('productos') as $productoData) {
                 $producto = new Producto;
                 $producto->titulo = $productoData['titulo'];
+                $producto->tipo = $productoData['tipo'];
                 $producto->codigo_barra = $productoData['codigo_barra'];
                 $producto->precio_costo = $productoData['precio_costo'];
                 $producto->precio_venta = $productoData['precio_venta'];
