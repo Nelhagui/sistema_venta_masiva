@@ -146,10 +146,10 @@ class ProductoController extends Controller
     public function edit(string $id)
     {
         $user = Auth::user();
-        $producto = Producto::where('id', $id)->where('comercio_id', $user->comercio_id )->get()->first();
-        if(isset($producto))
+        $producto = Producto::where('id', $id)->where('comercio_id', $user->comercio_id)->get()->first();
+        if (isset($producto))
             return view('productos.edit', compact('producto'));
-        else 
+        else
             return back();
     }
 
@@ -159,9 +159,9 @@ class ProductoController extends Controller
     public function update(Request $request, string $id)
     {
         $user = Auth::user();
-        $producto = Producto::where('id', $id)->where('comercio_id', $user->comercio_id )->get()->first();
+        $producto = Producto::where('id', $id)->where('comercio_id', $user->comercio_id)->get()->first();
 
-        if(!isset($producto))
+        if (!isset($producto))
             return back();
 
         $messages = [
@@ -288,7 +288,7 @@ class ProductoController extends Controller
         return view('productos.importador.create');
     }
 
-    
+
 
 
     public function stockPrecio()
@@ -322,11 +322,11 @@ class ProductoController extends Controller
             foreach ($productos as $producto) {
                 $key = $producto['key'];
                 $validator = Validator::make($producto, [
-                    'titulo' => 'required|unique:productos,titulo',
+                    'titulo' => 'required|unique:productos,titulo,NULL,id,comercio_id,' . $id_comercio,
+                    'codigo_barra' => 'nullable|unique:productos,codigo_barra,NULL,id,comercio_id,' . $id_comercio,
                     'precio_costo' => 'required',
                     'precio_venta' => 'required',
                     'stock_actual' => 'required',
-                    'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra'],
                     // Otras reglas de validación según tus necesidades
                 ]);
 
@@ -572,7 +572,7 @@ class ProductoController extends Controller
             // valido si el ya existen productos similares cargados
             $respuestaFiltroRepetidosNoRepetidos = $this->obtenerProductosRepetidosEnSistema($productosValidosInvalidos);
             $productosRepetidosEnSistema = array_values($respuestaFiltroRepetidosNoRepetidos['productosCoincidentes']);
-            
+
 
             $productosValidosParaCargar = $respuestaFiltroRepetidosNoRepetidos['productosNoCoincidentes'];
         } else {

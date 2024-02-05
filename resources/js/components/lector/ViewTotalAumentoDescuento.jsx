@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLectorContext } from '../../context/LectorContext'
+import { formatearAMoneda } from '../../utils/utils';
 
 const ViewTotalAumentoDescuento = () => {
     const { total, aumento, descuento, obtenerTotalSinModificaciones } = useLectorContext();
@@ -35,7 +36,7 @@ const ViewTotalAumentoDescuento = () => {
         }
 
         // Si no hay aumento ni descuento, solo mostrar el total
-        return <p style={{ fontSize: "2.5rem", lineHeight: 1 }}> ${total} </p>;
+        return <p style={{ fontSize: "2.5rem", lineHeight: 1 }}> ${formatearAMoneda(total)} </p>;
     };
 
     return (

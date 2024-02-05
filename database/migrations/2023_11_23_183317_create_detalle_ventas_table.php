@@ -16,9 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('venta_id');
             $table->unsignedBigInteger('producto_id');
             $table->unsignedBigInteger('lote_id')->nullable();
-            $table->integer('cantidad');
-            $table->decimal('precio_unitario', 8, 2); // Precio de venta en el momento de la venta
-            $table->decimal('costo_unitario', 8, 2);  // Costo del producto en el momento de la venta
+            $table->enum('tipo', ['unidad','fraccion','costo_adicional'])->default('unidad');
+            $table->decimal('cantidad', 15, 3);
+            $table->decimal('precio_unitario', 9, 3); // Precio de venta en el momento de la venta
+            $table->decimal('costo_unitario', 9, 3);  // Costo del producto en el momento de la venta
             $table->string('nombre_producto');
             $table->softDeletes();
             $table->timestamps();

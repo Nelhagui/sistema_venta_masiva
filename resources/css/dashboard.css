@@ -32,6 +32,8 @@
     padding: 1px 4px;
     border-radius: 5px;
     color: white;
+    width: 1.2em;
+    height: 1.2em;
     background-color: #818cf8;
     margin-right: 9px;
 }

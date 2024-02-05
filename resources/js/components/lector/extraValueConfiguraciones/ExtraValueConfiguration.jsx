@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { ChangesInPaymentIcon } from '../icons/ChangesInPaymentIcon.jsx';
-import { useLectorContext } from '../../context/LectorContext.jsx';
+import { ChangesInPaymentIcon } from '../../icons/ChangesInPaymentIcon.jsx';
+import { useLectorContext } from '../../../context/LectorContext.jsx';
 import {
     Input,
     Accordion,
@@ -23,14 +23,9 @@ const ExtraValueConfiguration = () => {
         tipoMontoFijo,
         tipoPorcentaje
     } = useLectorContext()
+
     const [vueltoInitial, setVueltoInitial] = useState('')
     const [cambioIngresado, setCambioIngresado] = useState(0);
-
-    useEffect(() => {
-        if (cambioIngresado > 0)
-            setVuelto(Number(cambioIngresado) - Number(total));
-    }, [total])
-
 
     const cambioTipoAumento = (e) => {
         setTipoVariableAumento(e.target.value)
@@ -39,14 +34,6 @@ const ExtraValueConfiguration = () => {
     const cambioTipoDescuento = (e) => {
         setTipoVariableDescuento(e.target.value)
     }
-
-    const handleVueltoChange = (e) => {
-        const valueIn = e.target.value;
-        const totalIn = Number(valueIn) - Number(total);
-        setVuelto(totalIn);
-        setCambioIngresado(valueIn)
-        setVueltoInitial(valueIn)
-    };
 
     const handleAumentoChange = (e) => {
         const aumentoValue = e.target.value;
@@ -83,34 +70,7 @@ const ExtraValueConfiguration = () => {
             >
                 <div className='flex mb-4 justify-between'>
                     <div className='flex gap-3'>
-                        <Input
-                            className='w-2/5'
-                            type="number"
-                            size='sm'
-                            label="Vuelto"
-                            placeholder="0.00"
-                            defaultValue={vueltoInitial}
-                            onChange={handleVueltoChange}
-                            startContent={
-                                <div className="pointer-events-none flex items-center">
-                                    <span className="text-default-400 text-small">$</span>
-                                </div>
-                            }
-                        />
-                        {
-                            vuelto > 0
-                                ?
-                                <div className='ml-2 text-green-600 text-xl'>
-                                    ${vuelto}
-                                </div>
-                                :
-                                cambioIngresado > 0 && vuelto !== 0
-                                    ?
-                                    <div className='ml-2 text-red-600'>
-                                        monto incompleto
-                                    </div>
-                                    : null
-                        }
+                        
                         <Input
                             label="Aumento"
                             className='w-2/5'

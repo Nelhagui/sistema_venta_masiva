@@ -94,7 +94,7 @@ export default function MainCrearProductos() {
         setValoresInputs(prevValores => [...prevValores, {
             key: id,
             titulo: '',
-            tipo: '',
+            tipo: "unidad",
             codigo_barra: '',
             precio_costo: '',
             precio_venta: '',
@@ -134,7 +134,7 @@ export default function MainCrearProductos() {
                                     <Tooltip 
                                         content={
                                             <div className="px-1 py-2">
-                                              <div className="text-small font-bold">Custom Content</div>
+                                              <div className="text-small font-bold">Unidad</div>
                                               <div className="text-tiny">This is a custom tooltip content</div>
                                             </div>
                                         }
@@ -169,11 +169,12 @@ export default function MainCrearProductos() {
                                         placeholder="Seleccione tipo"
                                         labelPlacement="outside"
                                         variant='bordered'
+                                        defaultSelectedKeys={["unidad"]}
                                         aria-label="Tipo de Producto"
                                         onChange={(e) => handleInputChange(e, index, 'tipo')}
                                         className='min-w-max'
                                     >
-                                        <SelectItem key="unidad" textValue="Unidad">
+                                        <SelectItem key="unidad" textValue="Unidad" SelectItem>
                                             <div className="flex gap-2 items-center">
                                                 <div className="flex flex-col">
                                                     <span className="text-small">Unidad</span>

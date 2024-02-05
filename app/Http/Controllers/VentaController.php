@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comercio;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Venta;
@@ -18,10 +19,10 @@ class VentaController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index()
+    public function index(Request $request)
     {
-        $ventas = Venta::orderBy('created_at', 'desc')->paginate(15);
-        return view('ventas.index', compact('ventas'));
+        $fecha = $request->query('fecha') ? Carbon::parse($request->query('fecha')) : Carbon::today();
+        return view('ventas.index', compact('fecha'));
     }
 
     /**
@@ -99,21 +100,40 @@ class VentaController extends Controller
 
 
     // API
-    public function indexApi()
+    public function indexApi(Request $request)
     {
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
-        // Obtener las ventas del mismo comercio con clientes
+        
+        // Obtener la fecha proporcionada en el request, o usar la fecha de hoy si no se proporciona ninguna fecha
+        $fecha = $request->query('fecha') ? Carbon::parse($request->query('fecha')) : Carbon::today();
+
+        // // Obtener las ventas del mismo comercio con clientes
+        // $ventasConClientes = Venta::where('comercio_id', $id_comercio)
+        //     ->whereHas('cliente') // Filtra las ventas que tienen un cliente asociado
+        //     ->with(['cliente', 'sesionCaja.cajero'])
+        //     ->get();
+
+        // // Obtener las ventas del mismo comercio sin clientes
+        // $ventasSinClientes = Venta::where('comercio_id', $id_comercio)
+        //     ->whereDoesntHave('cliente') // Filtra las ventas que no tienen un cliente asociado
+        //     ->with(['sesionCaja.cajero'])
+        //     ->get();
+
+        // Obtener las ventas del mismo comercio con clientes para la fecha proporcionada
         $ventasConClientes = Venta::where('comercio_id', $id_comercio)
+            ->whereDate('fecha_hora_venta', $fecha->toDateString())
             ->whereHas('cliente') // Filtra las ventas que tienen un cliente asociado
             ->with(['cliente', 'sesionCaja.cajero'])
             ->get();
 
-        // Obtener las ventas del mismo comercio sin clientes
+        // Obtener las ventas del mismo comercio sin clientes para la fecha proporcionada
         $ventasSinClientes = Venta::where('comercio_id', $id_comercio)
+            ->whereDate('fecha_hora_venta', $fecha->toDateString())
             ->whereDoesntHave('cliente') // Filtra las ventas que no tienen un cliente asociado
             ->with(['sesionCaja.cajero'])
             ->get();
+
 
         // Combinar los resultados en una sola colección
         $ventasCombinadas = $ventasConClientes->merge($ventasSinClientes);
@@ -121,7 +141,7 @@ class VentaController extends Controller
         $ventasOrdenadas = $ventasCombinadas->sortByDesc(function ($venta) {
             return $venta->created_at; // Suponiendo que la fecha de creación sea relevante para ordenar
         })->values(); // Utiliza values() para obtener un array de objetos
-        
+
         return $ventasOrdenadas;
     }
     public function storeApi(Request $request)

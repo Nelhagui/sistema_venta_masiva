@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SearchIcon } from '../icons/SearchIcon';
 import TeclaDetector from '../teclado/TeclaDetector';
 import lectorServices from '../../services/lectorServices';
+import ExtraValueConfiguration from './extraValueConfiguraciones/ExtraValueConfiguration';
 import {
     Input,
     Select,
@@ -84,6 +85,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                 theme: "light",
             });
             resetAll();
+            reset();
         }
     };
 
@@ -113,6 +115,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         focusInput();
         setObjetosBuscados([]);
         setInputText('')
+        setMetodoPagoSeleccionado("0");
     }
     const handleInputChange = (e) => {
         setIsLoading(true)
@@ -147,7 +150,25 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 
     const debouncedSearchRef = useRef(debounce((textoBusqueda) => realizarBusqueda(textoBusqueda), 200));
 
+    const setearCantidad = (producto) => {
+
+        if (producto?.tipo === 'fraccion') {
+            return 0.100;
+        } else {
+            return 1;
+        }
+    }
+    const setearMonto = (producto) => {
+
+        if (producto?.tipo === 'fraccion') {
+            return setearCantidad(producto) * producto.precio_venta;
+        } else {
+            return 1;
+        }
+    }
+
     const addProducto = (producto) => {
+        console.log(producto);
         setProductosSeleccionados(prevProductos => {
             const productoExistente = prevProductos.find(p => (producto.titulo === p.titulo));
             if (productoExistente) {
@@ -171,7 +192,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     return p;
                 });
             } else {
-                producto = { ...producto, highlighted: false, cantidad: 1 }
+                producto = { ...producto, highlighted: false, cantidad: setearCantidad(producto), monto: setearMonto(producto) }
                 return [producto, ...prevProductos];
             }
         });
@@ -307,6 +328,9 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                 </div>
                 {/* FIN BUSCADOR */}
 
+                <div className=''>
+                    <ExtraValueConfiguration />
+                </div>
 
                 <div>
                     <button
@@ -378,7 +402,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     <>
                         <div className='flex gap-3'>
                             <div className='w-full'>
-
                                 <ResumenPedido />
                             </div>
                             <div className='flex flex-col min-w-max gap-2 px-3'>
@@ -480,7 +503,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 const styles = {
     listContainer: {
         position: 'relative',
-        marginBottom: 20,
+        marginBottom: 15,
     },
     productosList: {
         position: 'absolute',
