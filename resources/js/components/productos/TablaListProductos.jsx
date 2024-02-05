@@ -100,6 +100,10 @@ export default function TablaListProductos({ productos }) {
         window.location.href = `${urls.productos.crear}`
     }
 
+    function irPaginaEditProducto(productoId) {
+        window.location.href = `${urls.productos.editar}/${productoId}`;
+    }
+
     const renderCell = React.useCallback((item, columnKey) => {
         const cellValue = item[columnKey];
 
@@ -130,7 +134,7 @@ export default function TablaListProductos({ productos }) {
                         </Tooltip>
                         <Tooltip content="Editar">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon onClick={() => irPaginaEditProducto(producto?.id)} />
+                                <EditIcon onClick={() => irPaginaEditProducto(item?.id)} />
                             </span>
                         </Tooltip>
                         <Tooltip color="danger" content="Borrar">

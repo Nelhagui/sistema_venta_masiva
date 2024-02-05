@@ -171,24 +171,24 @@ class ProductoController extends Controller
             'precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
             'precio_costo.required' => 'El campo Precio de costo es obligatorio.',
             'precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
-            'stock.required' => 'El campo Stock es obligatorio.',
-            'stock.numeric' => 'El campo Stock debe ser un valor numérico.',
+            'stock_actual.required' => 'El campo Stock es obligatorio.',
+            'stock_actual.numeric' => 'El campo Stock debe ser un valor numérico.',
             'codigo_barra.numeric' => 'El campo requiere números.',
             'codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
         ];
 
         $request->validate([
-            'titulo' => 'required|unique:productos,titulo,',
+            'titulo' => 'required|unique:productos,titulo,'. $producto->id,
             'precio_venta' => 'required|numeric',
             'precio_costo' => 'required|numeric',
-            'stock' => 'required|numeric',
-            'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,'],
+            'stock_actual' => 'required|numeric',
+            'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,' . $producto->id],
         ], $messages);
 
         $producto->titulo = $request->titulo;
         $producto->precio_venta = $request->precio_venta;
         $producto->precio_costo = $request->precio_costo;
-        $producto->stock_actual = $request->stock;
+        $producto->stock_actual = $request->stock_actual;
         $producto->codigo_barra = $request->codigo_barra;
         $producto->save();
 
