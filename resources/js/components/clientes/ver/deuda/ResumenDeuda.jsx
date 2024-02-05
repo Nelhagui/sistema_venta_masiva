@@ -15,7 +15,7 @@ const ResumenDeuda = () => {
         setVentas
      } = useDetalleClienteContext();
     const [montoTotalDeudas, setMontoTotalDeudas] = useState('')
-    const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = React.useState("");
+    const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = React.useState(["0"]);
     const [deudasSeleccionadas, setDeudasSeleccionadas] = useState([])
     const [metodoPagoCompletado, setMetodoPagoCompletado] = useState(true)
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -35,7 +35,7 @@ const ResumenDeuda = () => {
 
     useEffect(() => {
         if(isOpen){
-            setMetodoPagoSeleccionado([1]);
+            setMetodoPagoSeleccionado(["0"]);
             setMetodoPagoCompletado(true);
         }
       }, [isOpen])
@@ -116,7 +116,7 @@ const ResumenDeuda = () => {
                                         className="w-auto"
                                         size='sm'
                                         onChange={handleSelectionChange}
-                                        defaultSelectedKeys={["1"]}
+                                        defaultSelectedKeys={["0"]}
                                         isInvalid={!metodoPagoCompletado}
                                         errorMessage={!metodoPagoCompletado ? "Seleccione un método de pago" : ""}
                                     >
@@ -168,7 +168,7 @@ const ResumenDeuda = () => {
                                 ?
                                 <>
                                     <div className="flex gap-6" style={{ backgroundColor: '#d2e3fc', paddingRight: 12, paddingLeft: 12, paddingTop: 8, paddingBottom: 8, borderRadius: 7 }} >
-                                        <div>
+                                        <div style={{marginRight: 16}}>
                                             <p className="text-tiny uppercase font-bold" >Total Selección</p>
                                             <p style={{ color: '#ff0000', fontSize: 18 }}>
                                                 ${montoTotalDeudas}

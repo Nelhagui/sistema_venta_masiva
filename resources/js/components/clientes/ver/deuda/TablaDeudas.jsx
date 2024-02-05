@@ -34,7 +34,7 @@ export default function TablaDeudas() {
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>FECHA</TableColumn>
                                 <TableColumn>ESTADO</TableColumn>
-                                <TableColumn>ABONADO</TableColumn>
+                                {/* <TableColumn>ABONADO</TableColumn> */}
                                 <TableColumn>DEUDA</TableColumn>
                             </TableHeader>
                             <TableBody>
@@ -50,9 +50,9 @@ export default function TablaDeudas() {
                                                     {estadoCompraUtils.getTextoEstadoCompra(deuda.estado_pago)}
                                                 </p>
                                             </TableCell>
-                                            <TableCell>
+                                            {/* <TableCell>
                                                 ${estadoCompraUtils.calcularMontoTotalPagos(deuda?.pagos)}
-                                            </TableCell>
+                                            </TableCell> */}
                                             <TableCell>
                                                 <p style={{ color: '#ff0000' }}>
                                                     ${Number(deuda.monto_total_venta) - estadoCompraUtils.calcularMontoTotalPagos(deuda?.pagos)}

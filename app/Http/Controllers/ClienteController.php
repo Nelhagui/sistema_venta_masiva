@@ -110,7 +110,7 @@ class ClienteController extends Controller
             ->first();
         $deudas = $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with('pagos')->get();
         $ventas = $cliente->ventas()->with('pagos')->get();
-        
+
         $cliente->deudas = $deudas;
         $cliente->ventas = $ventas;
         return $cliente;
@@ -138,6 +138,7 @@ class ClienteController extends Controller
             $cliente = Cliente::where('id', $request->cliente)
                 ->where('comercio_id', $user->comercio_id)
                 ->first();
+
             if (isset($cliente)) {
                 $ventasRequest = collect($request->deudas);
                 $arrayIdsVentas = $ventasRequest->pluck('id')->toArray();
@@ -160,8 +161,9 @@ class ClienteController extends Controller
                     $pago->venta_id = $venta->id;
                     $pago->fecha_pago = now();
                     $pago->monto_pagado = $resta_abonar;
-                    $venta->metodos_de_pago = $request->metodoPago;
+                    $pago->metodos_de_pago = implode(', ', $request->metodoPago);
                     $pago->save();
+
 
                     $ventaDb = Venta::find($venta->id);
                     $ventaDb->estado_pago = Venta::COBRADA;
@@ -171,19 +173,20 @@ class ClienteController extends Controller
                 return response()->json(['error' => 'Ocurrió un error al procesar la solicitud'], 500);
             }
 
-            
+
             DB::commit();
-            
+
             return [
                 "deudas" => $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with('pagos')->get(),
                 "ventas" => $cliente->ventas()->with('pagos')->get(),
             ];
 
         } catch (\Exception $e) {
-
+            // Si ocurre una excepción, deshacer la transacción
             DB::rollback();
-            return response()->json(['error' => 'Ocurrió un error al procesar la solicitud'], 500);
-
+            
+            // Devolver el mensaje de error de la excepción
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
