@@ -36,7 +36,7 @@ const INITIAL_VISIBLE_COLUMNS = ["titulo", "precio_costo", "precio_venta", "stoc
 export default function TablaListProductos({ productos }) {
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
-    const [rowsPerPage, setRowsPerPage] = React.useState(15);
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [sortDescriptor, setSortDescriptor] = React.useState({
         column: "age",
         direction: "ascending",
