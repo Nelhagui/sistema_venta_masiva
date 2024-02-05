@@ -40,11 +40,10 @@ export default function ModalEliminarMetodoPago({ item }) {
         try {
             const response = await metodoPagoServices.eliminar(item)
             const data = await response.json();
-            if (response.status === 400) {
-                setMessage(data.message);
+            if (response.status === 200) {
+                window.location.reload();
             } else {
-                // tiene que haber un context. 
-                console.log('bien')
+                setMsjErrors("Ha ocurrido un error, intente nuevamente más tarde o comuniquese con soporte. Error: AZ193")
             }
         } catch (error) {
             // Maneja el error si la creación de la venta falla

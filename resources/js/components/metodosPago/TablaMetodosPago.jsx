@@ -63,11 +63,10 @@ const TablaMetodosPago = ({ metodosDePago }) => {
                                                     <EditIcon onClick={() => irPaginaEditMetodoPago(metodoDePago?.id)} />
                                                 </span>
                                             </Tooltip>
-                                            <Tooltip color="danger" content="Borrar">
-                                                <ModalEliminarMetodoPago item={metodoDePago}/>
-                                                {/* <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
-                                                    <DeleteIcon />
-                                                </span> */}
+                                            <Tooltip content="Eliminar">
+                                                <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                                    <ModalEliminarMetodoPago item={metodoDePago}/>
+                                                </span>
                                             </Tooltip>
                                         </div> : <></>
                                 }

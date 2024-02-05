@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('titulo');
             $table->text('descripcion')->nullable();
+            $table->enum('tipo', ['unidad','fraccion','costo_adicional'])->default('unidad');
             $table->decimal('precio_costo', 15, 2)->nullable();
             $table->decimal('precio_venta', 15, 2)->nullable();
             $table->bigInteger('stock_actual')->nullable();
