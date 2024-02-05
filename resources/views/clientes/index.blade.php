@@ -1,4 +1,5 @@
 <x-app-layout>
+    @vite('resources/js/components/clientes/MainClientes.jsx');
     <x-slot:title>
         Clientes - Lista
     </x-slot>
