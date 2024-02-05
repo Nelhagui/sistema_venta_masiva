@@ -36,7 +36,7 @@ Route::get('/productos-base/busqueda/{busqueda}', [ProductoController::class, 'b
 Route::get('/productos/busqueda/{busqueda}', [ProductoController::class, 'busqueda']);
 
 
-Route::post('/productos/base/agregar', [ProductoController::class, 'storeDesdeBase']);
+// Route::post('/productos/base/agregar', [ProductoController::class, 'storeDesdeBase']);
 Route::post('/productos/actualizar/stock', [ProductoController::class, 'updateStockProductos']);
 
 
