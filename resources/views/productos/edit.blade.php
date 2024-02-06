@@ -23,6 +23,20 @@
                     </div>
 
                     <div class="my-3">
+                        <label for="tipo">Tipo</label><br>
+                        <div style="width: 280px">
+                            <select name="tipo" class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                <option value="unidad" {{$producto->tipo === "unidad" ? 'selected' : ""}}>Unidad</option>
+                                <option value="fraccion" {{$producto->tipo === "fraccion" ? 'selected' : ""}}>Fracción</option>
+                                <option value="costo_adicional" {{$producto->tipo === "costo_adicional" ?? 'selected'}}>Costo Adicional</option>
+                            </select>
+                        </div>
+                        @error('tipo')
+                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="my-3">
                         <label for="precio_costo">Precio costo</label><br>
                         <div style="width: 280px">
                             <input type="number" name="precio_costo" required value="{{$producto->precio_costo}}"
@@ -70,8 +84,9 @@
                         @enderror
                     </div>
 
-
-                    <button type="submit">Editar producto</button>
+                    <x-primary-button>
+                        Editar producto
+                    </x-primary-button>
                 </form>
             </div>
         </div>
