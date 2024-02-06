@@ -185,12 +185,14 @@ class ProductoController extends Controller
             'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,' . $producto->id],
         ], $messages);
 
+
         $producto->titulo = $request->titulo;
+        $producto->tipo = $request->tipo;
         $producto->precio_venta = $request->precio_venta;
         $producto->precio_costo = $request->precio_costo;
         $producto->stock_actual = $request->stock_actual;
         $producto->codigo_barra = $request->codigo_barra;
-        $producto->save();
+        $producto->update();
 
         return redirect()->route('index.productos');
 
