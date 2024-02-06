@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useLectorContext } from '../../../context/LectorContext.jsx';
 import {
-    Input,
-    Accordion,
-    AccordionItem,
+    Input
 } from "@nextui-org/react";
 
 const Vuelto = () => {

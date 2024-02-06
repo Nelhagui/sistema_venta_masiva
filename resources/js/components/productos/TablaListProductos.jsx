@@ -21,7 +21,7 @@ import {
 import { PlusIcon } from "../icons/PlusIcon";
 import { SearchIcon } from "../icons/SearchIcon";
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
-import { capitalize } from "../../utils/utils";
+import { capitalize, capitalizeToLowerCase } from "../../utils/utils";
 import { formatearAMoneda } from "../../utils/utils";
 import { EyeIcon } from "../icons/EyeIcon";
 import { DeleteIcon } from "../icons/DeleteIcon";
@@ -29,6 +29,7 @@ import { EditIcon } from "../icons/EditIcon";
 import { urls } from "../../config/config";
 import { InventoryIcon } from "../icons/InventoryIcon";
 import { UploadFileIcon } from "../icons/UploadFileIcon";
+import { capitalizeToUpperCase } from "../../utils/utils";
 
 
 const INITIAL_VISIBLE_COLUMNS = ["titulo", "precio_costo", "precio_venta", "stock_actual", "acciones"];
@@ -108,6 +109,14 @@ export default function TablaListProductos({ productos }) {
         const cellValue = item[columnKey];
 
         switch (columnKey) {
+            case "titulo":
+                return (
+                    <div className="flex flex-col">
+                        <p className="text-bold text-small capitalize">
+                            {capitalizeToLowerCase(item.titulo)}
+                        </p>
+                    </div>
+                );
             case "precio_costo":
                 return (
                     <div className="flex flex-col">
@@ -127,21 +136,21 @@ export default function TablaListProductos({ productos }) {
             case "acciones":
                 return (
                     <div className="relative flex items-center gap-2">
-                        <Tooltip content="Ver">
+                        {/* <Tooltip content="Ver">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
                                 <EyeIcon />
                             </span>
-                        </Tooltip>
+                        </Tooltip> */}
                         <Tooltip content="Editar">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
                                 <EditIcon onClick={() => irPaginaEditProducto(item?.id)} />
                             </span>
                         </Tooltip>
-                        <Tooltip color="danger" content="Borrar">
+                        {/* <Tooltip color="danger" content="Borrar">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
                                 <DeleteIcon />
                             </span>
-                        </Tooltip>
+                        </Tooltip> */}
                     </div>
                 );
             default:

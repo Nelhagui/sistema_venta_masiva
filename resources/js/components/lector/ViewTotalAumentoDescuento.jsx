@@ -27,7 +27,7 @@ const ViewTotalAumentoDescuento = () => {
             return (
                 <div className='flex'>
                     <div>
-                        <p style={{ fontSize: "1rem", lineHeight: 1 }}> ${Number(total)} </p>
+                        <p style={{ fontSize: 45, lineHeight: 1 }}> ${Number(total)} </p>
                         <p style={{ opacity: 0.5, textAlign: 'center' }}>${obtenerTotalSinModificaciones()}</p>
                     </div>
                     <p style={{ marginLeft: 10, color: 'red' }}>- ${descuento}</p>
@@ -44,24 +44,6 @@ const ViewTotalAumentoDescuento = () => {
             <div>{renderAumentoODescuento()}</div>
         </div>
     );
-    // return (
-    //     <div className='flex flex-col'>
-    //         <div>
-    //             {
-    //                 aumento > 0 || descuento > 0
-    //                     ?
-    //                     <div className='flex'>
-    //                         <div>
-    //                             <p style={{ fontSize: 55, lineHeight: 1 }}> ${Number(total)} </p>
-    //                             <p style={{ opacity: 0.5, textAlign: 'center' }}>${obtenerTotalSinModificaciones()}</p>
-    //                         </div>
-    //                         <p style={{ marginLeft: 10, color: 'green' }}>+ ${aumento}</p>
-    //                     </div>
-    //                     : <p style={{ fontSize: 55, lineHeight: 1 }}> ${total} </p>
-    //             }
-    //         </div>
-    //     </div>
-    // )
 }
 
 export default ViewTotalAumentoDescuento

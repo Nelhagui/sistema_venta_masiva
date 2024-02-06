@@ -8,11 +8,18 @@ import {
     TableRow,
     TableCell,
     Tooltip,
-    Input
+    Input,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    Button
 } from "@nextui-org/react";
 import { CloseIcon } from '../icons/CloseIcon.jsx';
 import { CloseIconCircle } from '../icons/CloseIconCircle.jsx';
 import { formatearAMoneda } from '../../utils/utils.js';
+import Vuelto from './extraValueConfiguraciones/Vuelto.jsx';
+import ExtraValueConfiguration from './extraValueConfiguraciones/ExtraValueConfiguration.jsx';
+import { ChangesInPaymentIcon } from '../icons/ChangesInPaymentIcon.jsx';
 
 
 const ResumenPedido = () => {
@@ -60,7 +67,7 @@ const ResumenPedido = () => {
         if (parseFloat(nuevaCantidad) < 0) {
             nuevaCantidad = "0"; // Si es negativo, asignar cero como nuevo valor
         }
-        
+
         nuevaCantidad = nuevaCantidad.replace(/^(\d*\.\d{3}).*$/, '$1'); // Limitar a tres decimales después del punto
 
         const nuevoMonto = nuevaCantidad * productoSeleccionado.precio_venta;
@@ -75,7 +82,7 @@ const ResumenPedido = () => {
         setProductosSeleccionados(productosActualizados);
     };
 
-    
+
 
     const handleInputFraccionChangeMonto = (e, productoSeleccionado) => {
 
@@ -96,7 +103,6 @@ const ResumenPedido = () => {
 
         setProductosSeleccionados(productosActualizados);
     };
-    const [value, setValue] = useState(1)
 
     return (
         <>
@@ -120,19 +126,43 @@ const ResumenPedido = () => {
                     <div className='flex items-center px-6'>
                         <ViewTotalAumentoDescuento />
                     </div>
-                    <Tooltip
-                        delay={500}
-                        content={
-                            <div className="px-1 py-2">
-                                <div className="text-tiny">Cancelar toda la compra</div>
-                            </div>
-                        }
-                    >
+                    <div className='flex'>
+                        <div style={{ marginRight: 20 }}>
+                            <Popover placement="bottom" showArrow offset={10}>
+                                <PopoverTrigger>
 
-                        <span onClick={funCancelarCompra}>
-                            <CloseIconCircle style={{ cursor: 'pointer' }} />
-                        </span>
-                    </Tooltip>
+                                    <Button style={{ backgroundColor: 'white', borderWidth: 0.5, color: '#71717a' }}>
+                                        <ChangesInPaymentIcon />
+                                        Descuento - Aumento
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[240px]">
+                                    {(titleProps) => (
+                                        <div className="px-1 py-2 w-full">
+                                            <div className="mt-2 flex flex-col gap-2 w-full">
+                                                <ExtraValueConfiguration />
+                                            </div>
+                                        </div>
+                                    )}
+                                </PopoverContent>
+                            </Popover>
+                        </div>
+                        <div style={{ marginRight: 20 }}>
+                            <Vuelto />
+                        </div>
+                        <Tooltip
+                            delay={500}
+                            content={
+                                <div className="px-1 py-2">
+                                    <div className="text-tiny">Cancelar toda la compra</div>
+                                </div>
+                            }
+                        >
+                            <span onClick={funCancelarCompra}>
+                                <CloseIconCircle style={{ cursor: 'pointer' }} />
+                            </span>
+                        </Tooltip>
+                    </div>
                 </div>
                 <div className='flex flex-col' style={{ padding: 20 }}>
                     <Table
@@ -218,7 +248,7 @@ const ResumenPedido = () => {
                                                                             </div>
                                                                         }
                                                                         placeholder="Ingrese monto"
-                                                                        value={ exedeLimiteDecimales(productoSeleccionado.monto) ? productoSeleccionado.monto.toFixed(2) : productoSeleccionado.monto }
+                                                                        value={exedeLimiteDecimales(productoSeleccionado.monto) ? productoSeleccionado.monto.toFixed(2) : productoSeleccionado.monto}
                                                                         onChange={(e) => handleInputFraccionChangeMonto(e, productoSeleccionado)}
                                                                     />
                                                                 </div>

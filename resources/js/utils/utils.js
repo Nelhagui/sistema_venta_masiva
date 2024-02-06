@@ -21,6 +21,9 @@ export function formatearAMoneda(numero) {
 export function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+export function capitalizeToUpperCase(str) {
+    return str.toUpperCase();
+}
 
 export function capitalizeToLowerCase(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();

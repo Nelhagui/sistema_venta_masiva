@@ -329,7 +329,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                 {/* FIN BUSCADOR */}
 
                 <div className=''>
-                    <ExtraValueConfiguration />
+                    {/* <ExtraValueConfiguration /> */}
                 </div>
 
                 <div>
