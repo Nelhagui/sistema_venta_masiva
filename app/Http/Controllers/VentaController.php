@@ -81,8 +81,13 @@ class VentaController extends Controller
         $total_costo = 0;
         foreach ($productos as $producto) {
             $productoEnDb = Producto::find($producto['id']);
-            $costo = $productoEnDb->precio_costo * $producto['cantidad'];
-            $total_costo = $total_costo + $costo;
+            if ($productoEnDb->tipo == Producto::COSTO_ADICIONAL) {
+                $costo = $producto['precio_costo'];
+                $total_costo = $total_costo + $costo;
+            } else {
+                $costo = $productoEnDb->precio_costo * $producto['cantidad'];
+                $total_costo = $total_costo + $costo;
+            }
         }
         return $total_costo;
     }
@@ -91,8 +96,13 @@ class VentaController extends Controller
         $total_valor_venta = 0;
         foreach ($productos as $producto) {
             $productoEnDb = Producto::find($producto['id']);
-            $valor_venta = $productoEnDb->precio_venta * $producto['cantidad'];
-            $total_valor_venta = $total_valor_venta + $valor_venta;
+            if ($productoEnDb->tipo == Producto::COSTO_ADICIONAL) {
+                $valor_venta = $producto['precio_venta'] + $producto['precio_costo'];
+                $total_valor_venta = $total_valor_venta + $valor_venta;
+            } else {
+                $valor_venta = $productoEnDb->precio_venta * $producto['cantidad'];
+                $total_valor_venta = $total_valor_venta + $valor_venta;
+            }
         }
         return $total_valor_venta;
     }
@@ -104,7 +114,7 @@ class VentaController extends Controller
     {
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
-        
+
         // Obtener la fecha proporcionada en el request, o usar la fecha de hoy si no se proporciona ninguna fecha
         $fecha = $request->query('fecha') ? Carbon::parse($request->query('fecha')) : Carbon::today();
 
@@ -191,8 +201,8 @@ class VentaController extends Controller
                 $detalle_venta->producto_id = $productoEnDb->id;
                 $detalle_venta->nombre_producto = $productoEnDb->titulo;
                 $detalle_venta->cantidad = $producto['cantidad'];
-                $detalle_venta->costo_unitario = $productoEnDb->tipo == Producto::COSTO_ADICIONAL ?  $producto['precio_costo'] : $productoEnDb->precio_costo;
-                $detalle_venta->precio_unitario = $productoEnDb->tipo == Producto::COSTO_ADICIONAL ?  $producto['precio_venta'] + $producto['precio_costo'] : $productoEnDb->precio_venta;
+                $detalle_venta->costo_unitario = $productoEnDb->tipo == Producto::COSTO_ADICIONAL ? $producto['precio_costo'] : $productoEnDb->precio_costo;
+                $detalle_venta->precio_unitario = $productoEnDb->tipo == Producto::COSTO_ADICIONAL ? $producto['precio_venta'] + $producto['precio_costo'] : $productoEnDb->precio_venta;
                 $detalle_venta->tipo = $productoEnDb->tipo;
                 $detalle_venta->save();
 
