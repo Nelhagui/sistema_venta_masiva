@@ -191,8 +191,9 @@ class VentaController extends Controller
                 $detalle_venta->producto_id = $productoEnDb->id;
                 $detalle_venta->nombre_producto = $productoEnDb->titulo;
                 $detalle_venta->cantidad = $producto['cantidad'];
-                $detalle_venta->costo_unitario = $productoEnDb->precio_costo;
-                $detalle_venta->precio_unitario = $productoEnDb->precio_venta;
+                $detalle_venta->costo_unitario = $productoEnDb->tipo == Producto::COSTO_ADICIONAL ?  $producto['precio_costo'] : $productoEnDb->precio_costo;
+                $detalle_venta->precio_unitario = $productoEnDb->tipo == Producto::COSTO_ADICIONAL ?  $producto['precio_venta'] + $producto['precio_costo'] : $productoEnDb->precio_venta;
+                $detalle_venta->tipo = $productoEnDb->tipo;
                 $detalle_venta->save();
 
                 // Resto cantidad vendida del stock

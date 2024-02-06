@@ -28,3 +28,15 @@ export function capitalizeToUpperCase(str) {
 export function capitalizeToLowerCase(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
+
+export function exedeLimiteDecimales(numero, limite = 3) {
+    const numeroComoString = numero.toString();
+    const indicePunto = numeroComoString.indexOf('.');
+    let cantidadDecimales = 0;
+
+    if (indicePunto !== -1) {
+        cantidadDecimales = numeroComoString.length - indicePunto - 1;
+    }
+
+    return cantidadDecimales > limite;
+}

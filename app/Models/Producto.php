@@ -11,6 +11,10 @@ class Producto extends Model
 
     protected $table = 'productos';
 
+    const COSTO_ADICIONAL = 'costo_adicional';
+    const UNIDAD = 'unidad';
+    const FRACCION = "fraccion";
+
     protected $hidden = [
         'comercio_id',
         'deleted_at',

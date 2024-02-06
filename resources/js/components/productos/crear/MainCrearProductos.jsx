@@ -118,6 +118,8 @@ export default function MainCrearProductos() {
         setValoresInputs(nuevosValoresInputs);
     };
 
+
+
     return (
         <div style={{ marginTop: 30 }}>
             <div className='d-flex' style={{ textAlign: 'end', marginBlock: '0 10px', marginBottom: 20 }}>
@@ -150,9 +152,9 @@ export default function MainCrearProductos() {
                                                 <div className='p-1'>
                                                     <div className='flex'>
                                                         <div>
-                                                            <div style={{opacity: 0.6}} className="text-medium font-bold">Costo Adicional</div>
-                                                            <div style={{opacity: 0.6}} className="text-tiny mt-1">Un ejemplo podría ser </div>
-                                                            <div style={{opacity: 0.6}} className="text-tiny mt-1">el adicional para la Recarga de tarjeta SUBE.</div>
+                                                            <div style={{ opacity: 0.6 }} className="text-medium font-bold">Costo Adicional</div>
+                                                            <div style={{ opacity: 0.6 }} className="text-tiny mt-1">Un ejemplo podría ser </div>
+                                                            <div style={{ opacity: 0.6 }} className="text-tiny mt-1">el adicional para la Recarga de tarjeta SUBE.</div>
                                                         </div>
                                                         <div className='text-center'>
                                                             <span style={{ backgroundColor: '#818cf8', padding: 4, borderRadius: 6, color: 'white' }}>Próximamente</span>
@@ -163,7 +165,7 @@ export default function MainCrearProductos() {
                                         }
                                     >
                                         <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                            <InfoIcon fill='#818cf8' size={22}/>
+                                            <InfoIcon fill='#818cf8' size={22} />
                                         </span>
                                     </Tooltip>
                                 </div>
@@ -196,7 +198,7 @@ export default function MainCrearProductos() {
                                         labelPlacement="outside"
                                         variant='bordered'
                                         defaultSelectedKeys={["unidad"]}
-                                        disabledKeys={["costo_adicional"]}
+                                        // disabledKeys={["costo_adicional"]}
                                         aria-label="Tipo de Producto"
                                         onChange={(e) => handleInputChange(e, index, 'tipo')}
                                         className='min-w-min'
@@ -237,29 +239,83 @@ export default function MainCrearProductos() {
                                     />
                                     <p style={{ color: 'red' }}>{errores[`${fila.key}-codigo_barra`] ?? ""}</p>
                                 </td>
-                                <td
-                                    // style={{maxWidth: '6rem'}}
-                                    className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
-                                    <input
-                                        type="number"
-                                        style={{ maxWidth: '6rem' }}
-                                        className='input-text'
-                                        value={valoresInputs[index].precio_costo}
-                                        onChange={(e) => handleInputChange(e, index, 'precio_costo')}
-                                    />
-                                    <p style={{ color: 'red' }}>{errores[`${fila.key}-precio_costo`] ?? ""}</p>
+                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    {
+                                        valoresInputs[index].tipo === "costo_adicional"
+                                            ?
+                                            <>
+                                                <Tooltip
+                                                    content={
+                                                        <div className="px-1 py-2">
+                                                            <div className="text-small font-bold">SIN PRECIO COSTO</div>
+                                                            <div className="text-tiny">En un producto de tipo "costo adicional" no se incluye el precio costo.</div>
+                                                            <div className="text-tiny">Al cobrar, simplemente ingresa el monto del producto y el adicional.</div>
+                                                        </div>
+                                                    }
+                                                >
+                                                    <div>
+                                                        <input
+                                                            type="number"
+                                                            disabled
+                                                            style={{ maxWidth: '6rem' }}
+                                                            className='input-text'
+                                                            value={valoresInputs[index].precio_costo}
+                                                            onChange={(e) => handleInputChange(e, index, 'precio_costo')}
+                                                        />
+                                                    </div>
+                                                </Tooltip>
+                                            </>
+                                            :
+                                            <>
+                                                <input
+                                                    type="number"
+                                                    style={{ maxWidth: '6rem' }}
+                                                    className='input-text'
+                                                    value={valoresInputs[index].precio_costo}
+                                                    onChange={(e) => handleInputChange(e, index, 'precio_costo')}
+                                                />
+                                                <p style={{ color: 'red' }}>{errores[`${fila.key}-precio_costo`] ?? ""}</p>
+                                            </>
+                                    }
                                 </td>
-                                <td
-                                    // style={{maxWidth: '6rem'}}
-                                    className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
-                                    <input
-                                        type="number"
-                                        style={{ maxWidth: '6rem' }}
-                                        className='input-text'
-                                        value={valoresInputs[index].precio_venta}
-                                        onChange={(e) => handleInputChange(e, index, 'precio_venta')}
-                                    />
-                                    <p style={{ color: 'red' }}>{errores[`${fila.key}-precio_venta`] ?? ""}</p>
+                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    {
+                                        valoresInputs[index].tipo === "costo_adicional"
+                                            ?
+                                            <>
+                                                <Tooltip
+                                                    content={
+                                                        <div className="px-1 py-2">
+                                                            <div className="text-small font-bold">SIN PRECIO VENTA</div>
+                                                            <div className="text-tiny">En un producto de tipo "costo adicional" no se incluye el precio venta.</div>
+                                                            <div className="text-tiny">Al cobrar, simplemente ingresa el monto del producto y el adicional.</div>
+                                                        </div>
+                                                    }
+                                                >
+                                                    <div>
+                                                        <input
+                                                            type="number"
+                                                            disabled
+                                                            style={{ maxWidth: '6rem' }}
+                                                            className='input-text'
+                                                            value={valoresInputs[index].precio_costo}
+                                                            onChange={(e) => handleInputChange(e, index, 'precio_costo')}
+                                                        />
+                                                    </div>
+                                                </Tooltip>
+                                            </>
+                                            :
+                                            <>
+                                                <input
+                                                    type="number"
+                                                    style={{ maxWidth: '6rem' }}
+                                                    className='input-text'
+                                                    value={valoresInputs[index].precio_venta}
+                                                    onChange={(e) => handleInputChange(e, index, 'precio_venta')}
+                                                />
+                                                <p style={{ color: 'red' }}>{errores[`${fila.key}-precio_venta`] ?? ""}</p>
+                                            </>
+                                    }
                                 </td>
                                 <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                     <input

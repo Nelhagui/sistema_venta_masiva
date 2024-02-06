@@ -21,15 +21,42 @@ const LectorContextProvider = ({ children }) => {
             resetAll();
     }
 
+
+
+    const obtenerTotalSinModificaciones = () => {
+        let total = productosSeleccionados.reduce((sum, producto) => sum + obtenerTotalSegunTipoProducto(producto), 0).toFixed(2);
+        return total;
+    }
     const obtenerTotal = () => {
-        let subTotal = productosSeleccionados.reduce((sum, producto) => sum + (producto.precio_venta * producto.cantidad), 0);
-        let totalFinal = Number(subTotal) + Number(aumento) - Number(descuento);
+
+        let subTotal = productosSeleccionados.reduce((sum, producto) => sum + obtenerTotalSegunTipoProducto(producto), 0);
+
+        let aumentoNumero = parseFloat(aumento);
+        let descuentoNumero = parseFloat(descuento);
+
+        if (isNaN(aumentoNumero)) aumentoNumero = 0;
+        if (isNaN(descuentoNumero)) descuentoNumero = 0;
+
+        let totalFinal = (Number(subTotal) + aumentoNumero - descuentoNumero).toFixed(2);
+
         setTotal(totalFinal);
     }
 
-    const obtenerTotalSinModificaciones = () => {
-        let total = productosSeleccionados.reduce((sum, producto) => sum + (producto.precio_venta * producto.cantidad), 0);
-        return total;
+    const obtenerTotalSegunTipoProducto = (producto) => {
+        if (producto.tipo === 'costo_adicional') {
+
+            let precio_costo = parseFloat(producto.precio_costo);
+            let precio_venta = parseFloat(producto.precio_venta);
+
+            if (isNaN(precio_costo)) precio_costo = 0;
+            if (isNaN(precio_venta)) precio_venta = 0;
+
+            const costoVentaNumero = parseFloat(precio_costo + precio_venta);
+
+            return costoVentaNumero;
+
+        }
+        return producto.precio_venta * producto.cantidad;
     }
 
     const resetAll = () => {
@@ -41,15 +68,16 @@ const LectorContextProvider = ({ children }) => {
         setMontoAbonado('');
     }
     useEffect(() => {
-        let total = productosSeleccionados.reduce((sum, producto) => sum + (producto.precio_venta * producto.cantidad), 0);
+        let total = productosSeleccionados.reduce((sum, producto) => sum + obtenerTotalSegunTipoProducto(producto), 0);
         if (descuento > 0) {
-            setTotal(Number(total) - Number(descuento));
+            const totalToFixed = (Number(total) - Number(descuento)).toFixed(2)
+            setTotal(totalToFixed);
         }
         else if (aumento > 0) {
             calcularValorAumento();
         }
         else {
-            setTotal(Number(total));
+            setTotal(Number(total).toFixed(2));
         }
 
     }, [descuento, aumento])
@@ -72,11 +100,12 @@ const LectorContextProvider = ({ children }) => {
 
     const calcularPorcentajeAumento = () => {
         const totalActual = obtenerTotalSinModificaciones();
-        setTotal((Number(totalActual) * Number(aumento) / 100) + Number(totalActual))
+        const totalConAumento = (Number(totalActual) * Number(aumento) / 100) + Number(totalActual).toFixed(2)
+        setTotal(totalConAumento)
     }
     const calcularTotalAumento = () => {
         const totalActual = obtenerTotalSinModificaciones();
-        setTotal(Number(totalActual) + Number(aumento))
+        setTotal((Number(totalActual) + Number(aumento)).toFixed(2))
     }
 
     return (
@@ -100,10 +129,11 @@ const LectorContextProvider = ({ children }) => {
                 setTipoVariableDescuento,
                 tipoVariableAumento,
                 setTipoVariableAumento,
-                montoAbonado, 
+                montoAbonado,
                 setMontoAbonado,
                 tipoMontoFijo,
-                tipoPorcentaje
+                tipoPorcentaje,
+                obtenerTotalSegunTipoProducto
             }}
         >
             {children}

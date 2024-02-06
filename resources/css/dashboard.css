@@ -38,6 +38,29 @@
     margin-right: 9px;
 }
 
+.tipo-adicional {
+    background: #3aa2fe;
+    border-radius: 6px;
+    color: white;
+    border: 1px solid #0086fd;
+    font-weight: 700;
+    font-size: smaller;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+.tipo-fraccion {
+    background: #1fd194;
+    border-radius: 6px;
+    color: white;
+    border: 1px solid #12a773;
+    font-weight: 700;
+    font-size: smaller;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+}
+
 .input-text {
     border: solid 2px #e4e4e7;
     border-radius: 7px;

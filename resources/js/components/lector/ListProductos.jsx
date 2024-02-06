@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ResumenPedido from './ResumenPedido';
+import ResumenPedido from './resumen_pedido/ResumenPedido';
 import { useLectorContext } from '../../context/LectorContext';
 import { debounce } from '../../utils/debounce';
 import { ToastContainer, toast } from 'react-toastify';

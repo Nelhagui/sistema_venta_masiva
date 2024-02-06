@@ -323,21 +323,24 @@ class ProductoController extends Controller
 
             foreach ($productos as $producto) {
                 $key = $producto['key'];
-                $validator = Validator::make($producto, [
+
+                $reglas_validacion = [
                     'titulo' => 'required|unique:productos,titulo,NULL,id,comercio_id,' . $id_comercio,
                     'codigo_barra' => 'nullable|unique:productos,codigo_barra,NULL,id,comercio_id,' . $id_comercio,
-                    'precio_costo' => 'required',
-                    'precio_venta' => 'required',
                     'stock_actual' => 'required',
-                    // Otras reglas de validación según tus necesidades
-                ]);
+                ];
 
-                // Personalizar mensajes de error
+                if ($producto['tipo'] !== Producto::COSTO_ADICIONAL) {
+                    $reglas_validacion['precio_costo'] = 'required';
+                    $reglas_validacion['precio_venta'] = 'required';
+                }
+
+                $validator = Validator::make($producto, $reglas_validacion);
+
                 $validator->messages()->merge([
                     'required' => 'Campo obligatorio.',
                     'unique' => 'El :attribute ya está en uso.',
                     'numeric' => 'El campo :attribute requiere números.',
-                    // Personaliza los mensajes según tus necesidades
                 ]);
 
                 if ($validator->fails()) {
@@ -363,16 +366,17 @@ class ProductoController extends Controller
 
 
             foreach ($request->input('productos') as $productoData) {
+                $precio_costo = $productoData['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $productoData['precio_costo'];
+                $precio_venta = $productoData['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $productoData['precio_venta'];
                 $producto = new Producto;
                 $producto->titulo = $productoData['titulo'];
                 $producto->tipo = $productoData['tipo'];
                 $producto->codigo_barra = $productoData['codigo_barra'];
-                $producto->precio_costo = $productoData['precio_costo'];
-                $producto->precio_venta = $productoData['precio_venta'];
+                $producto->precio_costo = $precio_costo;
+                $producto->precio_venta = $precio_venta;
                 $producto->stock_actual = $productoData['stock_actual'];
                 $producto->comercio_id = $id_comercio;
                 $producto->save();
-
             }
 
             DB::commit(); // Confirma la transacción si todo se ejecuta correctamente

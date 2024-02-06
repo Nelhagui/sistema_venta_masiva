@@ -12,14 +12,16 @@ const Vuelto = () => {
     const handleVueltoChange = (e) => {
         const valueIn = e.target.value;
         const totalIn = Number(valueIn) - Number(total);
-        setVuelto(totalIn);
+        setVuelto(totalIn.toFixed(2));
         setCambioIngresado(valueIn)
         setVueltoInitial(valueIn)
     };
 
     useEffect(() => {
-        if (cambioIngresado > 0)
-            setVuelto(Number(cambioIngresado) - Number(total));
+        if (cambioIngresado > 0){
+            const nuevoVuelto = (Number(cambioIngresado) - Number(total)).toFixed(2)
+            setVuelto(nuevoVuelto);
+        }
     }, [total])
 
     return (
