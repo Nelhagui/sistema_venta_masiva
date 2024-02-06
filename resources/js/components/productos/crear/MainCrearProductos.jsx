@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { Button, Tooltip, Select, SelectItem } from "@nextui-org/react";
+import { Button, Tooltip, Select, SelectItem, Divider } from "@nextui-org/react";
 import { useEffect, useState } from 'react';
 import productoServices from '../../../services/productoServices';
 import { ToastContainer, toast } from 'react-toastify';
@@ -130,17 +130,40 @@ export default function MainCrearProductos() {
                             <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>TÍTULO</th>
                             <th className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
                                 <div className='flex gap-2'>
-                                    TIPO 
-                                    <Tooltip 
+                                    TIPO
+                                    <Tooltip
+                                        placement='bottom'
                                         content={
                                             <div className="px-1 py-2">
-                                              <div className="text-small font-bold">Unidad</div>
-                                              <div className="text-tiny">This is a custom tooltip content</div>
+                                                <div className='p-1'>
+                                                    <div className="text-medium font-bold">Unidad</div>
+                                                    <div className="text-tiny">Vendido individualmente</div>
+                                                    <div className="text-tiny">Ejemplo: Una Camiseta, Un encendedor.</div>
+                                                </div>
+                                                <Divider className='my-2' />
+                                                <div className='p-1'>
+                                                    <div className="text-medium font-bold">Fracción</div>
+                                                    <div className="text-tiny">Dividido en partes</div>
+                                                    <div className="text-tiny">Ejemplo: Queso por gramo, Pan.</div>
+                                                </div>
+                                                <Divider className='my-2' />
+                                                <div className='p-1'>
+                                                    <div className='flex'>
+                                                        <div>
+                                                            <div style={{opacity: 0.6}} className="text-medium font-bold">Costo Adicional</div>
+                                                            <div style={{opacity: 0.6}} className="text-tiny mt-1">Un ejemplo podría ser </div>
+                                                            <div style={{opacity: 0.6}} className="text-tiny mt-1">el adicional para la Recarga de tarjeta SUBE.</div>
+                                                        </div>
+                                                        <div className='text-center'>
+                                                            <span style={{ backgroundColor: '#818cf8', padding: 4, borderRadius: 6, color: 'white' }}>Próximamente</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         }
                                     >
                                         <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                            <InfoIcon />
+                                            <InfoIcon fill='#818cf8' size={22}/>
                                         </span>
                                     </Tooltip>
                                 </div>
@@ -162,17 +185,23 @@ export default function MainCrearProductos() {
                                         value={valoresInputs[index].titulo}
                                         onChange={(e) => handleInputChange(e, index, 'titulo')}
                                     />
-                                    <p style={{color: 'red'}}>{errores[`${fila.key}-titulo`] ?? ""}</p>
+                                    <p style={{ color: 'red' }}>{errores[`${fila.key}-titulo`] ?? ""}</p>
                                 </td>
-                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                <td
+                                    style={{ minWidth: '10rem' }}
+                                    className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1  data-[focus-visible=true]:outline-focus before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+
                                     <Select
                                         placeholder="Seleccione tipo"
                                         labelPlacement="outside"
                                         variant='bordered'
                                         defaultSelectedKeys={["unidad"]}
+                                        disabledKeys={["costo_adicional"]}
                                         aria-label="Tipo de Producto"
                                         onChange={(e) => handleInputChange(e, index, 'tipo')}
-                                        className='min-w-max'
+                                        className='min-w-min'
+                                        fullWidth
+                                        size='sm'
                                     >
                                         <SelectItem key="unidad" textValue="Unidad" SelectItem>
                                             <div className="flex gap-2 items-center">
@@ -206,25 +235,31 @@ export default function MainCrearProductos() {
                                         value={valoresInputs[index].codigo_barra}
                                         onChange={(e) => handleInputChange(e, index, 'codigo_barra')}
                                     />
-                                    <p style={{color: 'red'}}>{errores[`${fila.key}-codigo_barra`] ?? ""}</p>
+                                    <p style={{ color: 'red' }}>{errores[`${fila.key}-codigo_barra`] ?? ""}</p>
                                 </td>
-                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                <td
+                                    // style={{maxWidth: '6rem'}}
+                                    className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                     <input
                                         type="number"
+                                        style={{ maxWidth: '6rem' }}
                                         className='input-text'
                                         value={valoresInputs[index].precio_costo}
                                         onChange={(e) => handleInputChange(e, index, 'precio_costo')}
                                     />
-                                    <p style={{color: 'red'}}>{errores[`${fila.key}-precio_costo`] ?? ""}</p>
+                                    <p style={{ color: 'red' }}>{errores[`${fila.key}-precio_costo`] ?? ""}</p>
                                 </td>
-                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                <td
+                                    // style={{maxWidth: '6rem'}}
+                                    className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                     <input
                                         type="number"
+                                        style={{ maxWidth: '6rem' }}
                                         className='input-text'
                                         value={valoresInputs[index].precio_venta}
                                         onChange={(e) => handleInputChange(e, index, 'precio_venta')}
                                     />
-                                    <p style={{color: 'red'}}>{errores[`${fila.key}-precio_venta`] ?? ""}</p>
+                                    <p style={{ color: 'red' }}>{errores[`${fila.key}-precio_venta`] ?? ""}</p>
                                 </td>
                                 <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                     <input
@@ -233,7 +268,7 @@ export default function MainCrearProductos() {
                                         value={valoresInputs[index].stock_actual}
                                         onChange={(e) => handleInputChange(e, index, 'stock_actual')}
                                     />
-                                    <p style={{color: 'red'}}>{errores[`${fila.key}-stock_actual`] ?? ""}</p>
+                                    <p style={{ color: 'red' }}>{errores[`${fila.key}-stock_actual`] ?? ""}</p>
                                 </td>
                                 <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                     <button onClick={() => eliminarFila(index)}>Eliminar</button>
