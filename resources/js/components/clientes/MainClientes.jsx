@@ -15,7 +15,6 @@ export default function MainClientes() {
     }, []);
 
     const fetchClientes = async () => {
-        setIsLoading(true);
         try {
             const clientesResponse = await clienteServices.traerLista();
             setClientes(clientesResponse);
@@ -36,7 +35,7 @@ export default function MainClientes() {
                     :
                     <>
                         {
-                            clientes.length > 0
+                            clientes?.length > 0
                                 ? <>
                                     <div className='flex mb-4 justify-end'>
                                         <ModalCrearCliente />

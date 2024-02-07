@@ -9,7 +9,6 @@ import {
 } from "@nextui-org/react";
 import { useDetalleClienteContext } from "../../../../context/DetalleClienteContext";
 import ResumenDeuda from "./ResumenDeuda";
-import estadoCompraUtils from "../../../../utils/estadoCompraUtils";
 import fechaUtils from "../../../../utils/fechaUtils";
 
 export default function TablaVentas() {

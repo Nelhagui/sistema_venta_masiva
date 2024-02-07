@@ -5,7 +5,6 @@ import {
 import { exedeLimiteDecimales } from '../../../utils/utils';
 const InputCantidadTipoProducto = ({ productoSeleccionado, handleInputFraccionChangeCantidad, handleInputChangeCantidadUnidad, handleInputFraccionChangeMonto, handleInputChangeVentaAdicional }) => {
     const tipo = productoSeleccionado.tipo;
-    let tipoClase = null;
     let content = (
         <input 
             type="number"
@@ -13,7 +12,6 @@ const InputCantidadTipoProducto = ({ productoSeleccionado, handleInputFraccionCh
             value={productoSeleccionado.cantidad}
             step="1"
             style={{
-                backgroundColor: "#ebeef3",
                 textAlign: "left",
                 maxWidth: "6rem",
                 padding: "6px",
@@ -66,7 +64,6 @@ const InputCantidadTipoProducto = ({ productoSeleccionado, handleInputFraccionCh
                 </div>
             </div>
         );
-        tipoClase = "input-tipo-fraccion";
 
     } else if (tipo === "costo_adicional") {
 
@@ -114,7 +111,6 @@ const InputCantidadTipoProducto = ({ productoSeleccionado, handleInputFraccionCh
                 </div>
             </div>
         );
-        tipoClase = "input-costo-adiconal";
     }
     return content;
 }

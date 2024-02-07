@@ -30,7 +30,7 @@ export default function MainProductos() {
             {
                 isLoading
                     ? "Cargando..."
-                    : productos.length > 0
+                    : productos?.length > 0
                         ? <TablaListProductos productos={productos} />
                         : <InstructivoSinProductos/>
             }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comercio;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
+use App\Models\SesionCaja;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -118,18 +119,6 @@ class VentaController extends Controller
         // Obtener la fecha proporcionada en el request, o usar la fecha de hoy si no se proporciona ninguna fecha
         $fecha = $request->query('fecha') ? Carbon::parse($request->query('fecha')) : Carbon::today();
 
-        // // Obtener las ventas del mismo comercio con clientes
-        // $ventasConClientes = Venta::where('comercio_id', $id_comercio)
-        //     ->whereHas('cliente') // Filtra las ventas que tienen un cliente asociado
-        //     ->with(['cliente', 'sesionCaja.cajero'])
-        //     ->get();
-
-        // // Obtener las ventas del mismo comercio sin clientes
-        // $ventasSinClientes = Venta::where('comercio_id', $id_comercio)
-        //     ->whereDoesntHave('cliente') // Filtra las ventas que no tienen un cliente asociado
-        //     ->with(['sesionCaja.cajero'])
-        //     ->get();
-
         // Obtener las ventas del mismo comercio con clientes para la fecha proporcionada
         $ventasConClientes = Venta::where('comercio_id', $id_comercio)
             ->whereDate('fecha_hora_venta', $fecha->toDateString())
@@ -144,7 +133,6 @@ class VentaController extends Controller
             ->with(['sesionCaja.cajero'])
             ->get();
 
-
         // Combinar los resultados en una sola colección
         $ventasCombinadas = $ventasConClientes->merge($ventasSinClientes);
 
@@ -152,7 +140,25 @@ class VentaController extends Controller
             return $venta->created_at; // Suponiendo que la fecha de creación sea relevante para ordenar
         })->values(); // Utiliza values() para obtener un array de objetos
 
-        return $ventasOrdenadas;
+        // Verificar si hay una sesión de caja abierta para el usuario logueado, la fecha seleccionada y el comercio_id específico
+        
+        $sesionCaja = SesionCaja::where('user_id', $user->id)
+            ->where('fecha_hora_apertura', '<=', $fecha)
+            ->where('comercio_id', $id_comercio)
+            ->where(function ($query) use ($fecha) {
+                $query->whereNull('fecha_hora_cierre')
+                    ->orWhere('fecha_hora_cierre', '>=', $fecha);
+            })
+            ->with('cajero')
+            ->first();
+
+        $respuesta = [
+            'sesionCaja' => $sesionCaja,
+            'ventas' => $ventasOrdenadas
+        ];
+
+        // Devolver la respuesta como JSON
+        return response()->json($respuesta);
     }
     public function storeApi(Request $request)
     {

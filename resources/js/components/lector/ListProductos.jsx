@@ -124,7 +124,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         debouncedSearchRef.current(value);
     }
 
-
     const realizarBusqueda = (textoBusqueda) => {
         const MAX_PRODUCTOS = 30;
         if (textoBusqueda === '') {
@@ -133,19 +132,34 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             if (/^\d+$/.test(textoBusqueda)) {
                 const productoEncontrado = productosIniciales.find((producto) => Number(producto.codigo_barra) === Number(textoBusqueda));
                 if (productoEncontrado) {
-                    addProducto(productoEncontrado)
-                    focusInput()
+                    addProducto(productoEncontrado);
+                    focusInput();
                 } else {
                     setObjetosBuscados([]);
                     handleInputFocus();
                 }
             } else {
-                const productosCoincidentes = productosIniciales.filter((producto) => producto.titulo.toLowerCase().includes(textoBusqueda.toLowerCase()))
-                    .slice(0, MAX_PRODUCTOS);
+                const palabrasBusqueda = textoBusqueda.trim().toLowerCase().split(' ').filter(Boolean); // filter(Boolean) elimina espacios en blanco
+                const productosCoincidentes = productosIniciales.map(producto => {
+                    const tituloLowerCase = producto.titulo.toLowerCase();
+                    let coincidenciasCount = 0;
+                    palabrasBusqueda.forEach(palabra => {
+                        if (tituloLowerCase.includes(palabra.trim())) { // trim() elimina espacios en blanco al principio y al final
+                            coincidenciasCount++;
+                        }
+                    });
+                    return {
+                        producto,
+                        coincidenciasCount
+                    };
+                }).filter(item => item.coincidenciasCount > 0)
+                .sort((a, b) => b.coincidenciasCount - a.coincidenciasCount)
+                .map(item => item.producto)
+                .slice(0, MAX_PRODUCTOS);
                 setObjetosBuscados(productosCoincidentes);
             }
         }
-        setIsLoading(false)
+        setIsLoading(false);
     }
 
     const debouncedSearchRef = useRef(debounce((textoBusqueda) => realizarBusqueda(textoBusqueda), 200));

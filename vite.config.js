@@ -17,6 +17,7 @@ export default defineConfig({
             'resources/js/components/login/Login.jsx',
             'resources/js/components/clientes/MainClientes.jsx',
             'resources/js/components/productos_stock/MainProductosActualizarStock.jsx',
+            'resources/js/components/metodosPago/MainMetodosPago.jsx',
         ]),
         react(),
     ],

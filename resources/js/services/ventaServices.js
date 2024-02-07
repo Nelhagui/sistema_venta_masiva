@@ -1,8 +1,11 @@
 import { endpoints } from "../config/config";
 const ventaServices = {
-    traerLista: async () => {
+    traerLista: async (query = null) => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const url = endpoints.ventas.lista;
+        
+        let url = `${endpoints.ventas.lista}`;
+        if(query)
+             url = `${endpoints.ventas.lista}?fecha=${query}`;
 
         const requestOptions = {
             method: 'GET',
@@ -25,6 +28,7 @@ const ventaServices = {
             throw error;
         }
     },
+    
 };
 
 export default ventaServices;

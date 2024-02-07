@@ -39,15 +39,15 @@ export default function TablaDeudas() {
                             </TableHeader>
                             <TableBody>
                                 {
-                                    deudas.map((deuda) => (
+                                    deudas?.map((deuda) => (
                                         <TableRow key={deuda.id}>
                                             <TableCell>{deuda.id}</TableCell>
                                             <TableCell>
-                                                {fechaUtils.convertirFormatoFechaHora(deuda.fecha_hora_venta)}
+                                                {fechaUtils.convertirFormatoFechaHora(deuda?.fecha_hora_venta)}
                                             </TableCell>
                                             <TableCell>
                                                 <p>
-                                                    {estadoCompraUtils.getTextoEstadoCompra(deuda.estado_pago)}
+                                                    {estadoCompraUtils.getTextoEstadoCompra(deuda?.estado_pago)}
                                                 </p>
                                             </TableCell>
                                             {/* <TableCell>
@@ -55,7 +55,7 @@ export default function TablaDeudas() {
                                             </TableCell> */}
                                             <TableCell>
                                                 <p style={{ color: '#ff0000' }}>
-                                                    ${Number(deuda.monto_total_venta) - estadoCompraUtils.calcularMontoTotalPagos(deuda?.pagos)}
+                                                    ${Number(deuda?.monto_total_venta) - estadoCompraUtils.calcularMontoTotalPagos(deuda?.pagos)}
                                                 </p>
                                             </TableCell>
                                         </TableRow>

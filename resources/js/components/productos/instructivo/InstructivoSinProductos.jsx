@@ -27,7 +27,7 @@ const InstructivoSinProductos = () => {
                     </CardBody>
                     <CardFooter className="flex gap-3 justify-center" style={{marginBottom: 15}}>
                         <Link
-                            href={urls.productos.importarArchivo}
+                            href={urls?.productos?.importarArchivo}
                             className='text-center'
                             
                         >
@@ -46,7 +46,7 @@ const InstructivoSinProductos = () => {
                     </CardBody>
                     <CardFooter className="flex gap-3 justify-center" style={{marginBottom: 15}}>
                         <Link
-                            href={urls.productos.crear}
+                            href={urls?.productos?.crear}
                             className='text-center'
                             
                         >

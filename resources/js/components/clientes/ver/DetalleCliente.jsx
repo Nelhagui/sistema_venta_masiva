@@ -14,7 +14,7 @@ export default function DetalleCliente() {
         <>
             <div className="my-9" style={{ marginTop: 25, marginBottom: 25 }}>
                 <h2 className="antialiased font-medium tracking-wide text-left" style={{ fontSize: 32 }}>
-                    {capitalizeToLowerCase(cliente.nombre)}
+                    {capitalizeToLowerCase(cliente?.nombre)}
                 </h2>
                 <p className='text-left text-descripcion'>
                     Desde esta sección puedes ver y editar las deudas y sus datos personales como visualizar las ventas a este cliente.
