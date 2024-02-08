@@ -50,7 +50,7 @@ class Venta extends Model
     }
 
     public function metodoPago() {
-        return $this->belongsTo(MetodoPago::class);
+        return $this->belongsTo(MetodoPago::class, 'metodos_de_pago');
     }
 
     public function montoPendiente()

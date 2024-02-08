@@ -123,14 +123,14 @@ class VentaController extends Controller
         $ventasConClientes = Venta::where('comercio_id', $id_comercio)
             ->whereDate('fecha_hora_venta', $fecha->toDateString())
             ->whereHas('cliente') // Filtra las ventas que tienen un cliente asociado
-            ->with(['cliente', 'sesionCaja.cajero'])
+            ->with(['cliente', 'sesionCaja.cajero', 'metodoPago'])
             ->get();
 
         // Obtener las ventas del mismo comercio sin clientes para la fecha proporcionada
         $ventasSinClientes = Venta::where('comercio_id', $id_comercio)
             ->whereDate('fecha_hora_venta', $fecha->toDateString())
             ->whereDoesntHave('cliente') // Filtra las ventas que no tienen un cliente asociado
-            ->with(['sesionCaja.cajero'])
+            ->with(['sesionCaja.cajero', 'metodoPago'])
             ->get();
 
         // Combinar los resultados en una sola colección
