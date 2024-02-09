@@ -121,7 +121,7 @@ export default function TablaListProductos({ productos }) {
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            ${formatearAMoneda(item.precio_costo)}
+                            {item.precio_costo ? `$${formatearAMoneda(item.precio_costo)}` : "-"}
                         </p>
                     </div>
                 );
@@ -129,7 +129,7 @@ export default function TablaListProductos({ productos }) {
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            ${formatearAMoneda(item.precio_venta)}
+                            {item.precio_venta ? `$${formatearAMoneda(item.precio_venta)}` : "-"}
                         </p>
                     </div>
                 );
@@ -315,7 +315,7 @@ export default function TablaListProductos({ productos }) {
             topContent={topContent}
             topContentPlacement="outside"
             onSortChange={setSortDescriptor}
-            
+
         >
             <TableHeader columns={headerColumns}>
                 {(column) => (

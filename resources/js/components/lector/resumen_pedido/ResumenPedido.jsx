@@ -21,8 +21,8 @@ import Vuelto from '../extraValueConfiguraciones/Vuelto.jsx';
 import ExtraValueConfiguration from '../extraValueConfiguraciones/ExtraValueConfiguration.jsx';
 import { ChangesInPaymentIcon } from '../../icons/ChangesInPaymentIcon.jsx';
 import IconTipoProducto from './IconTipoProducto.jsx';
-import { exedeLimiteDecimales } from '../../../utils/utils.js';
 import InputCantidadTipoProducto from './InputCantidadTipoProducto.jsx';
+import { capitalizeToUpperCase } from '../../../utils/utils.js';
 
 
 const ResumenPedido = () => {
@@ -203,18 +203,18 @@ const ResumenPedido = () => {
                                             <InputCantidadTipoProducto productoSeleccionado={productoSeleccionado} handleInputFraccionChangeCantidad={handleInputFraccionChangeCantidad} handleInputChangeCantidadUnidad={handleInputChangeCantidadUnidad} handleInputFraccionChangeMonto={handleInputFraccionChangeMonto} handleInputChangeVentaAdicional={handleInputChangeVentaAdicional} />
                                         </TableCell>
                                         <TableCell>
-                                            {productoSeleccionado.titulo}
+                                            {capitalizeToUpperCase(productoSeleccionado.titulo)}
                                         </TableCell>
                                         <TableCell>
                                             {
                                                 productoSeleccionado.tipo === 'costo_adicional'
                                                     ? <p>-</p>
-                                                    : obtenerTotalSegunTipoProducto(productoSeleccionado)
+                                                    : `$${formatearAMoneda(productoSeleccionado?.precio_venta)}`
                                             }
                                         </TableCell>
                                         <TableCell>
                                             <p>
-                                                {obtenerTotalSegunTipoProducto(productoSeleccionado)}
+                                                ${formatearAMoneda(obtenerTotalSegunTipoProducto(productoSeleccionado))}
                                             </p>
                                         </TableCell>
                                         <TableCell>

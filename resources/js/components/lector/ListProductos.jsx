@@ -7,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { SearchIcon } from '../icons/SearchIcon';
 import TeclaDetector from '../teclado/TeclaDetector';
 import lectorServices from '../../services/lectorServices';
-import ExtraValueConfiguration from './extraValueConfiguraciones/ExtraValueConfiguration';
 import {
     Input,
     Select,

@@ -178,13 +178,13 @@ class ProductoController extends Controller
         ];
 
         $request->validate([
-            'titulo' => 'required|unique:productos,titulo,'. $producto->id,
-            'precio_venta' => 'required|numeric',
-            'precio_costo' => 'required|numeric',
+            'titulo' => 'required|unique:productos,titulo,' . $producto->id,
+            'tipo' => 'required|string|in:unidad,fraccion,costo_adicional',
+            'precio_venta' => $request->tipo == 'costo_adicional' ? '' : 'required|numeric',
+            'precio_costo' => $request->tipo == 'costo_adicional' ? '' : 'required|numeric',
             'stock_actual' => 'required|numeric',
             'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,' . $producto->id],
         ], $messages);
-
 
         $producto->titulo = $request->titulo;
         $producto->tipo = $request->tipo;
@@ -679,7 +679,7 @@ class ProductoController extends Controller
             $producto->descripcion = $rowData[$i][5];
 
             // Validar el código de barras
-            if (is_numeric($codigoBarra)) {
+            if (is_numeric($codigoBarra) && $codigoBarra !== 0) {
                 // Si el código de barras es numérico, se asigna tal cual al atributo del producto
                 $producto->codigo_barra = $codigoBarra;
             } elseif (strpos($codigoBarra, '-') !== false) {

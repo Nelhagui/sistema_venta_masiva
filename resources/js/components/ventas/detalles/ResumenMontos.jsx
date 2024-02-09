@@ -39,7 +39,7 @@ const ResumenMontos = ({ ventas, caja }) => {
                     <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>{ventas?.length}</p>
                 </CardBody>
             </Card>
-            {/* <Card shadow='sm' style={{ minWidth: '100px' }}>
+            <Card shadow='sm' style={{ minWidth: '100px' }}>
                 <CardBody>
                     <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Costo</p>
                     <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(totalCostoFormateado)}</p>
@@ -50,14 +50,14 @@ const ResumenMontos = ({ ventas, caja }) => {
                     <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Beneficio</p>
                     <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${diferenciaFormateada}</p>
                 </CardBody>
-            </Card> */}
+            </Card>
             <Card shadow='sm' style={{ minWidth: '100px' }}>
                 <CardBody>
                     <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Total</p>
                     <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(totalVentaFormateado)}</p>
                 </CardBody>
             </Card>
-            <Card shadow='sm' style={{ minWidth: '100px' }}>
+            {/* <Card shadow='sm' style={{ minWidth: '100px' }}>
                 <CardBody>
                     <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Apertura Caja</p>
                     {
@@ -84,7 +84,7 @@ const ResumenMontos = ({ ventas, caja }) => {
                             : <p className='text-center'> - </p>
                     }
                 </CardBody>
-            </Card>
+            </Card> */}
         </div>
     )
 }

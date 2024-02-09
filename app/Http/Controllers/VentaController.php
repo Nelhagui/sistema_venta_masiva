@@ -144,6 +144,7 @@ class VentaController extends Controller
         
         $sesionCaja = SesionCaja::where('user_id', $user->id)
             ->where('fecha_hora_apertura', '<=', $fecha)
+            ->where('fecha_hora_cierre', '>=', $fecha)
             ->where('comercio_id', $id_comercio)
             ->where(function ($query) use ($fecha) {
                 $query->whereNull('fecha_hora_cierre')
