@@ -19,7 +19,6 @@ return new class extends Migration
             $table->timestamp('fecha_hora_cierre')->nullable(); // Puede ser NULL si la caja aún no ha sido cerrada
             $table->decimal('monto_inicial', 8, 2);
             $table->decimal('monto_final', 8, 2)->nullable();
-            $table->decimal('monto_actual', 8, 2)->default(0);
             $table->softDeletes();
             $table->timestamps();
 

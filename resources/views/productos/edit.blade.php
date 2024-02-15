@@ -18,7 +18,7 @@
                                 class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                         </div>
                         @error('titulo')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            <div class="text-red-500 alert alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -37,33 +37,33 @@
                             </select>
                         </div>
                         @error('tipo')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="my-3">
                         <label for="precio_costo">Precio costo</label><br>
                         <div style="width: 280px">
-                            <input type="number" name="precio_costo" id="precio_costo"
+                            <input type="number" name="precio_costo" id="precio_costo" step="any"
                                 @if ($producto->tipo != 'costo_adicional') required @endif value="{{ $producto->precio_costo }}"
                                 @if ($producto->tipo == 'costo_adicional') disabled @endif
                                 class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                         </div>
                         @error('precio_costo')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="my-3">
                         <label for="precio_venta">Precio Venta</label><br>
                         <div style="width: 280px">
-                            <input type="number" name="precio_venta" id="precio_venta"
+                            <input type="number" name="precio_venta" id="precio_venta" step="any"
                                 @if ($producto->tipo != 'costo_adicional') required @endif value="{{ $producto->precio_venta }}"
                                 @if ($producto->tipo == 'costo_adicional') disabled @endif
                                 class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                         </div>
                         @error('precio_venta')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -74,7 +74,7 @@
                                 class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                         </div>
                         @error('stock_actual')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -85,7 +85,7 @@
                                 class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                         </div>
                         @error('codigo_barra')
-                            <div class="alert alert-danger mt-2">{{ $message }}</div>
+                            <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
                         @enderror
                     </div>
 

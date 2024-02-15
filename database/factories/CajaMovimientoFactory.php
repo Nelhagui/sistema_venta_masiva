@@ -19,9 +19,9 @@ class CajaMovimientoFactory extends Factory
     public function definition(): array
     {
         // Elegir un tipo aleatoriamente
-        $tipo = fake()->randomElement(['adición', 'retiro']);
+        $tipo = fake()->randomElement(['adicion', 'retiro']);
         // Generar monto según el tipo
-        $monto = ($tipo === 'adición') ? fake()->randomFloat(2, 0, 1000) : -fake()->randomFloat(2, 0, 1000);
+        $monto = ($tipo === 'adicion') ? fake()->randomFloat(2, 0, 1000) : -fake()->randomFloat(2, 0, 1000);
         return [
             'sesion_caja_id' => function () {
                 return SesionCaja::all()->random();

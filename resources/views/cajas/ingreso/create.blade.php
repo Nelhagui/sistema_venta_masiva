@@ -9,7 +9,7 @@
                     <div class="flex items-center">
                         <div class="text-center">
                             <p>Efectivo en Caja</p>
-                            <p class="text-4xl">${{$ultimaSesion->monto_actual}}</p>
+                            <p class="text-4xl">${{$total}}</p>
                         </div>
                     </div>
                 </div>

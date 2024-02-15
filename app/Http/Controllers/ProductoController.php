@@ -17,6 +17,8 @@ use App\Models\Inversor;
 use App\Models\InversorProducto;
 use App\Models\Compra;
 use App\Models\CompraDetalle;
+use Illuminate\Validation\Rule;
+
 
 class ProductoController extends Controller
 {
@@ -178,12 +180,24 @@ class ProductoController extends Controller
         ];
 
         $request->validate([
-            'titulo' => 'required|unique:productos,titulo,' . $producto->id,
+            'titulo' => [
+                'required',
+                Rule::unique('productos')->where(function ($query) use ($producto) {
+                    return $query->where('comercio_id', $producto->comercio_id);
+                })->ignore($producto->id),
+            ],
             'tipo' => 'required|string|in:unidad,fraccion,costo_adicional',
             'precio_venta' => $request->tipo == 'costo_adicional' ? '' : 'required|numeric',
             'precio_costo' => $request->tipo == 'costo_adicional' ? '' : 'required|numeric',
             'stock_actual' => 'required|numeric',
-            'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra,' . $producto->id],
+            'codigo_barra' => [
+                'nullable',
+                'sometimes',
+                'numeric',
+                Rule::unique('productos')->where(function ($query) use ($producto) {
+                    return $query->where('comercio_id', $producto->comercio_id);
+                })->ignore($producto->id),
+            ],
         ], $messages);
 
         $producto->titulo = $request->titulo;

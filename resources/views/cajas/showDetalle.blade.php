@@ -46,7 +46,7 @@
                     </tr>
                     <tr>
                         <td style="padding-right: 1rem">Total</td>
-                        <td>${{$sesionCaja->monto_actual}}</td>
+                        <td>$</td>
                     </tr>
                 </table>
             </div>
@@ -76,7 +76,7 @@
                     </tr>
                     <tr>
                         <td style="padding-right: 1rem">Total</td>
-                        <td>${{$sesionCaja->monto_actual}}</td>
+                        <td>$</td>
                     </tr>
                 </table>
             </div>

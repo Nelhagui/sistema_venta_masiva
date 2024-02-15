@@ -38,15 +38,15 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            // ProductsTableSeeder::class,
-            ProductosBaseSeeder::class,
+            ProductsTableSeeder::class,
+            // ProductosBaseSeeder::class,
             ClientesTableSeeder::class,
             ProveedorSeeder::class,
             MetodoPagoSeeder::class,
             // CompraSeeder::class,
         ]);
         
-        \App\Models\SesionCaja::factory()->count(100)->create();
-        \App\Models\CajaMovimiento::factory()->count(100)->create();
+        // \App\Models\SesionCaja::factory()->count(100)->create();
+        // \App\Models\CajaMovimiento::factory()->count(100)->create();
     }
 }

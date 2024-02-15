@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Venta;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -13,30 +14,64 @@ class CajaMovimientoController extends Controller
     public function createIngreso()
     {
         $user = Auth::user();
-        $comercio = $user->comercio;
-        $idsSessionesDelComercio = $comercio->sesionesCaja->pluck('id')->toArray();
         $ultimaSesion = $user->sesionesCaja()->latest()->first();
-        $ultimosIngresos = CajaMovimiento::where('tipo', 'adición')
-            ->whereIn('sesion_caja_id', $idsSessionesDelComercio)
+
+        // Calcular el total de ventas para la sesión de caja del usuario
+        $ventas = Venta::where('sesion_caja_id', $ultimaSesion->id)->sum('monto_total_venta');
+
+        // Obtener los movimientos de caja (adicion) para la sesión de caja del usuario
+        $movimientosAdicion = CajaMovimiento::where('sesion_caja_id', $ultimaSesion->id)
+            ->where('tipo', 'adicion')
+            ->sum('monto');
+
+        // Obtener los movimientos de caja (retiro) para la sesión de caja del usuario
+        $movimientosRetiro = CajaMovimiento::where('sesion_caja_id', $ultimaSesion->id)
+            ->where('tipo', 'retiro')
+            ->sum('monto');
+
+        // Calcular el total (monto inicial + total de ventas + movimientos de adicion - movimientos de resta)
+        $total = $ultimaSesion->monto_inicial + $ventas + $movimientosAdicion - $movimientosRetiro;
+
+        $ultimosIngresos = CajaMovimiento::where('tipo', 'adicion')
+            ->where('sesion_caja_id', $ultimaSesion->id)
             ->latest()  // Esto ordenará por la columna 'created_at' de forma descendente
             ->take(10)
             ->get();
 
-        return view('cajas.ingreso.create', compact('ultimaSesion', 'ultimosIngresos'));
+
+        return view('cajas.ingreso.create', compact('ultimaSesion', 'ultimosIngresos', 'total'));
+
     }
 
     public function createEgreso()
     {
         $user = Auth::user();
-        $comercio = $user->comercio;
-        $idsSessionesDelComercio = $comercio->sesionesCaja->pluck('id')->toArray();
         $ultimaSesion = $user->sesionesCaja()->latest()->first();
+
+        // Calcular el total de ventas para la sesión de caja del usuario
+        $ventas = Venta::where('sesion_caja_id', $ultimaSesion->id)->sum('monto_total_venta');
+
+        // Obtener los movimientos de caja (adicion) para la sesión de caja del usuario
+        $movimientosAdicion = CajaMovimiento::where('sesion_caja_id', $ultimaSesion->id)
+            ->where('tipo', 'adicion')
+            ->sum('monto');
+
+        // Obtener los movimientos de caja (retiro) para la sesión de caja del usuario
+        $movimientosRetiro = CajaMovimiento::where('sesion_caja_id', $ultimaSesion->id)
+            ->where('tipo', 'retiro')
+            ->sum('monto');
+
+        // Calcular el total (monto inicial + total de ventas + movimientos de adicion - movimientos de resta)
+        $total = $ultimaSesion->monto_inicial + $ventas + $movimientosAdicion - $movimientosRetiro;
+
+
         $ultimosEgresos = CajaMovimiento::where('tipo', 'retiro')
-            ->whereIn('sesion_caja_id', $idsSessionesDelComercio)
+            ->where('sesion_caja_id', $ultimaSesion->id)
             ->latest()  // Esto ordenará por la columna 'created_at' de forma descendente
             ->take(10)
             ->get();
-        return view('cajas.egreso.create', compact('ultimaSesion', 'ultimosEgresos'));
+
+        return view('cajas.egreso.create', compact('ultimaSesion', 'ultimosEgresos', 'total'));
     }
 
     public function agregarDinero(Request $request, $sesionCajaId)
@@ -55,14 +90,13 @@ class CajaMovimientoController extends Controller
                 CajaMovimiento::create([
                     'sesion_caja_id' => $sesionCajaId,
                     'user_id' => Auth::id(),
-                    'tipo' => 'adición',
+                    'tipo' => 'adicion',
                     'monto' => $monto,
                     'descripcion' => $descripcion
                 ]);
 
                 // Actualizar monto actual en sesiones_cajas
                 $sesionCaja = SesionCaja::find($sesionCajaId);
-                $sesionCaja->monto_actual += $monto;
                 $sesionCaja->save();
             });
         }
@@ -86,13 +120,12 @@ class CajaMovimientoController extends Controller
                     'sesion_caja_id' => $sesionCajaId,
                     'user_id' => Auth::id(),
                     'tipo' => 'retiro',
-                    'monto' => -$monto,
+                    'monto' => $monto,
                     'descripcion' => $descripcion,
                 ]);
 
                 // Actualizar monto actual en sesiones_cajas
                 $sesionCaja = SesionCaja::find($sesionCajaId);
-                $sesionCaja->monto_actual -= $monto; // Aquí estamos restando el monto
                 $sesionCaja->save();
             });
         }

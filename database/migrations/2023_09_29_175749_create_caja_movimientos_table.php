@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sesion_caja_id'); // Relación con la tabla sesiones_caja
             $table->unsignedBigInteger('user_id'); // Relación con la tabla de usuarios
-            $table->string('tipo');
+            $table->enum('tipo', ['adicion','retiro']);
             $table->string('descripcion')->nullable();
             $table->decimal('monto', 8, 2);
             $table->softDeletes();
