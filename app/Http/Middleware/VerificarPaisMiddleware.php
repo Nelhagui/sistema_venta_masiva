@@ -17,29 +17,32 @@ class VerificarPaisMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Obtiene la dirección IP del cliente
-        $ip = $request->ip();
+        $verificarPais = env('VERIFICAR_PAIS', false);
 
-        // Consulta la API de geolocalización
-        $response = Http::get("http://ip-api.com/json/{$ip}");
-
-        // Analiza la respuesta JSON
-        $data = $response->json();
-
-        // Obtiene el país desde los datos de la API
-        $country = $data['country'];
-
-        // Restringe el acceso basado en el país
-        if ($country !== 'Argentina') {
-            $url = $request->url();
-            // Guarda el intento de ingreso en un archivo de registro
-            $logMessage = "[" . now()->toDateTimeString() . "] Intento de ingreso desde $country con la dirección IP: $ip. Ruta: $url";
-            Storage::disk('local')->append('intentos_ingreso.log', $logMessage);
-
-            // Redirige al usuario a una página de error o muestra un mensaje de prohibición
-            return response("Por el momento no estamos operando en tu país. Disculpas", 403);
+        if ($verificarPais) {
+            // Obtiene la dirección IP del cliente
+            $ip = $request->ip();
+    
+            // Consulta la API de geolocalización
+            $response = Http::get("http://ip-api.com/json/{$ip}");
+    
+            // Analiza la respuesta JSON
+            $data = $response->json();
+    
+            // Obtiene el país desde los datos de la API
+            $country = $data['country'];
+    
+            // Restringe el acceso basado en el país
+            if ($country !== 'Argentina') {
+                $url = $request->url();
+                // Guarda el intento de ingreso en un archivo de registro
+                $logMessage = "[" . now()->toDateTimeString() . "] Intento de ingreso desde $country con la dirección IP: $ip. Ruta: $url";
+                Storage::disk('local')->append('intentos_ingreso.log', $logMessage);
+    
+                // Redirige al usuario a una página de error o muestra un mensaje de prohibición
+                return response("Por el momento no estamos operando en tu país. Disculpas", 403);
+            }
         }
-
         // Si el país está permitido, permite el acceso a la ruta
         return $next($request);
     }
