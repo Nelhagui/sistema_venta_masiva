@@ -102,7 +102,7 @@ const TablaListClientes = ({ clientes }) => {
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {capitalizeToLowerCase(item.nombre)}
+                            {item.nombre}
                         </p>
                     </div>
                 );
