@@ -26,9 +26,21 @@ const TablaMetodosPago = ({ metodosDePago }) => {
             aria-label="Example static collection table"
         >
             <TableHeader>
-                <TableColumn>Nombre</TableColumn>
-                <TableColumn>Estado</TableColumn>
-                <TableColumn>Acción</TableColumn>
+                <TableColumn
+                    style={{ backgroundColor: '#999cbe', color: 'white' }}
+                >
+                    NOMBRE
+                </TableColumn>
+                <TableColumn
+                    style={{ backgroundColor: '#999cbe', color: 'white' }}
+                >
+                    ESTADO
+                </TableColumn>
+                <TableColumn
+                    style={{ backgroundColor: '#999cbe', color: 'white' }}
+                >
+                    ACCIÓN
+                </TableColumn>
             </TableHeader>
             <TableBody>
                 {
@@ -36,21 +48,21 @@ const TablaMetodosPago = ({ metodosDePago }) => {
                         <TableRow key={metodoDePago?.id}>
                             <TableCell>{metodoDePago?.nombre}</TableCell>
                             <TableCell>
-                               {metodoDePago?.predeterminado == 1 ? 
+                                {metodoDePago?.predeterminado == 1 ?
                                     <Chip className="capitalize" color="warning" size="sm" variant="flat">
                                         Predeterminado
                                     </Chip>
                                     :
                                     <>
-                                        {metodoDePago?.estado == 1 ? 
+                                        {metodoDePago?.estado == 1 ?
                                             <Chip className="capitalize" color="success" size="sm" variant="flat">
                                                 Activo
                                             </Chip>
-                                            :  
+                                            :
                                             <Chip className="capitalize" color="danger" size="sm" variant="flat">
                                                 Inactivo
                                             </Chip>
-                                        }    
+                                        }
                                     </>
                                 }
                             </TableCell>
@@ -65,12 +77,12 @@ const TablaMetodosPago = ({ metodosDePago }) => {
                                             </Tooltip>
                                             <Tooltip content="Eliminar">
                                                 <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                                    <ModalEliminarMetodoPago item={metodoDePago}/>
+                                                    <ModalEliminarMetodoPago item={metodoDePago} />
                                                 </span>
                                             </Tooltip>
                                         </div> : <></>
                                 }
-                                
+
                             </TableCell>
                         </TableRow>
                     ))

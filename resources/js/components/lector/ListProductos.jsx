@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SearchIcon } from '../icons/SearchIcon';
 import TeclaDetector from '../teclado/TeclaDetector';
+import NovedadesInstructivos from './novedades_instructivos/NovedadesInstructivos';
 import lectorServices from '../../services/lectorServices';
 import {
     Input,
@@ -152,9 +153,9 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                         coincidenciasCount
                     };
                 }).filter(item => item.coincidenciasCount > 0)
-                .sort((a, b) => b.coincidenciasCount - a.coincidenciasCount)
-                .map(item => item.producto)
-                .slice(0, MAX_PRODUCTOS);
+                    .sort((a, b) => b.coincidenciasCount - a.coincidenciasCount)
+                    .map(item => item.producto)
+                    .slice(0, MAX_PRODUCTOS);
                 setObjetosBuscados(productosCoincidentes);
             }
         }
@@ -340,11 +341,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     </ul>
                 </div>
                 {/* FIN BUSCADOR */}
-
-                <div className=''>
-                    {/* <ExtraValueConfiguration /> */}
-                </div>
-
                 <div>
                     <button
                         type="button"
@@ -505,7 +501,11 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 
                     </>
                     :
-                    ""
+                    <>
+                        <div className='mt-10'>
+                            {/* <NovedadesInstructivos /> */}
+                        </div>
+                    </>
             }
 
             <ToastContainer />

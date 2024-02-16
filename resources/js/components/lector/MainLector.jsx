@@ -6,6 +6,7 @@ import metodoPagoServices from '../../services/metodoPagoServices';
 import clienteServices from '../../services/clienteServices';
 import productoServices from '../../services/productoServices';
 import InstructivoSinProductos from '../productos/instructivo/InstructivoSinProductos';
+import ContainerLector from './ContainerLector';
 
 export default function MainLector() {
     const [productos, setProductos] = useState([])
@@ -55,7 +56,7 @@ export default function MainLector() {
         !isLoading
             ?
             productos.length > 0
-                ? <ListProductos productos={productos} metodosDePago={metodosDePago} clientes={clientes}></ListProductos>
+                ? <ContainerLector productos={productos} metodosDePago={metodosDePago} clientes={clientes}/>
                 : <InstructivoSinProductos />
             : null
     )

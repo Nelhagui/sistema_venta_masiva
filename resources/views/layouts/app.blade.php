@@ -2,7 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <!-- Hotjar Tracking Code for RápidoVentas -->
+    {{-- <!-- Hotjar Tracking Code for RápidoVentas -->
     <script>
         (function(h, o, t, j, a, r) {
             h.hj = h.hj || function() {
@@ -49,7 +49,7 @@
         gtag('js', new Date());
 
         gtag('config', 'G-T2VWG0L63T');
-    </script>
+    </script> --}}
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">

@@ -126,7 +126,7 @@ const TablaListClientes = ({ clientes }) => {
                     <div className="relative flex items-center gap-2">
                         <Tooltip content="Ver">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon onClick={() => irPaginaDetalle(item?.id)}/>
+                                <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
                             </span>
                         </Tooltip>
                         <Tooltip content="Editar">
@@ -217,7 +217,7 @@ const TablaListClientes = ({ clientes }) => {
                             </DropdownMenu>
                         </Dropdown>
                         <div className='flex gap-2'>
-                            <ModalCrearCliente/>
+                            <ModalCrearCliente />
                         </div>
                     </div>
                 </div>
@@ -294,6 +294,7 @@ const TablaListClientes = ({ clientes }) => {
             <TableHeader columns={headerColumns}>
                 {(column) => (
                     <TableColumn
+                        style={{ backgroundColor: '#999cbe', color: 'white' }}
                         key={column.uid}
                         align={
                             column.uid === "acciones" ? "center" : "start"}

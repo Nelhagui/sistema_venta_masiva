@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CajaMovimientoController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\SesionCajaController;
 use App\Http\Controllers\ProductoController;
@@ -27,9 +28,11 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -127,14 +130,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/proveedores', [ProveedorController::class, 'index'])->name('index.proveedores');
         Route::get('/proveedores/agregar', [ProveedorController::class, 'create'])->name('create.proveedores');
         Route::post('/proveedores/agregar', [ProveedorController::class, 'store'])->name('store.proveedores');
-        Route::get('/proveedores/editar/{id}', [ProveedorController::class, 'edit'])->name('edit.proveedores');
-        Route::post('/proveedores/editar/{id}', [ProveedorController::class, 'update'])->name('update.proveedores');
+        Route::get('/proveedores/editar/{proveedor}', [ProveedorController::class, 'edit'])->name('edit.proveedores');
+        Route::post('/proveedores/editar/{proveedor}', [ProveedorController::class, 'update'])->name('update.proveedores');
 
 
         // REPORTES
         Route::get('/reportes/productos', [ReporteController::class, 'indexProductos'])->name('index.reportes');
         Route::get('/reportes/productos/costo/{id}/{anio}/{mes}', [ReporteController::class, 'showProducto'])->name('show.reportes');
-        Route::get('/reportes/proveedores', [ReporteController::class, 'indexProveedores'])->name('index.proveedores');
+        Route::get('/reportes/proveedores', [ReporteController::class, 'indexProveedores'])->name('index.reportes.proveedores');
         Route::get('/reportes/proveedores/compras/{id}', [ReporteController::class, 'showProveedorCompras'])->name('show.reportesComprasProveedores');
 
     });

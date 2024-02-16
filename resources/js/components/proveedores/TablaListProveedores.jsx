@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import {
     Table,
     TableHeader,
@@ -15,24 +15,17 @@ import {
     Tooltip,
     Pagination,
 } from "@nextui-org/react";
-
-import { PlusIcon } from "../icons/PlusIcon";
-import { SearchIcon } from "../icons/SearchIcon";
+import { EyeIcon } from '../icons/EyeIcon';
+import { SearchIcon } from '../icons/SearchIcon';
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
-import { capitalize, capitalizeToLowerCase } from "../../utils/utils";
-import { formatearAMoneda } from "../../utils/utils";
-import { EyeIcon } from "../icons/EyeIcon";
-import { DeleteIcon } from "../icons/DeleteIcon";
-import { EditIcon } from "../icons/EditIcon";
-import { urls } from "../../config/config";
-import { InventoryIcon } from "../icons/InventoryIcon";
-import { UploadFileIcon } from "../icons/UploadFileIcon";
-import { capitalizeToUpperCase } from "../../utils/utils";
+import { urls } from '../../config/config';
+import ModalCrearProveedor from './agregar/ModalCrearProveedor';
+import { EditIcon } from '../icons/EditIcon';
+
+const INITIAL_VISIBLE_COLUMNS = ["nombre", "direccion", "telefono", "whatsapp", "nota", "acciones"];
 
 
-const INITIAL_VISIBLE_COLUMNS = ["titulo", "precio_costo", "precio_venta", "stock_actual", "acciones"];
-
-export default function TablaListProductos({ productos }) {
+const TablaListProveedores = ({ proveedores }) => {
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -43,11 +36,11 @@ export default function TablaListProductos({ productos }) {
 
     const columns = [
         { name: "ID", uid: "id", sortable: true },
-        { name: "TITULO", uid: "titulo", sortable: true },
-        { name: "CODIGO BARRA", uid: "codigo_barra" },
-        { name: "PRECIO COSTO", uid: "precio_costo", sortable: true },
-        { name: "PRECIO VENTA", uid: "precio_venta", sortable: true },
-        { name: "STOCK", uid: "stock_actual", sortable: true },
+        { name: "NOMBRE", uid: "nombre", sortable: true },
+        { name: "DIRECCIÓN", uid: "direccion", sortable: true },
+        { name: "TELEFONO", uid: "telefono" },
+        { name: "WHATSAPP", uid: "whatsapp", sortable: true },
+        { name: "NOTA", uid: "nota", sortable: true },
         { name: "ACCIONES", uid: "acciones" },
     ];
 
@@ -62,15 +55,15 @@ export default function TablaListProductos({ productos }) {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...productos];
+        let filteredUsers = [...proveedores];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((item) =>
-                item.titulo.toLowerCase().includes(filterValue.toLowerCase()),
+                item.nombre.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
         return filteredUsers;
-    }, [productos, filterValue]);
+    }, [proveedores, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -91,57 +84,49 @@ export default function TablaListProductos({ productos }) {
         });
     }, [sortDescriptor, items]);
 
-    function irPaginaStockPrecio() {
-        window.location.href = `${urls.productos.stockPrecio}`
+
+    function irPaginaDetalle(cliente_id) {
+        window.location.href = `${urls.proveedores.detalle}/${cliente_id}`;
     }
 
-    function irPaginaAgregarProducto() {
-        window.location.href = `${urls.productos.crear}`
-    }
-
-    function irPaginaEditProducto(productoId) {
-        window.location.href = `${urls.productos.editar}/${productoId}`;
+    function irPaginaEdit(cliente_id) {
+        window.location.href = `${urls.proveedores.editar}/${cliente_id}`;
     }
 
     const renderCell = React.useCallback((item, columnKey) => {
         const cellValue = item[columnKey];
 
         switch (columnKey) {
-            case "titulo":
+            case "nombre":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {capitalizeToLowerCase(item.titulo)}
+                            {item.nombre}
                         </p>
                     </div>
                 );
-            case "precio_costo":
+            case "telefono":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {item.precio_costo ? `$${formatearAMoneda(item.precio_costo)}` : "-"}
+                            {item.telefono ? item.telefono : "-"}
                         </p>
                     </div>
                 );
-            case "precio_venta":
+            case "whatsapp":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {item.precio_venta ? `$${formatearAMoneda(item.precio_venta)}` : "-"}
+                            {item.whatsapp ? item.whatsapp : "-"}
                         </p>
                     </div>
                 );
             case "acciones":
                 return (
                     <div className="relative flex items-center gap-2">
-                        {/* <Tooltip content="Ver">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon />
-                            </span>
-                        </Tooltip> */}
                         <Tooltip content="Editar">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon onClick={() => irPaginaEditProducto(item?.id)} />
+                                <EditIcon onClick={() => irPaginaEdit(item?.id)} />
                             </span>
                         </Tooltip>
                         {/* <Tooltip color="danger" content="Borrar">
@@ -221,32 +206,18 @@ export default function TablaListProductos({ productos }) {
                             >
                                 {columns.map((column) => (
                                     <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
+                                        {column.name}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
                         <div className='flex gap-2'>
-                            <Button
-                                className="bg-foreground text-background"
-                                endContent={<InventoryIcon />}
-                                onPress={() => irPaginaStockPrecio()}
-                            >
-                                Stock - Precio
-                            </Button>
-                            <Button
-                                className="bg-foreground text-background"
-                                // color="danger"
-                                endContent={<PlusIcon />}
-                                onPress={() => irPaginaAgregarProducto()}
-                            >
-                                Nuevo Producto
-                            </Button>
+                            <ModalCrearProveedor />
                         </div>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {productos.length} items</span>
+                    <span className="text-default-400 text-small">Total {proveedores.length} items</span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por pág.:
                         <select
@@ -258,7 +229,7 @@ export default function TablaListProductos({ productos }) {
                             <option value="10">10</option>
                             <option value="15" >15</option>
                             <option value="50" >50</option>
-                            <option value={productos.length} >Todos</option>
+                            <option value={proveedores.length} >Todos</option>
                         </select>
                     </label>
                 </div>
@@ -268,7 +239,7 @@ export default function TablaListProductos({ productos }) {
         filterValue,
         visibleColumns,
         onRowsPerPageChange,
-        productos.length,
+        proveedores.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -315,7 +286,9 @@ export default function TablaListProductos({ productos }) {
             onSortChange={setSortDescriptor}
 
         >
-            <TableHeader columns={headerColumns}>
+            <TableHeader
+                columns={headerColumns}
+            >
                 {(column) => (
                     <TableColumn
                         style={{ backgroundColor: '#999cbe', color: 'white' }}
@@ -336,5 +309,7 @@ export default function TablaListProductos({ productos }) {
                 )}
             </TableBody>
         </Table>
-    );
+    )
 }
+
+export default TablaListProveedores

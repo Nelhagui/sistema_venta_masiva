@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Proveedor;
 use App\Models\Comercio;
+use Illuminate\Support\Facades\Auth;
 
 class ProveedorController extends Controller
 {
@@ -12,8 +14,7 @@ class ProveedorController extends Controller
      */
     public function index()
     {
-        $proveedores = Proveedor::all();
-        return view('proveedores.index', compact('proveedores'));
+        return view('proveedores.index');
     }
 
     /**
@@ -24,35 +25,13 @@ class ProveedorController extends Controller
         return view('proveedores.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $proveedor = new Proveedor;
-        $proveedor->nombre = $request->nombre;
-        $proveedor->direccion = $request->direccion;
-        $proveedor->telefono = $request->telefono;
-        $proveedor->whatsapp = $request->whatsapp;
-        $proveedor->nota = $request->nota;
-        $proveedor->save();
-        return redirect()->route('index.proveedores');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Proveedor $proveedor)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Proveedor $proveedor)
     {
-        //
+        $user = Auth::user();
+        if ($user->comercio_id == $proveedor->comercio_id)
+            return view('proveedores.edit', compact('proveedor'));
+        else
+            return redirect()->action([ProveedorController::class, 'index']);
     }
 
     /**
@@ -60,7 +39,18 @@ class ProveedorController extends Controller
      */
     public function update(Request $request, Proveedor $proveedor)
     {
-        //
+        $user = Auth::user();
+        if($user->comercio_id == $proveedor->comercio_id) {
+            $proveedor->nombre = $request->nombre;
+            $proveedor->direccion = $request->direccion;
+            $proveedor->telefono = $request->telefono;
+            $proveedor->whatsapp = $request->whatsapp;
+            $proveedor->nota = $request->nota;
+            $proveedor->update();
+            return redirect()->route('index.proveedores');
+        } else {
+            return redirect()->route('index.proveedores');
+        }
     }
 
     /**
@@ -78,5 +68,19 @@ class ProveedorController extends Controller
         $id_comercio = $user->comercio_id;
         $proveedores = Comercio::find($id_comercio)->proveedores;
         return $proveedores;
+    }
+
+    public function storeApi(Request $request)
+    {
+        $user = Auth::user();
+        $proveedor = new Proveedor;
+        $proveedor->comercio_id = $user->comercio_id;
+        $proveedor->nombre = $request->nombre;
+        $proveedor->direccion = $request->direccion;
+        $proveedor->telefono = $request->telefono;
+        $proveedor->whatsapp = $request->whatsapp;
+        $proveedor->nota = $request->nota;
+
+        return $proveedor->save();
     }
 }
