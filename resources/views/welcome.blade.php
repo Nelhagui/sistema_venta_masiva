@@ -70,7 +70,7 @@
 </head>
 
 <body class="is-preload">
-    <!-- Google Tag Manager (noscript) -->
+    {{-- <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MVZ6HWRX" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
@@ -78,7 +78,7 @@
         <a href="https://rapidoventas.com.ar/login">Ingresar</a>
         <a href="https://rapidoventas.com.ar/register">Registrarse</a>
     </div>
-    <!-- Wrapper -->
+    <!-- Wrapper --> --}}
     <div id="wrapper">
         <!-- Header -->
         <header id="header" class="alt">
