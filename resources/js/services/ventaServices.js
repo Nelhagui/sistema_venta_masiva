@@ -5,7 +5,7 @@ const ventaServices = {
         
         let url = `${endpoints.ventas.lista}`;
         if(query)
-             url = `${endpoints.ventas.lista}?fecha=${query}`;
+            url = `${endpoints.ventas.lista}?fecha=${query}`;
 
         const requestOptions = {
             method: 'GET',

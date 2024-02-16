@@ -115,6 +115,8 @@ class VentaController extends Controller
     {
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
+        $cantidadVentas = $user->comercio->ventas->count();
+
 
         // Obtener la fecha proporcionada en el request, o usar la fecha de hoy si no se proporciona ninguna fecha
         $fecha = $request->query('fecha') ? Carbon::parse($request->query('fecha')) : Carbon::today();
@@ -153,9 +155,11 @@ class VentaController extends Controller
             ->with('cajero')
             ->first();
 
+
         $respuesta = [
             'sesionCaja' => $sesionCaja,
-            'ventas' => $ventasOrdenadas
+            'ventas' => $ventasOrdenadas,
+            'cantidadVentas' => $cantidadVentas
         ];
 
         // Devolver la respuesta como JSON

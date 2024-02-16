@@ -82,58 +82,65 @@ const TablaListVentas = ({ ventas, caja }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {ventas.map((venta, index) => (
-                            <tr key={index} className={index % 2 === 0 ? 'odd-row' : 'even-row'} style={{ textAlign: 'start' }}>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <p>{fechaUtils.convertirFormatoFecha(venta?.fecha_hora_venta)}</p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <p>{fechaUtils.convertirFormatoHora(venta?.fecha_hora_venta)}</p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal" style={{textAlign: 'right'}}>
-                                    <p>
-                                        ${formatearAMoneda(venta?.monto_total_venta)}
-                                    </p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <p>
-                                        {
-                                            venta?.aumento > 0
-                                                ? `$${venta?.aumento}`
-                                                : "-"
-                                        }
-                                    </p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <p>
-                                        {
-                                            venta?.descuento > 0
-                                                ? `$${venta?.descuento}`
-                                                : "-"
-                                        }
-                                    </p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <p>
-                                        {venta?.metodos_de_pago == 0 ? "Efectivo" : venta?.metodo_pago?.nombre}
-                                    </p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <p> {verEstadoPago(venta?.estado_pago)}</p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <p>{venta?.sesion_caja?.cajero?.nombre}</p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <p>{venta?.cliente?.nombre}</p>
-                                </td>
-                                <td className="py-2 px-3 text-small font-normal text-center">
-                                    <a href={`${urls.ventas.ver}/${venta.id}`} >
-                                        <EyeIcon style={{ cursor: 'pointer' }} />
-                                    </a>
-                                </td>
+                        {
+                            ventas.length !== 0 ?
+                            ventas.map((venta, index) => (
+                                <tr key={index} className={index % 2 === 0 ? 'odd-row' : 'even-row'} style={{ textAlign: 'start' }}>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <p>{fechaUtils.convertirFormatoFecha(venta?.fecha_hora_venta)}</p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <p>{fechaUtils.convertirFormatoHora(venta?.fecha_hora_venta)}</p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal" style={{textAlign: 'right'}}>
+                                        <p>
+                                            ${formatearAMoneda(venta?.monto_total_venta)}
+                                        </p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <p>
+                                            {
+                                                venta?.aumento > 0
+                                                    ? `$${venta?.aumento}`
+                                                    : "-"
+                                            }
+                                        </p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <p>
+                                            {
+                                                venta?.descuento > 0
+                                                    ? `$${venta?.descuento}`
+                                                    : "-"
+                                            }
+                                        </p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <p>
+                                            {venta?.metodos_de_pago == 0 ? "Efectivo" : venta?.metodo_pago?.nombre}
+                                        </p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <p> {verEstadoPago(venta?.estado_pago)}</p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <p>{venta?.sesion_caja?.cajero?.nombre}</p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <p>{venta?.cliente?.nombre}</p>
+                                    </td>
+                                    <td className="py-2 px-3 text-small font-normal text-center">
+                                        <a href={`${urls.ventas.ver}/${venta.id}`} >
+                                            <EyeIcon style={{ cursor: 'pointer' }} />
+                                        </a>
+                                    </td>
+                                </tr>
+                            ))
+                            :
+                            <tr className='text-center'>
+                                <td colSpan="10" className='py-3'>No se registraron ventas dentro de esta fecha</td>
                             </tr>
-                        ))}
+                        }
                     </tbody>
                 </table>
             </div>

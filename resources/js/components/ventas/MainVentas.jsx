@@ -8,6 +8,7 @@ import InstructivoSinVentas from './instructivos/InstructivoSinVentas';
 export default function MainVentas() {
     const [ventas, setVentas] = useState([])
     const [caja, setCaja] = useState({})
+    const [cantidadVentas, setCantidadVentas] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
@@ -22,6 +23,8 @@ export default function MainVentas() {
             const response = await ventaServices.traerLista(queryDate)
             setVentas(response.ventas);
             setCaja(response.sesionCaja);
+            setCantidadVentas(response.cantidadVentas);
+
         } catch (error) {
             // Maneja el error si la creación de la venta falla
         } finally {
@@ -36,7 +39,7 @@ export default function MainVentas() {
                     :
                     <>
                         {
-                            ventas?.length > 0
+                            cantidadVentas > 0
                                 ?  <TablaListVentas ventas={ventas} caja={caja} />
                                 : <InstructivoSinVentas />
                         }
