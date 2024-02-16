@@ -19,7 +19,6 @@ import { EyeIcon } from '../icons/EyeIcon';
 import { SearchIcon } from '../icons/SearchIcon';
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
 import { PlusIcon } from "../icons/PlusIcon";
-import { capitalize, capitalizeToLowerCase } from "../../utils/utils";
 import { urls } from '../../config/config';
 import ModalCrearCliente from './agregar/ModalCrearCliente';
 import { EditIcon } from '../icons/EditIcon';
@@ -212,7 +211,7 @@ const TablaListClientes = ({ clientes }) => {
                             >
                                 {columns.map((column) => (
                                     <DropdownItem key={column.uid} className="capitalize">
-                                        {capitalize(column.name)}
+                                        {column.name}
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
