@@ -104,7 +104,6 @@ export default function ModalCrearCliente() {
                                     errorMessage={msjError?.nombre ?? ''}
                                 />
                                 <Input
-                                    isRequired={camposObligatorios.includes('telefono')}
                                     label="Telefono"
                                     placeholder="Ingrese el telefono"
                                     variant="bordered"
@@ -117,7 +116,6 @@ export default function ModalCrearCliente() {
                                     errorMessage={msjError?.telefono ?? ''}
                                 />
                                 <Input
-                                    isRequired={camposObligatorios.includes('whatsapp')}
                                     label="Whatsapp"
                                     placeholder="Ingrese el whatsapp"
                                     variant="bordered"
@@ -131,7 +129,6 @@ export default function ModalCrearCliente() {
                                 />
                                 <div className="w-full flex flex-col gap-2 max-w-[240px]">
                                     <Textarea
-                                        isRequired={camposObligatorios.includes('nota')}
                                         variant="bordered"
                                         label="Nota"
                                         name="nota"

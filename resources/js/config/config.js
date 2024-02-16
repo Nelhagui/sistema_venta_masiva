@@ -47,6 +47,7 @@ export const urls = {
     },
     clientes: {
         lista: `${BASE_URL}/clientes`,
+        editar: `${BASE_URL}/clientes/editar`,
         detalle: `${BASE_URL}/clientes/detalle`,
     },
     metodosDePago: {
