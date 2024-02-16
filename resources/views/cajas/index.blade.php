@@ -33,7 +33,7 @@
                                     @endif
                                 </td>
                                 <td class="p-2 border border-slate-600">{{ $sesion->ventas->count() }}</td>
-                                <td class="p-2 border border-slate-600">${{ $sesion->ventas->sum('monto_total') }}</td>
+                                <td class="p-2 border border-slate-600">${{ $sesion->ventas->sum('monto_total_venta') }}</td>
                                 <td class="p-2 border border-slate-600"><a href='{{route('showDetalle.cajas', $sesion->id)}}'>detalle</a></td>
                             </tr>
                         @endforeach

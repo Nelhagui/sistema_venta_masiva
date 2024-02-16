@@ -2,18 +2,27 @@
     <x-slot:title>
         Apertura Caja
     </x-slot>
-    <x-slot name="header">
-        <div class="flex flex-row justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Apertura de caja') }}
-            </h2>
-            <div class="dark:text-gray-200">
-                <a href="{{ route('index.cajas') }}" class="bg-gray-100 text-gray-800 p-2 rounded">Historial</a>
+    <div class="py-6">
+        <div class="flex justify-between max-w-7xl mx-auto sm:px-6 lg:px-8">
+
+            <div class="flex flex-col">
+                <div class="flex flex-col gap-10">
+                    <div class="flex items-center">
+                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                            {{ __('Apertura de caja') }}
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-6">
+                <div class="dark:text-gray-500">
+                    <a href="{{ route('index.cajas') }}" class="bg-gray-300 text-gray-800 p-2 rounded">Historial</a>
+                </div>
             </div>
         </div>
-    </x-slot>
+    </div>
 
-    <div class="py-12">
+    <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-red-200 p-5 rounded">
             <div class="flex flex-col">
                 <div class="flex flew-row justify-between">

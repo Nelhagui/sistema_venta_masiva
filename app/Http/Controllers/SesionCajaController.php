@@ -13,7 +13,7 @@ class SesionCajaController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $sesiones = $user->sesionesCaja()->latest()->paginate(15);
+        $sesiones = $user->sesionesCaja()->with('ventas')->latest()->paginate(15);
         return view('cajas.index', compact('sesiones'));
     }
 
@@ -24,7 +24,6 @@ class SesionCajaController extends Controller
 
         // Calcular el total de ventas para la sesión de caja del usuario
         $ventas = Venta::where('sesion_caja_id', $ultimaSesion->id)->sum('monto_total_venta');
-        
 
         // Obtener los movimientos de caja (adicion) para la sesión de caja del usuario
         $movimientosAdicion = CajaMovimiento::where('sesion_caja_id', $ultimaSesion->id)
@@ -38,6 +37,7 @@ class SesionCajaController extends Controller
 
         // Calcular el total (monto inicial + total de ventas + movimientos de adicion - movimientos de resta)
         $total = $ultimaSesion->monto_inicial + $ventas + $movimientosAdicion - $movimientosRetiro;
+        // dd($ventas);
 
         return view('cajas.show', compact('ultimaSesion', 'total'));
         // return view('proximamente.index');
@@ -71,5 +71,25 @@ class SesionCajaController extends Controller
         $sesionCaja->save();
 
         return redirect()->route('index.lector');
+    }
+    public function storeCierre()
+    {
+        $usuarioId = Auth::id(); // Obtener el ID del usuario autenticado
+
+        // Obtener la última sesión de caja sin cerrar del usuario actual
+        $ultimaSesion = SesionCaja::where('user_id', $usuarioId)
+            ->whereNull('fecha_hora_cierre')
+            ->latest('fecha_hora_apertura')
+            ->first();
+
+        if ($ultimaSesion) {
+            // Si se encuentra la última sesión de caja sin cerrar, puedes manejarlo aquí
+            $ultimaSesion->fecha_hora_cierre = now();
+            $ultimaSesion->update();
+            return redirect()->route('create.aperturaCaja');
+        } else {
+            // Si no se encuentra una sesión de caja abierta, puedes redirigir a una página o realizar alguna acción apropiada
+            return redirect()->route('create.aperturaCaja'); // Por ejemplo, redirigir a la página para crear una nueva sesión de caja
+        }
     }
 }

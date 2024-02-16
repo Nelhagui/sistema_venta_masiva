@@ -3,7 +3,7 @@
 
 <head>
     <!-- Hotjar Tracking Code for RápidoVentas -->
-    <script>
+    {{-- <script>
         (function(h, o, t, j, a, r) {
             h.hj = h.hj || function() {
                 (h.hj.q = h.hj.q || []).push(arguments)
@@ -49,7 +49,7 @@
         gtag('js', new Date());
 
         gtag('config', 'G-T2VWG0L63T');
-    </script>
+    </script> --}}
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
