@@ -28,7 +28,6 @@ class SesionCajaFactory extends Factory
             'fecha_hora_apertura' => fake()->dateTimeThisMonth,
             'fecha_hora_cierre' => fake()->dateTimeThisMonth,
             'monto_inicial' => fake()->randomFloat(2, 0, 1000),
-            'monto_final' => fake()->randomFloat(2, 0, 1000),
         ];
     }
 }

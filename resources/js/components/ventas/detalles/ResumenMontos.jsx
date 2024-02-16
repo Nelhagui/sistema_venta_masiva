@@ -57,34 +57,6 @@ const ResumenMontos = ({ ventas, caja }) => {
                     <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(totalVentaFormateado)}</p>
                 </CardBody>
             </Card>
-            {/* <Card shadow='sm' style={{ minWidth: '100px' }}>
-                <CardBody>
-                    <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Apertura Caja</p>
-                    {
-                        caja?.monto_inicial && caja?.fecha_hora_apertura
-                            ?
-                            <>
-                                <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(caja?.monto_inicial)}</p>
-                                <p className='text-center text-descripcion mt-1' style={{ fontSize: '0.8rem' }}>{fechaUtils.convertirFormatoFecha(caja?.fecha_hora_apertura)}</p>
-                            </>
-                            : <p className='text-center'> - </p>
-                    }
-                </CardBody>
-            </Card>
-            <Card shadow='sm' style={{ minWidth: '100px' }}>
-                <CardBody>
-                    <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Cierre Caja</p>
-                    {
-                        caja?.fecha_hora_cierre && caja?.monto_final
-                            ?
-                            <>
-                                <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(caja?.monto_final)}</p>
-                                <p className='text-center text-descripcion mt-1' style={{ fontSize: '0.8rem' }}>{fechaUtils.convertirFormatoFecha(caja?.fecha_hora_cierre)}</p>
-                            </>
-                            : <p className='text-center'> - </p>
-                    }
-                </CardBody>
-            </Card> */}
         </div>
     )
 }

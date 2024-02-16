@@ -91,11 +91,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/ventas/ver/{id}', [VentaController::class, 'show'])->name('show.ventas');
 
         // CAJA
-        Route::get('/cajas', [SesionCajaController::class, 'index'])->name('index.cajas');
         Route::get('/caja', [SesionCajaController::class, 'show'])->name('show.cajas')->middleware('checksesion');
+        Route::get('/cajas', [SesionCajaController::class, 'index'])->name('index.cajas');
         Route::get('/caja-detalle/{sesionCaja}', [SesionCajaController::class, 'showDetalle'])->name('showDetalle.cajas');
         Route::get('/apertura-caja', [SesionCajaController::class, 'createApertura'])->name('create.aperturaCaja')->middleware('checksesion');
         Route::post('/apertura-caja', [SesionCajaController::class, 'storeApertura'])->name('store.aperturaCaja');
+        Route::post('/cierre-caja', [SesionCajaController::class, 'storeCierre'])->name('cerrar.caja');
 
         // GASTOS
         Route::get('/gastos', [SesionCajaController::class, 'index'])->name('index.gastos');
