@@ -12,8 +12,6 @@ import {
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Chip,
-    User,
     Tooltip,
     Pagination,
 } from "@nextui-org/react";

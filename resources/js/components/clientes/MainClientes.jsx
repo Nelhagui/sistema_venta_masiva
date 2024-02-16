@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import TablaListClientes from './TablaListClientes';
 import clienteServices from '../../services/clienteServices';
-import { Button } from "@nextui-org/react";
-import ModalCrearCliente from './agregar/ModalCrearCliente';
 import InstructivoSinClientes from './instructivos/InstructivoSinClientes';
 
 export default function MainClientes() {
@@ -24,9 +22,7 @@ export default function MainClientes() {
             setIsLoading(false);
         }
     };
-    const irPaginaAgregarCliente = () => {
-        console.log('voy')
-    }
+
     return (
         <>
             {
@@ -36,12 +32,7 @@ export default function MainClientes() {
                     <>
                         {
                             clientes?.length > 0
-                                ? <>
-                                    <div className='flex mb-4 justify-end'>
-                                        <ModalCrearCliente />
-                                    </div>
-                                    <TablaListClientes clientes={clientes} />
-                                </>
+                                ? <TablaListClientes clientes={clientes} />
                                 : <InstructivoSinClientes />
                         }
                     </>
