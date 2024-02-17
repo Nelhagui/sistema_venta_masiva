@@ -17,11 +17,18 @@ export default function TabsSecciones() {
                         </div>
                     }
                 >
-                <Card>
-                    <CardBody>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    </CardBody>
-                </Card>
+                    <Card>
+                        <CardBody>
+                            <div className="my-9" style={{ marginTop: 25 }}>
+                                <h3 className="antialiased font-medium tracking-wide" style={{ fontSize: 24 }}>
+                                    Novedades
+                                </h3>
+                                <p className='text-descripcion'>
+                                    Descubre las novedades que te ayudaran a potenciar tu negocio
+                                </p>
+                            </div>
+                        </CardBody>
+                    </Card>
                 </ Tab>
                 <Tab
                     key="music"

@@ -49,6 +49,7 @@
     height: 20px;
     text-align: center;
 }
+
 .tipo-fraccion {
     background: #1fd194;
     border-radius: 6px;
@@ -107,6 +108,64 @@
 .texto-intermitente {
     animation: intermitente 2s infinite;
 }
+
+.boton-degrades {
+    background: rgb(255, 255, 255);
+    background: linear-gradient(90deg, rgb(127, 138, 247) 0%, rgb(128 139 246) 35%, rgb(195, 201, 255) 100%);
+    color: white;
+    border: 1px solid #818cf8;
+    transition: opacity 0.5s; /* Transición suave de la opacidad */
+}
+
+  
+  .boton-degrades.animado {
+    animation: opacidad 2s linear infinite; /* Duración, tipo de animación e iteraciones */
+  }
+  
+  .detenido {
+    animation-play-state: paused; /* Detiene la animación */
+  }
+  
+  @keyframes opacidad {
+    0%, 100% {
+      opacity: 1; /* Opacidad normal al principio y al final */
+    }
+    50% {
+      opacity: 0.5; /* Opacidad al 50% en el paso intermedio */
+    }
+  }
+
+
+.contenedor-img-animada {
+    width: 23px; /* Ancho de tus imágenes */
+    height: 23px; /* Altura de tus imágenes */
+    position: relative;
+  }
+  
+  .imagen-animada {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: girar 4s linear infinite; /* Duración, tipo de animación e iteraciones */
+  }
+  
+  .detenido {
+    animation-play-state: paused; /* Detiene la animación */
+  }
+  
+  @keyframes girar {
+    0% {
+      transform: rotate(-15deg); /* Gira -15 grados en el primer paso */
+    }
+    50% {
+      transform: rotate(15deg); /* Gira 15 grados en el paso intermedio */
+    }
+    100% {
+      transform: rotate(-15deg); /* Vuelve a girar -15 grados en el último paso */
+    }
+  }
 
 @keyframes intermitente {
 

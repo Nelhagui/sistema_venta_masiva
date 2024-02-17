@@ -8,7 +8,8 @@ export default function MainHome() {
 
     return (
         <>
-            <NovedadesInstructivos/>
+            {/* <NovedadesInstructivos/> */}
+            <p>Bienvenido/a</p>
         </>
     )
 }
