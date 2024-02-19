@@ -1,16 +1,19 @@
 import { createRoot } from 'react-dom/client';
-import { Button, Tooltip, Select, SelectItem, Divider } from "@nextui-org/react";
+import { Button, Tooltip, Select, SelectItem, Divider, Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import { useEffect, useState } from 'react';
 import productoServices from '../../../services/productoServices';
+import productosBaseServices from '../../../services/productosBaseServices';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { InfoIcon } from '../../icons/InfoIcon';
 import { SaveIcon } from '../../icons/SaveIcon';
+import MagicIcon from "../../icons/magicIcon.png"
 
 export default function MainCrearProductos() {
 
     const [filas, setFilas] = useState([]);
     const [valoresInputs, setValoresInputs] = useState([]);
+    const [buscandoCoincidencias, setBuscandoCoincidencias] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [errores, setErrores] = useState([]);
     const [keyCounter, setKeyCounter] = useState(0);
@@ -119,13 +122,104 @@ export default function MainCrearProductos() {
         setValoresInputs(nuevosValoresInputs);
     };
 
+    const completaAutomaticamente = async () => {
+        const codigosBarra = [];
+        valoresInputs.forEach(input => {
+            if (input.codigo_barra) {
+                codigosBarra.push(input.codigo_barra);
+            }
+        });
+
+        if (codigosBarra.length === 0) {
+            toast.warn('No hay códigos de barras ingresados para buscar títulos automáticamente');
+            return;
+        }
+
+        try {
+            setBuscandoCoincidencias(true)
+            // Realizar la búsqueda en el archivo productos.json utilizando los códigos de barras
+            const response = await productosBaseServices.traerCoincidenciasConCodigoBarra(codigosBarra);
+            const productos = await response.json();
+
+            console.log('encontrados', productos.length);
+
+            if (productos.length > 0) {
+
+                // Actualizar los títulos correspondientes en el arreglo valoresInputs
+                const nuevosValoresInputs = [...valoresInputs];
+                nuevosValoresInputs.forEach(input => {
+                    if (codigosBarra.includes(input.codigo_barra)) {
+                        const productoEncontrado = productos.find(producto => producto.codigo_barra === input.codigo_barra);
+                        if (productoEncontrado) {
+                            input.titulo = productoEncontrado.titulo;
+                        }
+                    }
+                });
+                setValoresInputs(nuevosValoresInputs);
+
+                toast.success('Títulos actualizados automáticamente', {
+                    position: "bottom-right",
+                    autoClose: 2000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            } else {
+                toast.warn('No hay códigos de barras que coincidan los productos almacenados en nuestro sistema');
+            }
+        } catch (error) {
+            console.error('Error al buscar títulos automáticamente:', error);
+            toast.error('Error al buscar títulos automáticamente');
+        }
+        setBuscandoCoincidencias(false)
+    };
 
 
     return (
         <div style={{ marginTop: 30 }}>
-            <div className='d-flex' style={{ textAlign: 'end', marginBlock: '0 10px', marginBottom: 20 }}>
-                {/* <Button color="primary" style={{ paddingRight: 35, paddingLeft: 35 }} >Guardar Productos</Button> */}
+
+            <div>
                 <Button
+                    style={{ padding: 10, marginRight: 5 }}
+                    className={buscandoCoincidencias ? 'boton-degrades animado' : 'boton-degrades'}
+                    onClick={() => completaAutomaticamente()}
+                    isDisabled={buscandoCoincidencias}
+                >
+                    {
+                        buscandoCoincidencias
+                            ? "Procesando información ..."
+                            : "Completado automático"
+                    }
+
+                    <div class="contenedor-img-animada" style={{ width: 23 }}>
+                        <img src={MagicIcon} alt="" width={23} className={buscandoCoincidencias ? 'imagen-animada' : 'detenido'} />
+                    </div>
+                </Button>
+                <div className='flex items-center gap-1 mt-1'>
+                    <p className='text-descripcion' style={{ fontSize: 12, marginLeft: 5 }}>
+                        Rellena de forma automática los títulos.
+                    </p>
+                    <Popover placement="right">
+                        <PopoverTrigger>
+                            <p className='text-descripcion' style={{ fontSize: 13, textDecorationLine: 'underline' }}>Más info</p>
+                        </PopoverTrigger>
+                        <PopoverContent>
+                            <div className="px-1 py-2">
+                                <div className="text-small font-bold">Rellenado automático</div>
+                                <div className="text-tiny">Completa de forma automática con</div>
+                                <div className="text-tiny">sugerencias de títulos en aquellas filas que</div>
+                                <div className="text-tiny">contengan un código de barra.</div>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                </div>
+            </div>
+            <div className='d-flex' style={{ textAlign: 'end', marginBlock: '0 10px', marginBottom: 20 }}>
+                <Button
+                    isDisabled={buscandoCoincidencias}
                     className="bg-foreground text-background"
                     endContent={<SaveIcon />}
                     onClick={() => { handleConfirmCompra() }}
@@ -188,10 +282,13 @@ export default function MainCrearProductos() {
                     <tbody>
                         {filas.map((fila, index) => (
                             <tr key={index} className='group outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
-                                <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                <td
+                                    style={{ minWidth: '12rem' }}
+                                    className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                     <input
+                                        disabled={buscandoCoincidencias}
                                         type="text"
-                                        className='input-text'
+                                        className='input-text w-full'
                                         value={valoresInputs[index].titulo}
                                         onChange={(e) => handleInputChange(e, index, 'titulo')}
                                     />
@@ -240,6 +337,7 @@ export default function MainCrearProductos() {
                                 </td>
                                 <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                     <input
+                                        disabled={buscandoCoincidencias}
                                         type="number"
                                         className='input-text'
                                         value={valoresInputs[index].codigo_barra}

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ProductosBaseController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\VentaController;
 use Illuminate\Http\Request;
@@ -62,7 +63,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/productos', [ProductoController::class, 'apiStoreProducto']);
     Route::post('/productos/stock-precio', [ProductoController::class, 'apiStockPrecio']);
     Route::post('/productos/subir/archivo', [ProductoController::class, 'apiSubirExcel']);
-    
 
     // METODOS DE PAGO
     Route::get('/metodos-pago', [MetodoPagoController::class, 'indexApi']);
@@ -75,17 +75,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/crear', [VentaController::class, 'storeApi']);
     });
 
-
     // PROVEEDORES
     Route::prefix('proveedores')->group(function () {
         Route::get('/', [ProveedorController::class, 'indexApi']);
         Route::post('/crear', [ProveedorController::class, 'storeApi']);
     });
     
-
     // INVERSORES
     Route::get('/inversores', function () {
         $inversores = Inversor::all();
         return $inversores;
     });
+
+    // PRODUCTOS BASE
+    Route::post('/productos-base/busqueda-titulos', [ProductosBaseController::class, 'busqueda']);
 });
