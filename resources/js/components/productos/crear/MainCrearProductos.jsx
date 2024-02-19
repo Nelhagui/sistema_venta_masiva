@@ -140,13 +140,10 @@ export default function MainCrearProductos() {
             // Realizar la búsqueda en el archivo productos.json utilizando los códigos de barras
             const response = await productosBaseServices.traerCoincidenciasConCodigoBarra(codigosBarra);
             const productos = await response.json();
-
-            console.log('encontrados', productos.length);
-
             if (productos.length > 0) {
-
                 // Actualizar los títulos correspondientes en el arreglo valoresInputs
                 const nuevosValoresInputs = [...valoresInputs];
+                
                 nuevosValoresInputs.forEach(input => {
                     if (codigosBarra.includes(input.codigo_barra)) {
                         const productoEncontrado = productos.find(producto => producto.codigo_barra === input.codigo_barra);
@@ -168,7 +165,7 @@ export default function MainCrearProductos() {
                     theme: "light",
                 });
             } else {
-                toast.warn('No hay códigos de barras que coincidan los productos almacenados en nuestro sistema');
+                toast.warn('No hay códigos de barras que coincidan con los productos almacenados en nuestro sistema');
             }
         } catch (error) {
             console.error('Error al buscar títulos automáticamente:', error);

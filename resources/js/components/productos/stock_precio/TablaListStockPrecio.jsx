@@ -5,6 +5,7 @@ import { Input, Select, SelectItem, Checkbox, Table, TableHeader, TableColumn, T
 import { SearchIcon } from '../../icons/SearchIcon';
 import productoServices from '../../../services/productoServices';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { SaveIcon } from '../../icons/SaveIcon';
 import { InfoIcon } from '../../icons/InfoIcon';
 
@@ -14,7 +15,7 @@ const highlightedStyle = {
     transition: 'background-color 2s ease', // Animación de transición
 };
 
-const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
+const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const productosInicialesRef = useRef([]);
     const nuevoProducto = {
@@ -42,7 +43,6 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
-    const [nuevosProductos, setNuevosProductos] = useState([nuevoProducto]);
     const [datosCompra, setDatosCompra] = useState({
         fechaCompra: "",
         proveedor: "",
@@ -80,10 +80,9 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
         const value = e.target.value;
         setInputText(value);
         debouncedSearchRef.current(value);
-        console.log(value)
     }
 
-    
+
     useEffect(() => {
         // Enfoque automático en el elemento seleccionado
         if (selectedItem !== null && selectedItemRef.current) {
@@ -103,23 +102,17 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const handleChangeDatosCompra = (e) => {
         const { name, value } = e.target
         setDatosCompra({ ...datosCompra, [name]: value })
-        console.log(datosCompra)
-
     }
 
     const realizarBusqueda = (textoBusqueda) => {
-        console.log(textoBusqueda)
         const productosActuales = productosInicialesRef.current;
-
         const MAX_PRODUCTOS = 30;
         if (textoBusqueda === '') {
             setObjetosBuscados([]);
         } else {
             if (/^\d+$/.test(textoBusqueda)) {
                 const productoEncontrado = productosActuales.find((producto) => Number(producto.codigo_barra) === Number(textoBusqueda));
-                console.log(productoEncontrado)
                 if (productoEncontrado) {
-                    console.log(productoEncontrado)
                     agregarFilaConProducto(productoEncontrado)
                 } else {
                     setObjetosBuscados([]);
@@ -167,11 +160,19 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
+            const id = toast.loading("Procesando datos, aguarde...", {
+                render: "All is good",
+                isLoading: true,
+                position: "bottom-right",
+                closeOnClick: true,
+                theme: "colored",
+            })
+
             const response = await productoServices.cargarCompra(valoresInputs, datosCompra);
             const data = await response.json();
-
+            console.log(response.status);
             if (response.status !== 200) {
-                if(data?.errors?.length > 0){
+                if (data?.errors?.length > 0) {
                     let objetoResultado = {};
                     data.errors.forEach(error => {
                         objetoResultado[`${error.key}-${error.campo}`] = error.error;
@@ -182,19 +183,20 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                 } else {
                     console.log('error inesperado');
                 }
+                toast.update(id, {
+                    isLoading: false,
+                    autoClose: true,
+                    render: "Proceso incompleto",
+                    type: "error",
+                });
             } else {
-                toast.success('Compra realizada con éxito', {
-                    position: "bottom-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
+                toast.update(id, {
+                    isLoading: false,
+                    render: "Proceso finalizado correctamente!",
+                    type: "success",
                 });
                 setProductosSeleccionados([]);
-                setNuevosProductos([nuevoProducto]);
+
                 setDatosCompra({
                     fechaCompra: "",
                     proveedor: "",
@@ -205,17 +207,16 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
             // Maneja el error si la creación de la compra falla
         } finally {
             setIsLoading(false);
-           
         }
     };
 
     useEffect(() => {
         console.log(errores)
-      }, [errores])
+    }, [errores])
 
     useEffect(() => {
         agregarFila();
-    }, []); 
+    }, []);
 
 
     const generarIdUnico = (() => {
@@ -249,20 +250,17 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
             usar_control_por_lote: '',
             fecha_vencimiento: ''
         }]);
-    
+
     };
 
 
     const agregarFilaConProducto = (producto) => {
         // Verificar si el producto ya existe en las filas
         const productoExistenteIndex = valoresInputs.findIndex(valor => valor.key === producto.id);
-        console.log(productoExistenteIndex)
-        console.log(valoresInputs)
-        console.log(filas)
-        if (productoExistenteIndex !== -1 ) {
+        if (productoExistenteIndex !== -1) {
             // Si el producto ya existe, aumentar la cantidad
             const nuevosValores = [...valoresInputs];
-            nuevosValores[productoExistenteIndex].stock_actual++; 
+            nuevosValores[productoExistenteIndex].stock_actual++;
             setFilas(nuevosValores);
         } else {
             // Si el producto no existe, agregar una nueva fila
@@ -293,9 +291,9 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
 
         // Resto de tu lógica para valoresInputs y reset
     };
-    
 
-    
+
+
     const handleInputChange = (e, index, columna) => {
         const nuevosValoresInputs = [...valoresInputs];
         nuevosValoresInputs[index][columna] = e.target.value;
@@ -376,7 +374,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                 ) : null}
                             </ul>
                         </div>
-                    {/* FIN BUSCADOR */}
+                        {/* FIN BUSCADOR */}
                     </div>
                     <div style={{ display: 'flex', marginTop: '-1.5em', gap: '.5em' }}>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -480,10 +478,23 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                         </Tooltip>
                                     </div>
                                 </th>
-                                <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>CÓDIGO BARRA</th>
-                                <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>PRECIO COSTO</th>
-                                <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>PRECIO VENTA</th>
-                                <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>STOCK</th>
+                                <th
+                                    style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'
+                                >
+                                    CÓDIGO BARRA</th>
+                                <th
+                                    style={{ maxWidth: "6.5rem", backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'
+                                >
+                                    PRECIO COSTO</th>
+                                <th
+                                    style={{ maxWidth: "6.5rem", backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'
+                                >
+                                    PRECIO VENTA</th>
+                                <th
+                                    style={{ maxWidth: '6rem', backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'
+                                >
+                                    STOCK
+                                </th>
                                 <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='text-center group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>CONTROL POR LOTE</th>
                                 <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>FECHA DE VENCIMIENTO</th>
                                 <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>ACCIÓN</th>
@@ -567,6 +578,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                     >
                                                         <div>
                                                             <input
+                                                                style={{ maxWidth: '6.5rem' }}
                                                                 type="number"
                                                                 disabled
                                                                 className='input-text'
@@ -579,6 +591,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 :
                                                 <>
                                                     <input
+                                                        style={{ maxWidth: '6.5rem' }}
                                                         type="number"
                                                         className='input-text'
                                                         value={valoresInputs[index].precio_costo}
@@ -588,7 +601,8 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 </>
                                         }
                                     </td>
-                                    <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    <td
+                                        className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                         {
                                             valoresInputs[index].tipo === "costo_adicional"
                                                 ?
@@ -604,6 +618,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                     >
                                                         <div>
                                                             <input
+                                                                style={{ maxWidth: '6.5rem' }}
                                                                 type="number"
                                                                 disabled
                                                                 className='input-text'
@@ -616,6 +631,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 :
                                                 <>
                                                     <input
+                                                        style={{ maxWidth: '6.5rem' }}
                                                         type="number"
                                                         className='input-text'
                                                         value={valoresInputs[index].precio_venta}
@@ -625,9 +641,12 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                                                 </>
                                         }
                                     </td>
-                                    <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
+                                    <td
+                                        style={{ maxWidth: '7rem' }}
+                                        className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                         <input
                                             type="number"
+                                            style={{ maxWidth: '6rem' }}
                                             className='input-text'
                                             value={valoresInputs[index].stock_actual}
                                             onChange={(e) => handleInputChange(e, index, 'stock_actual')}
@@ -661,7 +680,7 @@ const TablaListStockPrecio = ({productos, inversores, proveedores}) => {
                 <div className='d-flex text-center mt-4'>
                     <Button variant="ghost" onClick={() => agregarFila()}>Agregar Fila</Button>
                 </div>
-                {/* <ToastContainer /> */}
+                <ToastContainer />
             </div>
 
         </>

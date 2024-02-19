@@ -465,8 +465,8 @@ class ProductoController extends Controller
         $compra->fecha_compra = $datosCompra['fechaCompra'] ?? now();
         $compra->fecha_carga = date('Y-m-d H:i:s');
         $compra->precio_total = $totalCompra;
-        $compra->numero_factura = $datosCompra['nroFactura'] ?? "";
-        $compra->proveedor_id = $datosCompra['proveedor'] ?? "";
+        $compra->numero_factura = $datosCompra['nroFactura'] ?? null;
+        $compra->proveedor_id = $datosCompra['proveedor'] ?? null;
         $compra->comercio_id = $id_comercio;
         $compra->save();
 
@@ -483,9 +483,9 @@ class ProductoController extends Controller
                     $productoDB->comercio_id = $id_comercio;
                     $productoDB->save();
                 }
-                $productoDB->tipo = $productoData['tipo'];
-                $productoDB->precio_venta = $productoData['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $productoData['precio_venta'];
-                $productoDB->precio_costo = $productoData['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $productoData['precio_costo'];
+                $productoDB->tipo = $producto['tipo'];
+                $productoDB->precio_venta = $producto['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $producto['precio_venta'];
+                $productoDB->precio_costo = $producto['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $producto['precio_costo'];
                 $productoDB->stock_actual = $productoDB->stock_actual + $producto['stock_actual'];
                 $productoDB->usar_control_por_lote = $producto['usar_control_por_lote'] == "on" ? 1 : 0;
                 $productoDB->update();
