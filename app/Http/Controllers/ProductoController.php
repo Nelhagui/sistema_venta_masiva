@@ -413,22 +413,25 @@ class ProductoController extends Controller
         $errores = [];
 
         foreach ($productos as $producto) {
-            $key = $producto['key'] ?? $producto['id'];
-            $validator = Validator::make($producto, [
-                'titulo' => 'required|unique:productos,titulo',
-                'precio_costo' => 'required',
-                'precio_venta' => 'required',
-                'stock_actual' => 'required',
-                'codigo_barra' => ['nullable', 'sometimes', 'numeric', 'unique:productos,codigo_barra'],
-                // Otras reglas de validación según tus necesidades
-            ]);
+            $key = $producto['key'];
 
-            // Personalizar mensajes de error
+            $reglas_validacion = [
+                'titulo' => 'required|unique:productos,titulo,NULL,id,comercio_id,' . $id_comercio,
+                'codigo_barra' => 'nullable|unique:productos,codigo_barra,NULL,id,comercio_id,' . $id_comercio,
+                'stock_actual' => 'required',
+            ];
+
+            if ($producto['tipo'] !== Producto::COSTO_ADICIONAL) {
+                $reglas_validacion['precio_costo'] = 'required';
+                $reglas_validacion['precio_venta'] = 'required';
+            }
+
+            $validator = Validator::make($producto, $reglas_validacion);
+
             $validator->messages()->merge([
-                'required' => 'El campo :attribute es obligatorio.',
+                'required' => 'Campo obligatorio.',
                 'unique' => 'El :attribute ya está en uso.',
                 'numeric' => 'El campo :attribute requiere números.',
-                // Personaliza los mensajes según tus necesidades
             ]);
 
 
@@ -460,7 +463,6 @@ class ProductoController extends Controller
 
         $compra = new Compra;
         $compra->fecha_compra = $datosCompra['fechaCompra'] ?? now();
-        ;
         $compra->fecha_carga = date('Y-m-d H:i:s');
         $compra->precio_total = $totalCompra;
         $compra->numero_factura = $datosCompra['nroFactura'] ?? "";
@@ -481,8 +483,9 @@ class ProductoController extends Controller
                     $productoDB->comercio_id = $id_comercio;
                     $productoDB->save();
                 }
-                $productoDB->precio_venta = $producto['precio_venta'];
-                $productoDB->precio_costo = $producto['precio_costo'];
+                $productoDB->tipo = $productoData['tipo'];
+                $productoDB->precio_venta = $productoData['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $productoData['precio_venta'];
+                $productoDB->precio_costo = $productoData['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $productoData['precio_costo'];
                 $productoDB->stock_actual = $productoDB->stock_actual + $producto['stock_actual'];
                 $productoDB->usar_control_por_lote = $producto['usar_control_por_lote'] == "on" ? 1 : 0;
                 $productoDB->update();
