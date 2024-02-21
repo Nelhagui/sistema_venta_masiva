@@ -135,28 +135,30 @@ const ResumenPedido = () => {
                         <ViewTotalAumentoDescuento />
                     </div>
                     <div className='flex'>
-                        <div style={{ marginRight: 20 }}>
-                            <Popover placement="bottom" showArrow offset={10}>
-                                <PopoverTrigger>
+                        <div className='flex'>
+                            <div className='w-100 md:w-32 lg:w-48' style={{ marginRight: 20 }}>
+                                <Popover placement="bottom" showArrow offset={10}>
+                                    <PopoverTrigger>
 
-                                    <Button style={{ backgroundColor: 'white', borderWidth: 0.5, color: '#71717a' }}>
-                                        <ChangesInPaymentIcon />
-                                        Descuento - Aumento
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[240px]">
-                                    {(titleProps) => (
-                                        <div className="px-1 py-2 w-full">
-                                            <div className="mt-2 flex flex-col gap-2 w-full">
-                                                <ExtraValueConfiguration />
+                                        <Button style={{ backgroundColor: 'white', borderWidth: 0.5, color: '#71717a' }}>
+                                            <ChangesInPaymentIcon />
+                                            Descuento - Aumento
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-[240px]">
+                                        {(titleProps) => (
+                                            <div className="px-1 py-2 w-full">
+                                                <div className="mt-2 flex flex-col gap-2 w-full">
+                                                    <ExtraValueConfiguration />
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </PopoverContent>
-                            </Popover>
-                        </div>
-                        <div style={{ marginRight: 20 }}>
-                            <Vuelto />
+                                        )}
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+                            <div className='w-100 md:w-32 lg:w-48' style={{ marginRight: 20 }}>
+                                <Vuelto />
+                            </div>
                         </div>
                         <Tooltip
                             delay={500}

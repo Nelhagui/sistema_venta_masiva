@@ -32,6 +32,12 @@ export default function MainCrearProductos() {
 
     const handleSubmit = async () => {
         setIsLoading(true);
+        const id = toast.loading("Procesando datos, aguarde...", {
+            isLoading: true,
+            position: "bottom-right",
+            closeOnClick: true,
+            theme: "colored",
+        })
         try {
             const response = await productoServices.crear(valoresInputs);
             const data = await response.json();
@@ -45,16 +51,18 @@ export default function MainCrearProductos() {
                 } else {
                     console.log('error inesperado');
                 }
+                toast.update(id, {
+                    isLoading: false,
+                    autoClose: 3000,
+                    render: "Proceso incompleto, revise los campos",
+                    type: "error",
+                });
             } else {
-                toast.success('Productos cargados exitosamente', {
-                    position: "bottom-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
+                toast.update(id, {
+                    isLoading: false,
+                    autoClose: 9000,
+                    render: "Proceso finalizado correctamente!",
+                    type: "success",
                 });
                 resetAll();
             }
@@ -143,7 +151,7 @@ export default function MainCrearProductos() {
             if (productos.length > 0) {
                 // Actualizar los títulos correspondientes en el arreglo valoresInputs
                 const nuevosValoresInputs = [...valoresInputs];
-                
+
                 nuevosValoresInputs.forEach(input => {
                     if (codigosBarra.includes(input.codigo_barra)) {
                         const productoEncontrado = productos.find(producto => producto.codigo_barra === input.codigo_barra);

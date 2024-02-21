@@ -161,7 +161,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
         setIsLoading(true);
         try {
             const id = toast.loading("Procesando datos, aguarde...", {
-                render: "All is good",
                 isLoading: true,
                 position: "bottom-right",
                 closeOnClick: true,
@@ -170,7 +169,7 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
 
             const response = await productoServices.cargarCompra(valoresInputs, datosCompra);
             const data = await response.json();
-            console.log(response.status);
+
             if (response.status !== 200) {
                 if (data?.errors?.length > 0) {
                     let objetoResultado = {};

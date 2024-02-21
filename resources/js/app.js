@@ -19,6 +19,8 @@ import MainProximamente from './components/proximamente/MainProximamente.jsx';
 import MainMetodosPago from './components/metodosPago/MainMetodosPago.jsx';
 import MainHome from './components/home/MainHome.jsx';
 
+import MainMaquetadoLector from './components/maquetado/MainMaquetadoLector.jsx';
+
 
 window.Alpine = Alpine;
 

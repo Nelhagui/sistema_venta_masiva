@@ -59,6 +59,12 @@ function ListProductos({ productos, metodosDePago, clientes }) {
 
     const handleSubmit = async () => {
         setIsLoading(true);
+        const id = toast.loading("Procesando datos, aguarde...", {
+            isLoading: true,
+            position: "bottom-right",
+            closeOnClick: true,
+            theme: "colored",
+        })
         try {
             await lectorServices.crearVenta(
                 productosSeleccionados,
@@ -71,18 +77,19 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             );
             // Realiza alguna acción adicional después de completar la creación de la venta, si es necesario
         } catch (error) {
-            // Maneja el error si la creación de la venta falla
+            toast.update(id, {
+                isLoading: false,
+                autoClose: 3000,
+                render: "Proceso incompleto, vuelva a intentarlo",
+                type: "error",
+            });
         } finally {
             setIsLoading(false);
-            toast.success('Venta realizada con éxito', {
-                position: "bottom-right",
-                autoClose: 2000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
+            toast.update(id, {
+                isLoading: false,
+                autoClose: 9000,
+                render: "Proceso finalizado correctamente!",
+                type: "success",
             });
             resetAll();
             reset();
@@ -118,7 +125,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         setMetodoPagoSeleccionado("0");
     }
     const handleInputChange = (e) => {
-        setIsLoading(true)
         const value = e.target.value;
         setInputText(value);
         debouncedSearchRef.current(value);
@@ -159,7 +165,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                 setObjetosBuscados(productosCoincidentes);
             }
         }
-        setIsLoading(false);
     }
 
     const debouncedSearchRef = useRef(debounce((textoBusqueda) => realizarBusqueda(textoBusqueda), 200));
@@ -290,6 +295,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     <div>
                         <div>
                             <Input
+                                isDisabled={isLoading}
                                 isClearable
                                 onClear={() => reset()}
                                 variant="bordered"
@@ -354,7 +360,11 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                         }}
                         onClick={onOpen}
                     >
-                        Cargar Venta
+                        {
+                            isLoading
+                            ? "Cargando compra..."
+                            : "Cargar Venta"
+                        }
                     </button>
                 </div>
             </div>
@@ -411,7 +421,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     <>
                         <div className='flex gap-3'>
                             <div className='w-full'>
-                                <ResumenPedido />
+                                <ResumenPedido/>
                             </div>
                             <div className='flex flex-col min-w-max gap-2 px-3'>
                                 <div className='flex flex-col gap-2 p-3 rounded' style={{ backgroundColor: '#fcfcfc', borderWidth: 1, borderColor: "#e7e8ff" }}>

@@ -140,6 +140,17 @@ Route::middleware(['auth', 'verificarPais'])->group(function () {
         Route::get('/reportes/proveedores', [ReporteController::class, 'indexProveedores'])->name('index.reportes.proveedores');
         Route::get('/reportes/proveedores/compras/{id}', [ReporteController::class, 'showProveedorCompras'])->name('show.reportesComprasProveedores');
 
+
+        //DISENIO
+        Route::get('/lector-disenio', function(){
+            return view('maquetado.lector');
+        });
+
+        //PRUEBA MERCADO
+        Route::get('/pagos-mercadopago', function(){
+            return view('mercadopago.index');
+        });
+
     });
 
 

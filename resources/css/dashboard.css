@@ -180,3 +180,21 @@
         /* Opacidad normal */
     }
 }
+
+
+.container-lector{
+    background-color: red;
+    min-height: 16px;
+}
+.container-opciones{
+    background-color: green;
+    min-height: 16px;
+}
+.container-resumen{
+    background-color: blue;
+    min-height: 16px;
+}
+.container-buttons{
+    background-color: violet;
+    min-height: 16px;
+}
