@@ -15,6 +15,7 @@
                         <label for="titulo">Título</label><br>
                         <div style="width: 280px">
                             <input type="text" name="titulo" required value="{{ $producto->titulo }}"
+                                oninput="this.value = this.value.toUpperCase()"
                                 class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                         </div>
                         @error('titulo')
@@ -41,30 +42,72 @@
                         @enderror
                     </div>
 
-                    <div class="my-3">
-                        <label for="precio_costo">Precio costo</label><br>
-                        <div style="width: 280px">
-                            <input type="number" name="precio_costo" id="precio_costo" step="any"
-                                @if ($producto->tipo != 'costo_adicional') required @endif value="{{ $producto->precio_costo }}"
-                                @if ($producto->tipo == 'costo_adicional') disabled @endif
-                                class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+
+                    <div class="flex items-center gap-4">
+                        <div class="my-3">
+                            <label for="precio_costo">Precio costo</label><br>
+                            <div style="width: 280px">
+                                <input type="number" name="precio_costo" id="precio_costo" step="any"
+                                    @if ($producto->tipo != 'costo_adicional') required @endif
+                                    value="{{ $producto->precio_costo }}"
+                                    @if ($producto->tipo == 'costo_adicional') disabled @endif
+                                    class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                            </div>
+                            @error('precio_costo')
+                                <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
+                            @enderror
                         </div>
-                        @error('precio_costo')
-                            <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
-                        @enderror
+                        <div class="flex gap-2 border p-3">
+                            <div>
+                                <label for="valor_precio_costo">Valor</label><br>
+                                <div style="width: 150px">
+                                    <input type="number" name="valor_precio_costo" id="valor_precio_costo" step="any"
+                                        class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                            <div>
+                                <label for="cantidad_precio_costo">Cantidad</label><br>
+                                <div style="width: 150px">
+                                    <input type="number" name="cantidad_precio_costo" id="cantidad_precio_costo" step="any"
+                                        class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="flex">
+                            <p style="font-size: 12px"> Asistente para calcular costo individual del producto dentro de un paquete. <br> Ejemplo: Bolsa de caramelos.</p>
+                        </div>
                     </div>
 
-                    <div class="my-3">
-                        <label for="precio_venta">Precio Venta</label><br>
-                        <div style="width: 280px">
-                            <input type="number" name="precio_venta" id="precio_venta" step="any"
-                                @if ($producto->tipo != 'costo_adicional') required @endif value="{{ $producto->precio_venta }}"
-                                @if ($producto->tipo == 'costo_adicional') disabled @endif
-                                class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    <div class="flex items-center gap-4 mt-3">
+                        <div class="my-3">
+                            <label for="precio_venta">Precio Venta</label><br>
+                            <div style="width: 280px">
+                                <input type="number" name="precio_venta" id="precio_venta" step="any"
+                                    @if ($producto->tipo != 'costo_adicional') required @endif
+                                    value="{{ $producto->precio_venta }}"
+                                    @if ($producto->tipo == 'costo_adicional') disabled @endif
+                                    class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                            </div>
+                            @error('precio_venta')
+                                <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
+                            @enderror
+
                         </div>
-                        @error('precio_venta')
-                            <div class="text-red-500 alert-danger mt-2">{{ $message }}</div>
-                        @enderror
+                        <div class="flex gap-2 border p-2">
+                            {{-- calculador --}}
+                            <div>
+                                <label for="porcentaje_aumento">Aumento Porcentaje</label><br>
+                                <div style="width: 150px">
+                                    <input type="number" name="porcentaje_aumento" id="porcentaje_aumento" step="any"
+                                        value="{{ $producto->porcenjate_aumento }}"
+                                        class="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <p style="font-size: 12px"> Asistente para calcular el precio venta a partir de un porcentaje de aumento.</p>
+                        </div>
                     </div>
 
                     <div class="my-3">
@@ -96,6 +139,70 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const cantidadInput = document.getElementById('cantidad_precio_costo');
+            const valorInput = document.getElementById('valor_precio_costo');
+            const precioCostoInput = document.getElementById('precio_costo');
+    
+            cantidadInput.addEventListener('input', calcularValorCosto);
+            valorInput.addEventListener('input', calcularValorCosto);
+    
+            function calcularValorCosto() {
+                const cantidad = parseFloat(cantidadInput.value);
+                const valor = parseFloat(valorInput.value);
+    
+                if (!isNaN(cantidad) && !isNaN(valor)) {
+                    const valorCosto = valor / cantidad;
+                    precioCostoInput.value = valorCosto.toFixed(2);
+                }
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const precioVentaInput = document.getElementById('precio_venta');
+            const porcentajeAumentoInput = document.getElementById('porcentaje_aumento');
+            const precioCostoInput = document.getElementById('precio_costo');
+
+            function calcularPrecioVenta() {
+                const precioCosto = parseFloat(precioCostoInput.value);
+                const porcentajeAumento = parseFloat(porcentajeAumentoInput.value);
+                const aumento = (precioCosto * porcentajeAumento) / 100;
+                const precioVenta = precioCosto + aumento;
+                precioVentaInput.value = precioVenta.toFixed(2);
+            }
+
+            function calcularPorcentajeAumento() {
+                const precioVenta = parseFloat(precioVentaInput.value);
+                const precioCosto = parseFloat(precioCostoInput.value);
+                const aumento = precioVenta - precioCosto;
+                const porcentajeAumento = (aumento / precioCosto) * 100;
+                porcentajeAumentoInput.value = porcentajeAumento.toFixed(2);
+            }
+
+            function calcularPorcentajeInicial() {
+                const precioVenta = parseFloat(precioVentaInput.value);
+                const precioCosto = parseFloat(precioCostoInput.value);
+                const aumento = precioVenta - precioCosto;
+                const porcentajeAumento = (aumento / precioCosto) * 100;
+                porcentajeAumentoInput.value = porcentajeAumento.toFixed(2);
+            }
+
+            precioVentaInput.addEventListener('input', calcularPorcentajeAumento);
+            porcentajeAumentoInput.addEventListener('input', calcularPrecioVenta);
+            precioCostoInput.addEventListener('input', () => {
+                calcularPorcentajeAumento();
+                calcularPrecioVenta();
+            });
+
+            // Calcular porcentaje inicial si hay valores al cargar la página
+            if (precioVentaInput.value && precioCostoInput.value) {
+                calcularPorcentajeInicial();
+            }
+        });
+    </script>
+
     <script>
         var precioCostoValue = document.getElementById('precio_costo').value;
         var precioVentaValue = document.getElementById('precio_venta').value;

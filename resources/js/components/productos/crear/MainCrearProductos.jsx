@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { InfoIcon } from '../../icons/InfoIcon';
 import { SaveIcon } from '../../icons/SaveIcon';
 import MagicIcon from "../../icons/magicIcon.png"
+import { HelpIcon } from '../../icons/HelpIcon';
 
 export default function MainCrearProductos() {
 
@@ -17,6 +18,83 @@ export default function MainCrearProductos() {
     const [isLoading, setIsLoading] = useState(false)
     const [errores, setErrores] = useState([]);
     const [keyCounter, setKeyCounter] = useState(0);
+
+    // CALCULO DE VALOR COSTO
+    const [cantidad, setCantidad] = useState('');
+    const [valor, setValor] = useState('');
+    const [precioCosto, setPrecioCosto] = useState('');
+
+    const resetAsisCosto = () => {
+        setCantidad('')
+        setValor('')
+        setPrecioCosto('')
+    }
+
+    const handleCantidadChange = (event) => {
+        const nuevaCantidad = event.target.value;
+        setCantidad(nuevaCantidad);
+        calcularValorCosto(nuevaCantidad, valor);
+    };
+
+    const handleValorChange = (event) => {
+        const nuevoValor = event.target.value;
+        setValor(nuevoValor);
+        calcularValorCosto(cantidad, nuevoValor);
+    };
+
+    const calcularValorCosto = (cantidad, valor) => {
+        const cantidadFloat = parseFloat(cantidad);
+        const valorFloat = parseFloat(valor);
+
+        if (!isNaN(cantidadFloat) && !isNaN(valorFloat) && cantidadFloat !== 0) {
+            const nuevoPrecioCosto = valorFloat / cantidadFloat;
+            setPrecioCosto(nuevoPrecioCosto.toFixed(2));
+        } else {
+            setPrecioCosto('');
+        }
+    };
+    const handleInputCostoAsistente = (precioCosto, index) => {
+        const nuevosValoresInputs = [...valoresInputs];
+        nuevosValoresInputs[index]['precio_costo'] = precioCosto;
+        setValoresInputs(nuevosValoresInputs);
+    };
+    // FIN CALCULO VALOR COSTO
+
+    // CALCULO VALOR CON PORCENTAJE
+    const [porcentaje, setPorcentaje] = useState('');
+    const [precioConAumento, setPrecioConAumento] = useState('');
+
+    const resetAsisVenta = () => {
+        setPorcentaje('')
+        setPrecioConAumento('')
+    }
+
+    const handlePorcentajeChange = (e, index) => {
+        const nuevoPorcentaje = e.target.value;
+        setPorcentaje(nuevoPorcentaje);
+        const precioBase = valoresInputs[index]['precio_costo'];
+        calcularPrecioConAumento(nuevoPorcentaje, precioBase);
+    };
+
+    const calcularPrecioConAumento = (porcentaje, precioBase) => {
+        const porcentajeFloat = parseFloat(porcentaje);
+        const precioBaseFloat = parseFloat(precioBase);
+
+        if (!isNaN(porcentajeFloat) && !isNaN(precioBaseFloat)) {
+            const aumento = (porcentajeFloat / 100) * precioBaseFloat;
+            const precioConAumento = precioBaseFloat + aumento;
+            setPrecioConAumento(precioConAumento.toFixed(2));
+        } else {
+            setPrecioConAumento('');
+        }
+    };
+
+    const handleInputVentaAsistente = (precioVenta, index) => {
+        const nuevosValoresInputs = [...valoresInputs];
+        nuevosValoresInputs[index]['precio_venta'] = precioVenta;
+        setValoresInputs(nuevosValoresInputs);
+    };
+    // FIN VALOR CON PORCENTAJE
 
     // Crear la fila por defecto
     useEffect(() => {
@@ -199,7 +277,7 @@ export default function MainCrearProductos() {
                             : "Completado automático"
                     }
 
-                    <div class="contenedor-img-animada" style={{ width: 23 }}>
+                    <div className="contenedor-img-animada" style={{ width: 23 }}>
                         <img src={MagicIcon} alt="" width={23} className={buscandoCoincidencias ? 'imagen-animada' : 'detenido'} />
                     </div>
                 </Button>
@@ -373,19 +451,84 @@ export default function MainCrearProductos() {
                                                             value={valoresInputs[index].precio_costo}
                                                             onChange={(e) => handleInputChange(e, index, 'precio_costo')}
                                                         />
+
                                                     </div>
                                                 </Tooltip>
                                             </>
                                             :
                                             <>
-                                                <input
-                                                    type="number"
-                                                    style={{ maxWidth: '6rem' }}
-                                                    className='input-text'
-                                                    value={valoresInputs[index].precio_costo}
-                                                    onChange={(e) => handleInputChange(e, index, 'precio_costo')}
-                                                />
+                                                <div className='flex items-center gap-1' style={{ maxWidth: '6rem' }}>
+                                                    <input
+                                                        type="number"
+                                                        style={{ maxWidth: '6rem' }}
+                                                        className='input-text'
+                                                        value={valoresInputs[index].precio_costo}
+                                                        onChange={(e) => handleInputChange(e, index, 'precio_costo')}
+                                                    />
+                                                    <Popover placement="right">
+                                                        <PopoverTrigger>
+                                                            <span onClick={() => resetAsisCosto()}>
+                                                                <HelpIcon fill='#7f8af7' />
+                                                            </span>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent>
+                                                            <div className="px-1 py-2">
+                                                                <div className="text-small font-bold mb-1">Calculadora de Precio por Unidad:</div>
+                                                                <div className="text-tiny">Ingrese la cantidad total de productos y  </div>
+                                                                <div className="text-tiny">el <strong>precio del paquete</strong> para obtener <strong>el costo</strong> </div>
+                                                                <div className="text-tiny"> <strong>individual</strong> de cada producto que se vende en un paquete</div>
+                                                                {/* <div className="text-tiny">Asistente para calcular costo individual de productos que venden en paquetes.</div> */}
+                                                                <div>
+                                                                    <div className="my-3">
+                                                                        <label htmlFor="cantidad_precio_costo">Cantidad</label><br />
+                                                                        <input
+                                                                            type="number"
+                                                                            id="cantidad_precio_costo"
+                                                                            step="any"
+                                                                            value={cantidad}
+                                                                            onChange={handleCantidadChange}
+                                                                            className="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="my-3">
+                                                                        <label htmlFor="valor_precio_costo">Valor</label><br />
+                                                                        <input
+                                                                            type="number"
+                                                                            id="valor_precio_costo"
+                                                                            step="any"
+                                                                            value={valor}
+                                                                            onChange={handleValorChange}
+                                                                            className="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="my-3">
+                                                                        <label htmlFor="precio_costo">Precio Costo</label><br />
+                                                                        <input
+                                                                            type="number"
+                                                                            id="precio_costo"
+                                                                            step="any"
+                                                                            value={precioCosto}
+                                                                            className="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                                            readOnly
+                                                                        />
+                                                                    </div>
+                                                                    <div className="my-3">
+                                                                        <Button
+                                                                            className='bg-personalizado text-white'
+                                                                            isDisabled={precioCosto === ''}
+                                                                            onClick={() => handleInputCostoAsistente(precioCosto, index)}
+                                                                        >
+                                                                            Usar Costo
+                                                                        </Button>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                </div>
                                                 <p style={{ color: 'red' }}>{errores[`${fila.key}-precio_costo`] ?? ""}</p>
+
                                             </>
                                     }
                                 </td>
@@ -409,21 +552,91 @@ export default function MainCrearProductos() {
                                                             disabled
                                                             style={{ maxWidth: '6rem' }}
                                                             className='input-text'
-                                                            value={valoresInputs[index].precio_costo}
-                                                            onChange={(e) => handleInputChange(e, index, 'precio_costo')}
+                                                            value={valoresInputs[index].precio_venta}
+                                                            onChange={(e) => handleInputChange(e, index, 'precio_venta')}
                                                         />
                                                     </div>
                                                 </Tooltip>
                                             </>
                                             :
                                             <>
-                                                <input
-                                                    type="number"
-                                                    style={{ maxWidth: '6rem' }}
-                                                    className='input-text'
-                                                    value={valoresInputs[index].precio_venta}
-                                                    onChange={(e) => handleInputChange(e, index, 'precio_venta')}
-                                                />
+                                                <div className='flex items-center gap-1' style={{ maxWidth: '6rem' }}>
+                                                    <input
+                                                        type="number"
+                                                        style={{ maxWidth: '6rem' }}
+                                                        className='input-text'
+                                                        value={valoresInputs[index].precio_venta}
+                                                        onChange={(e) => handleInputChange(e, index, 'precio_venta')}
+                                                    />
+                                                    <Popover placement="right">
+                                                        <PopoverTrigger>
+                                                            <span onClick={() => resetAsisVenta()}>
+                                                                <HelpIcon fill='#7f8af7' />
+                                                            </span>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent>
+                                                            <div className="px-1 py-2">
+                                                                {
+                                                                    valoresInputs[index].precio_costo === null || valoresInputs[index].precio_costo === ''
+                                                                        ? <p style={{
+                                                                            paddingTop: '15px',
+                                                                            paddingBottom: '5px',
+                                                                            fontSize: 16,
+                                                                            color: 'red'
+                                                                        }}>Se Requiere "precio costo"</p>
+                                                                        : null
+                                                                }
+                                                                <div className={
+                                                                    valoresInputs[index].precio_costo === null || valoresInputs[index].precio_costo === ''
+                                                                    ? 'estilo-disabled'
+                                                                    : ''
+                                                                }>
+                                                                    <div className="text-small font-bold mb-1">Calculadora de Precio de Venta:</div>
+                                                                    <div className="text-tiny">Ingrese el porcentaje deseado sobre el costo del </div>
+                                                                    <div className="text-tiny">producto para obtener el precio de venta sugerido.</div>
+                                                                    {/* <div className="text-tiny">Asistente para calcular costo individual de productos que venden en paquetes.</div> */}
+                                                                    <div>
+                                                                        <div className="my-3">
+                                                                            <label htmlFor="porcentaje_venta">Porcentaje</label><br />
+                                                                            <input
+                                                                                type="number"
+                                                                                id="porcentaje_venta"
+                                                                                step="any"
+                                                                                disabled={valoresInputs[index].precio_costo === null || valoresInputs[index].precio_costo === ''}
+                                                                                value={porcentaje}
+                                                                                onChange={(e) => handlePorcentajeChange(e, index)}
+                                                                                className="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                                            />
+                                                                        </div>
+
+                                                                        <div className="my-3">
+                                                                            <label htmlFor="precio_con_aumento">Precio Sugerido</label><br />
+                                                                            <input
+                                                                                type="number"
+                                                                                id="precio_con_aumento"
+                                                                                step="any"
+                                                                                value={precioConAumento}
+                                                                                className="block w-full rounded-md border-0 py-2 px-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                                                                readOnly
+                                                                                disabled={true}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="my-3">
+                                                                            <Button
+                                                                                className='bg-personalizado text-white'
+                                                                                onClick={() => handleInputVentaAsistente(precioConAumento, index)}
+                                                                                isDisabled={precioConAumento === ''}
+                                                                            >
+                                                                                Usar Precio Venta
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                </div>
                                                 <p style={{ color: 'red' }}>{errores[`${fila.key}-precio_venta`] ?? ""}</p>
                                             </>
                                     }

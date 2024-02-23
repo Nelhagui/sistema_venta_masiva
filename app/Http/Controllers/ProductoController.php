@@ -30,15 +30,7 @@ class ProductoController extends Controller
         return view('productos.index');
     }
 
-    // public function indexProductosBase()
-    // {
-    //     $proveedores = Proveedor::all();
-    //     return view('productos.productos_base.index', compact('proveedores'));
-    // }
-
-    /**
-     * Show the form for creating a new resource.
-     */
+    
     public function create()
     {
         return view('productos.create');

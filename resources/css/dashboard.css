@@ -198,3 +198,7 @@
     background-color: violet;
     min-height: 16px;
 }
+
+.estilo-disabled {
+    opacity: 0.5;
+}

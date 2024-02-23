@@ -21,13 +21,9 @@ import { SearchIcon } from "../icons/SearchIcon";
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
 import { capitalize, capitalizeToLowerCase } from "../../utils/utils";
 import { formatearAMoneda } from "../../utils/utils";
-import { EyeIcon } from "../icons/EyeIcon";
-import { DeleteIcon } from "../icons/DeleteIcon";
 import { EditIcon } from "../icons/EditIcon";
 import { urls } from "../../config/config";
 import { InventoryIcon } from "../icons/InventoryIcon";
-import { UploadFileIcon } from "../icons/UploadFileIcon";
-import { capitalizeToUpperCase } from "../../utils/utils";
 
 
 const INITIAL_VISIBLE_COLUMNS = ["titulo", "precio_costo", "precio_venta", "stock_actual", "acciones"];
@@ -65,9 +61,11 @@ export default function TablaListProductos({ productos }) {
         let filteredUsers = [...productos];
 
         if (hasSearchFilter) {
-            filteredUsers = filteredUsers.filter((item) =>
-                item.titulo.toLowerCase().includes(filterValue.toLowerCase()),
-            );
+            filteredUsers = filteredUsers.filter((item) => {
+                const tituloMatch = item.titulo.toLowerCase().includes(filterValue.toLowerCase());
+                const codigoBarraMatch = item.codigo_barra && item.codigo_barra.toString().includes(filterValue);
+                return tituloMatch || codigoBarraMatch;
+            });
         }
         return filteredUsers;
     }, [productos, filterValue]);

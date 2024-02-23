@@ -12,7 +12,6 @@ export default defineConfig({
             'resources/js/components/lector/MainLector.jsx',
             'resources/js/components/reportes/MainReportes.jsx',
             'resources/js/components/productos/MainProductos.jsx',
-            'resources/js/components/productos_base/MainProductosBase.jsx',
             'resources/js/components/compras/MainCompras.jsx',
             'resources/js/components/login/Login.jsx',
             'resources/js/components/clientes/MainClientes.jsx',

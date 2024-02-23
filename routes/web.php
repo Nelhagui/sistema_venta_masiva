@@ -61,10 +61,6 @@ Route::middleware(['auth', 'verificarPais'])->group(function () {
         });
 
 
-        //PRODUCTOS BASE
-        Route::get('/productos/base', [ProductoController::class, 'indexProductosBase'])->name('index.productosBase');
-
-
         //COMPRAS
         Route::get('/compras', [CompraController::class, 'index'])->name('index.compras');
         Route::get('/compras/agregar', [CompraController::class, 'create'])->name('create.compras');
