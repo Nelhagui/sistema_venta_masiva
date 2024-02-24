@@ -1,3 +1,4 @@
+
 import { createRoot } from 'react-dom/client';
 import { Button, Tooltip, Select, SelectItem, Divider, Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import { useEffect, useState } from 'react';
@@ -228,28 +229,33 @@ export default function MainCrearProductos() {
             const productos = await response.json();
             if (productos.length > 0) {
                 // Actualizar los títulos correspondientes en el arreglo valoresInputs
-                const nuevosValoresInputs = [...valoresInputs];
+                setTimeout(() => {
+                    const nuevosValoresInputs = [...valoresInputs];
 
-                nuevosValoresInputs.forEach(input => {
-                    if (codigosBarra.includes(input.codigo_barra)) {
-                        const productoEncontrado = productos.find(producto => producto.codigo_barra === input.codigo_barra);
-                        if (productoEncontrado) {
-                            input.titulo = productoEncontrado.titulo;
+                    nuevosValoresInputs.forEach(input => {
+                        if (codigosBarra.includes(input.codigo_barra)) {
+                            const productoEncontrado = productos.find(producto => producto.codigo_barra === input.codigo_barra);
+                            if (productoEncontrado && !input.titulo) {
+                                input.titulo = productoEncontrado.titulo;
+                                console.log(input)
+                            }
                         }
-                    }
-                });
-                setValoresInputs(nuevosValoresInputs);
+                    });
+                    setValoresInputs(nuevosValoresInputs);
 
-                toast.success('Títulos actualizados automáticamente', {
-                    position: "bottom-right",
-                    autoClose: 2000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                });
+                    toast.success('Títulos actualizados automáticamente', {
+                        position: "bottom-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                }, 2000); // Retraso de 2 segundos (2000 milisegundos)
+
+                
             } else {
                 toast.warn('No hay códigos de barras que coincidan con los productos almacenados en nuestro sistema');
             }
@@ -257,7 +263,9 @@ export default function MainCrearProductos() {
             console.error('Error al buscar títulos automáticamente:', error);
             toast.error('Error al buscar títulos automáticamente');
         }
-        setBuscandoCoincidencias(false)
+        setTimeout(() => {
+            setBuscandoCoincidencias(false)
+        }, 2000); // Retraso de 2 segundos (2000 milisegundos)
     };
 
 
@@ -371,9 +379,10 @@ export default function MainCrearProductos() {
                                     <input
                                         disabled={buscandoCoincidencias}
                                         type="text"
-                                        className='input-text w-full'
+                                        className={buscandoCoincidencias && !valoresInputs[index].titulo && valoresInputs[index].codigo_barra ? 'boton-degrades animado w-full input-text' : 'input-text w-full'}
                                         value={valoresInputs[index].titulo}
                                         onChange={(e) => handleInputChange(e, index, 'titulo')}
+                                        placeholder={buscandoCoincidencias && !valoresInputs[index].titulo && valoresInputs[index].codigo_barra ? "Buscando" : ""}
                                     />
                                     <p style={{ color: 'red' }}>{errores[`${fila.key}-titulo`] ?? ""}</p>
                                 </td>

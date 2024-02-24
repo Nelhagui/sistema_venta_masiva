@@ -117,6 +117,10 @@
     transition: opacity 0.5s; /* Transición suave de la opacidad */
 }
 
+.boton-degrades::placeholder {
+    color: white;
+}
+
   
   .boton-degrades.animado {
     animation: opacidad 2s linear infinite; /* Duración, tipo de animación e iteraciones */
