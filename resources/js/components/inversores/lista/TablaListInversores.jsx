@@ -8,107 +8,159 @@ import {
     TableCell,
     Input,
     Button,
-    Chip,
     DropdownTrigger,
     Dropdown,
     DropdownMenu,
     DropdownItem,
+    Tooltip,
     Pagination,
 } from "@nextui-org/react";
+import { EyeIcon } from '../../icons/EyeIcon';
 import { SearchIcon } from '../../icons/SearchIcon';
-import { VerticalDotsIcon } from '../../icons/VerticalDotsIcon';
-import { PlusIcon } from '../../icons/PlusIcon';
+import { ChevronDownIcon } from "../../icons/ChevronDownIcon";
+import { urls } from '../../../config/config';
+import ModalCrearInversor from '../agregar/ModalCrearInversor';
+import { EditIcon } from '../../icons/EditIcon';
 
-const columns = [
-    {
-      key: "id",
-      label: "ID",
-    },
-    {
-      key: "nombre",
-      label: "NOMBRE",
-    },
-    {
-        key: "apellido",
-        label: "APELLIDO",
-    },
-    {
-        key: "estado",
-        label: "ESTADO",
-    },
-    {
-        key: "actions",
-        label: "ACCIONES",
-    },
-];
+const INITIAL_VISIBLE_COLUMNS = ["nombre", "telefono", "whatsapp", "nota", "acciones"];
 
-const statusColorMap = {
-    1: "success",
-    0: "danger",
-  };
 
 const TablaListInversores = ({ inversores }) => {
     const [filterValue, setFilterValue] = React.useState("");
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+    const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
+    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [sortDescriptor, setSortDescriptor] = React.useState({
+        column: "age",
+        direction: "ascending",
+    });
+
+    const columns = [
+        { name: "ID", uid: "id", sortable: true },
+        { name: "NOMBRE", uid: "nombre", sortable: true },
+        { name: "APELLIDO", uid: "apellido", sortable: true },
+        { name: "TELEFONO", uid: "telefono" },
+        { name: "WHATSAPP", uid: "whatsapp", sortable: true },
+        { name: "NOTA", uid: "nota", sortable: true },
+        { name: "ACCIONES", uid: "acciones" },
+    ];
+
     const [page, setPage] = React.useState(1);
-    
-    const rowsPerPage = 30;
-    const pages = Math.ceil(inversores.length / rowsPerPage);
 
     const hasSearchFilter = Boolean(filterValue);
 
+    const headerColumns = React.useMemo(() => {
+        if (visibleColumns === "all") return columns;
+
+        return columns.filter((column) => Array.from(visibleColumns).includes(column.uid));
+    }, [visibleColumns]);
+
     const filteredItems = React.useMemo(() => {
-        let filteredProducts = [...inversores];
+        let filteredUsers = [...inversores];
 
         if (hasSearchFilter) {
-            filteredProducts = filteredProducts.filter((producto) =>
-                producto.nombre.toLowerCase().includes(filterValue.toLowerCase()),
+            filteredUsers = filteredUsers.filter((item) =>
+                item.nombre.toLowerCase().includes(filterValue.toLowerCase()),
             );
         }
-
-        return filteredProducts;
+        return filteredUsers;
     }, [inversores, filterValue]);
-  
+
+    const pages = Math.ceil(filteredItems.length / rowsPerPage);
+
     const items = React.useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
         return filteredItems.slice(start, end);
-    }, [page, filteredItems]);
+    }, [page, filteredItems, rowsPerPage]);
 
-    const renderCell = React.useCallback((inversor, columnKey) => {
-        const cellValue = inversor[columnKey];
+    const sortedItems = React.useMemo(() => {
+        return [...items].sort((a, b) => {
+            const first = a[sortDescriptor.column];
+            const second = b[sortDescriptor.column];
+            const cmp = first < second ? -1 : first > second ? 1 : 0;
+
+            return sortDescriptor.direction === "descending" ? -cmp : cmp;
+        });
+    }, [sortDescriptor, items]);
+
+
+    function irPaginaDetalle(cliente_id) {
+        window.location.href = `${urls.inversores.detalle}/${cliente_id}`;
+    }
+
+    function irPaginaEditProducto(cliente_id) {
+        window.location.href = `${urls.inversores.editar}/${cliente_id}`;
+    }
+
+    const renderCell = React.useCallback((item, columnKey) => {
+        const cellValue = item[columnKey];
 
         switch (columnKey) {
-            case "estado":
+            case "nombre":
                 return (
-                    <Chip className="capitalize" color={statusColorMap[inversor.estado]} size="sm" variant="flat">
-                        {cellValue == 1 ? "Activo" : "Inactivo"}
-                    </Chip>
+                    <div className="flex flex-col">
+                        <p className="text-bold text-small capitalize">
+                            {item.nombre}
+                        </p>
+                    </div>
                 );
-            case "actions":
+            case "telefono":
                 return (
-                    <div className="relative flex justify-end items-center gap-2">
-                        <Dropdown>
-                            <DropdownTrigger>
-                                <Button isIconOnly size="sm" variant="light">
-                                    <VerticalDotsIcon className="text-default-300" />
-                                </Button>
-                            </DropdownTrigger>
-                            <DropdownMenu>
-                                <DropdownItem> 
-                                    <a href={`/inversores/editar/${inversor.id}`}>
-                                        Editar
-                                    </a>
-                                </DropdownItem>
-                                <DropdownItem>Eliminar</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
+                    <div className="flex flex-col">
+                        <p className="text-bold text-small capitalize">
+                            {item.telefono ? item.telefono : "-"}
+                        </p>
+                    </div>
+                );
+            case "whatsapp":
+                return (
+                    <div className="flex flex-col">
+                        <p className="text-bold text-small capitalize">
+                            {item.whatsapp ? item.whatsapp : "-"}
+                        </p>
+                    </div>
+                );
+            case "acciones":
+                return (
+                    <div className="relative flex items-center gap-2">
+                        <Tooltip content="Ver">
+                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
+                            </span>
+                        </Tooltip>
+                        <Tooltip content="Editar">
+                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                <EditIcon onClick={() => irPaginaEditProducto(item?.id)} />
+                            </span>
+                        </Tooltip>
+                        {/* <Tooltip color="danger" content="Borrar">
+                            <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
+                                <DeleteIcon />
+                            </span>
+                        </Tooltip> */}
                     </div>
                 );
             default:
                 return cellValue;
         }
+    }, []);
+
+    const onNextPage = React.useCallback(() => {
+        if (page < pages) {
+            setPage(page + 1);
+        }
+    }, [page, pages]);
+
+    const onPreviousPage = React.useCallback(() => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    }, [page]);
+
+    const onRowsPerPageChange = React.useCallback((e) => {
+        setRowsPerPage(Number(e.target.value));
+        setPage(1);
     }, []);
 
     const onSearchChange = React.useCallback((value) => {
@@ -120,61 +172,139 @@ const TablaListInversores = ({ inversores }) => {
         }
     }, []);
 
+    const onClear = React.useCallback(() => {
+        setFilterValue("")
+        setPage(1)
+    }, [])
+
     const topContent = React.useMemo(() => {
         return (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-10">
                 <div className="flex justify-between gap-3 items-end">
-                    <Input
-                        isClearable
-                        className="w-full sm:max-w-[44%]"
-                        placeholder="Escriba nombre del Inversor..."
-                        startContent={<SearchIcon />}
-                        value={filterValue}
-                        onClear={() => onClear()}
-                        variant="bordered"
-                        onValueChange={onSearchChange}
-                    />
-                    <a href={"/inversores/agregar"}>
-                        <Button color="primary" endContent={<PlusIcon />}>
-                            Agregar Inversor
-                        </Button>
-                    </a>
+                    <div className='w-full'>
+                        <Input
+                            isClearable
+                            variant="bordered"
+                            className="max-w-md"
+                            placeholder="Buscar por nombre..."
+                            startContent={<SearchIcon />}
+                            value={filterValue}
+                            onClear={() => onClear()}
+                            onValueChange={onSearchChange}
+                            size="sm"
+                        />
+                    </div>
+                    <div className="flex gap-3">
+                        <Dropdown>
+                            <DropdownTrigger className="hidden sm:flex">
+                                <Button endContent={<ChevronDownIcon className="text-small" />} variant="flat">
+                                    Columnas
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                disallowEmptySelection
+                                aria-label="Table Columns"
+                                closeOnSelect={false}
+                                selectedKeys={visibleColumns}
+                                selectionMode="multiple"
+                                onSelectionChange={setVisibleColumns}
+                            >
+                                {columns.map((column) => (
+                                    <DropdownItem key={column.uid} className="capitalize">
+                                        {column.name}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        </Dropdown>
+                        <div className='flex gap-2'>
+                            <ModalCrearInversor />
+                        </div>
+                    </div>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-default-400 text-small">Total {inversores.length} items</span>
+                    <label className="flex items-center text-default-400 text-small">
+                        Filas por pág.:
+                        <select
+                            className="bg-transparent outline-none text-default-400 text-small"
+                            onChange={onRowsPerPageChange}
+                            defaultValue={10}
+                        >
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15" >15</option>
+                            <option value="50" >50</option>
+                            <option value={inversores.length} >Todos</option>
+                        </select>
+                    </label>
                 </div>
             </div>
         );
     }, [
         filterValue,
+        visibleColumns,
+        onRowsPerPageChange,
+        inversores.length,
         onSearchChange,
         hasSearchFilter,
     ]);
 
+    const bottomContent = React.useMemo(() => {
+        return (
+            <div className="py-2 px-2 flex justify-between items-center">
+                <Pagination
+                    isCompact
+                    showControls
+                    showShadow
+                    classNames={{
+                        cursor: "bg-foreground text-background",
+                    }}
+                    page={page}
+                    total={pages}
+                    onChange={setPage}
+                />
+                <div className="hidden sm:flex w-[30%] justify-end gap-2">
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onPreviousPage}>
+                        Previo
+                    </Button>
+                    <Button isDisabled={pages === 1} size="sm" variant="flat" onPress={onNextPage}>
+                        Siguiente
+                    </Button>
+                </div>
+            </div>
+        );
+    }, [items.length, page, pages, hasSearchFilter]);
 
     return (
-        <Table 
-            aria-label="Lista de Inversores"
-            selectionMode="multiple"
-            selectedKeys={selectedKeys}
-            onSelectionChange={setSelectedKeys}
+        <Table
+            aria-label="Example table with custom cells, pagination and sorting"
+            isHeaderSticky={true}
+            isStriped
+            bottomContent={bottomContent}
+            bottomContentPlacement="outside"
+            classNames={{
+                wrapper: "max-h-[382px]",
+            }}
+            sortDescriptor={sortDescriptor}
             topContent={topContent}
             topContentPlacement="outside"
-            bottomContent={
-                <div className="flex w-full justify-center">
-                    <Pagination
-                        isCompact
-                        showControls
-                        showShadow
-                        color="secondary"
-                        page={page}
-                        total={pages}
-                        onChange={(page) => setPage(page)}
-                    />
-                </div>
-        }
+            onSortChange={setSortDescriptor}
+
         >
-            <TableHeader columns={columns}>
-                {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+            <TableHeader columns={headerColumns}>
+                {(column) => (
+                    <TableColumn
+                        style={{ backgroundColor: '#999cbe', color: 'white' }}
+                        key={column.uid}
+                        align={
+                            column.uid === "acciones" ? "center" : "start"}
+                        allowsSorting={column.sortable}
+                    >
+                        {column.name}
+                    </TableColumn>
+                )}
             </TableHeader>
-            <TableBody items={items}>
+            <TableBody emptyContent={"Sin resultados que coincidan"} items={sortedItems}>
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

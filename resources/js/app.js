@@ -18,6 +18,7 @@ import MainCrearProductos from './components/productos/crear/MainCrearProductos.
 import MainProximamente from './components/proximamente/MainProximamente.jsx';
 import MainMetodosPago from './components/metodosPago/MainMetodosPago.jsx';
 import MainHome from './components/home/MainHome.jsx';
+import MainDetalleInversor from './components/inversores/ver/MainDetalleInversor.jsx';
 
 import MainMaquetadoLector from './components/maquetado/MainMaquetadoLector.jsx';
 

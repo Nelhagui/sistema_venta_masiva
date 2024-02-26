@@ -14,9 +14,14 @@ return new class extends Migration
         Schema::create('inversores', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->string('apellido');
+            $table->string('apellido')->nullable();
+            $table->integer("telefono")->nullable();
+            $table->integer("whatsapp")->nullable();
+            $table->string("nota")->nullable();
             $table->string('estado')->default(1);
+            $table->softDeletes();
             $table->timestamps();
+
 
             // Llave foránea
             $table->unsignedBigInteger('comercio_id');

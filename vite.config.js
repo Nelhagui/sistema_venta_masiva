@@ -17,6 +17,7 @@ export default defineConfig({
             'resources/js/components/clientes/MainClientes.jsx',
             'resources/js/components/productos_stock/MainProductosActualizarStock.jsx',
             'resources/js/components/metodosPago/MainMetodosPago.jsx',
+            'resources/js/components/inversores/ver/MainDetalleInversor.jsx',
             'resources/js/components/home/MainHome.jsx',
             'resources/js/components/maquetado/MainMaquetadoLector.jsx',
         ]),

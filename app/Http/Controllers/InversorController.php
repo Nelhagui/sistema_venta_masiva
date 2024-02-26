@@ -17,8 +17,7 @@ class InversorController extends Controller
      */
     public function index()
     {
-        $inversores = Inversor::all();
-        return view('inversores.index', compact ('inversores'));
+        return view('inversores.index');
     }
 
     /**
@@ -49,8 +48,8 @@ class InversorController extends Controller
      */
     public function show(Inversor $inversor)
     {
-        $inversor = Inversor::where('id', $inversor->id);
-        return view('show.inversores');
+        $id = $inversor->id;
+        return view('inversores.show', compact('id'));
     }
 
     /**
@@ -88,5 +87,18 @@ class InversorController extends Controller
         $id_comercio = $user->comercio_id;
         $inversores = Comercio::find($id_comercio)->inversores;
         return $inversores;
+    }
+
+    public function storeApi(Request $request)
+    {
+        $user = Auth::user();
+        $inversor = new Inversor;
+        $inversor->comercio_id = $user->comercio_id;
+        $inversor->nombre = $request->nombre;
+        $inversor->telefono = $request->telefono;
+        $inversor->whatsapp = $request->whatsapp;
+        $inversor->nota = $request->nota;
+
+        return $inversor->save();
     }
 }

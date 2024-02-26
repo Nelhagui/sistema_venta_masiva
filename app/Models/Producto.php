@@ -47,4 +47,9 @@ class Producto extends Model
     {
         return $this->hasMany(CompraDetalle::class, 'producto_id');
     }
+
+    public function inversiones()
+    {
+        return $this->belongsToMany(Inversion::class)->withPivot('cantidad_invertida');
+    }
 }

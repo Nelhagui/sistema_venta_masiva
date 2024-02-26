@@ -78,11 +78,15 @@ Route::middleware(['auth', 'verificarPais'])->group(function () {
         });
 
         //INVERSORES
-        Route::get('/inversores', [InversorController::class, 'index'])->name('index.inversores');
-        Route::get('/inversores/agregar', [InversorController::class, 'create'])->name('create.inversores');
-        Route::post('/inversores/agregar', [InversorController::class, 'store'])->name('store.inversores');
-        Route::get('/inversores/editar/{inversor}', [InversorController::class, 'edit'])->name('edit.inversores');
-        Route::post('/inversores/editar/{inversor}', [InversorController::class, 'update'])->name('update.inversores');
+        Route::prefix('inversores')->group(function () {
+            Route::get('/', [InversorController::class, 'index'])->name('index.inversores');
+            Route::get('/detalle/{inversor}', [InversorController::class, 'show'])->name('show.inversores');
+
+            // Route::get('/inversores/agregar', [InversorController::class, 'create'])->name('create.inversores');
+            // Route::post('/inversores/agregar', [InversorController::class, 'store'])->name('store.inversores');
+            // Route::get('/inversores/editar/{inversor}', [InversorController::class, 'edit'])->name('edit.inversores');
+            // Route::post('/inversores/editar/{inversor}', [InversorController::class, 'update'])->name('update.inversores');
+        });
 
 
         // VENTAS
@@ -138,12 +142,12 @@ Route::middleware(['auth', 'verificarPais'])->group(function () {
 
 
         //DISENIO
-        Route::get('/lector-disenio', function(){
+        Route::get('/lector-disenio', function () {
             return view('maquetado.lector');
         });
 
         //PRUEBA MERCADO
-        Route::get('/pagos-mercadopago', function(){
+        Route::get('/pagos-mercadopago', function () {
             return view('mercadopago.index');
         });
 
