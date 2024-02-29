@@ -71,32 +71,38 @@
     @vite('resources/css/dashboard.css')
     @viteReactRefresh
     @vite('resources/js/app.js')
+    @vite('resources/js/utils/desplegarMenu.js')
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased" style="display: flex">
+    @include('layouts.menu_lateral')
 
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MVZ6HWRX" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
-    <div class="min-h-screen">
+    <div style="display: flex; flex-direction: column; width: 100%">
         @include('layouts.navigation')
 
-        <!-- Page Heading -->
-        @if (isset($header))
-            <header class="bg-white dark:bg-gray-800 shadow">
-                {{ $header }}
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                </div>
-            </header>
-        @endif
+        <div class="min-h-screen">
 
-        <!-- Page Content -->
-        <main>
-            {{ $slot }}
-        </main>
+            <!-- Page Heading -->
+            @if (isset($header))
+                <header class="bg-white dark:bg-gray-800 shadow">
+                    {{ $header }}
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    </div>
+                </header>
+            @endif
+
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
+        </div>
     </div>
+    
 </body>
 
 </html>
