@@ -1,32 +1,39 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import ventaServices from '../../services/ventaServices';
+import metodoPagoServices from '../../services/metodoPagoServices';
 import TablaListVentas from './TablaListVentas';
 import InstructivoSinVentas from './instructivos/InstructivoSinVentas';
 
 
 export default function MainVentas() {
     const [ventas, setVentas] = useState([])
-    const [caja, setCaja] = useState({})
+    const [metodos, setMetodos] = useState([])
     const [cantidadVentas, setCantidadVentas] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        fetchModel()
+        fetchData()
     }, []);
 
-    const fetchModel = async () => {
+    
+
+    const fetchData = async () => {
         setIsLoading(true);
         try {
             const params = new URLSearchParams(window.location.search);
             const queryDate = params.get('fecha');
-            const response = await ventaServices.traerLista(queryDate)
-            setVentas(response.ventas);
-            setCaja(response.sesionCaja);
-            setCantidadVentas(response.cantidadVentas);
 
+            // Fetch de ventas
+            const ventaResponse = await ventaServices.traerLista(queryDate);
+            setVentas(ventaResponse.ventas);
+            setCantidadVentas(ventaResponse.cantidadVentas);
+
+            // Fetch de métodos de pago
+            const metodoPagoResponse = await metodoPagoServices.traerLista();
+            setMetodos(metodoPagoResponse);
         } catch (error) {
-            // Maneja el error si la creación de la venta falla
+            // Manejar errores
         } finally {
             setIsLoading(false);
         }
@@ -40,7 +47,7 @@ export default function MainVentas() {
                     <>
                         {
                             cantidadVentas > 0
-                                ?  <TablaListVentas ventas={ventas} caja={caja} />
+                                ? <TablaListVentas ventas={ventas} metodos={metodos} />
                                 : <InstructivoSinVentas />
                         }
                     </>

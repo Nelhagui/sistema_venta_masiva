@@ -255,4 +255,15 @@ class VentaController extends Controller
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function anularVentaApi(Request $request)
+    {
+        $venta = Venta::find($request->id);
+        $user = Auth::user();
+        if($user->comercio_id === $venta->comercio_id){
+            $venta->anulada = true;
+            return $venta->update(); 
+        }
+        return response()->json(['error' => 'Error al procesar los datos'], 400);
+    }
 }

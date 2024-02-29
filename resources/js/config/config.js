@@ -9,6 +9,7 @@ export const endpoints = {
     ventas: {
         lista: `${API_BASE_URL}/ventas`,
         crear: `${API_BASE_URL}/ventas/crear`,
+        anular: `${API_BASE_URL}/ventas/anular`,
     },
     clientes: {
         lista: `${API_BASE_URL}/clientes`,

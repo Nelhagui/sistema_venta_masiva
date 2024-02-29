@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('descuento', 8, 2)->nullable();
             $table->enum('tipo_aumento', ['porcentaje','monto_fijo'])->nullable();
             $table->enum('tipo_descuento', ['porcentaje','monto_fijo'])->nullable();
+            $table->boolean('anulada')->default(false);
             $table->softDeletes();
             $table->timestamps();
 

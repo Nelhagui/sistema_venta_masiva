@@ -206,3 +206,7 @@
 .estilo-disabled {
     opacity: 0.5;
 }
+
+.bg-anulada {
+    background-color: #ffd4d4;
+}
