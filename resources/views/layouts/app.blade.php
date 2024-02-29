@@ -75,7 +75,7 @@
 </head>
 
 <body class="font-sans antialiased" style="display: flex">
-    @include('layouts.menu_lateral')
+    @include('layouts.sidebar')
 
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MVZ6HWRX" height="0" width="0"
