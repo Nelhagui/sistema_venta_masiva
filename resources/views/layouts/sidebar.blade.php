@@ -2,10 +2,10 @@
     <!-- Logo -->
     <div class="nombre-pagina">
         <x-nav-link-ml :href="route('dashboard')">
-            <x-application-logo  class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+            <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
             <span id="logo-nombre" class="oculto">rapido ventas</span>
         </x-nav-link-ml>
-        
+
     </div>
     <nav class="navegacion">
         <ul>
@@ -16,8 +16,8 @@
                 </x-nav-link-ml>
             </li>
             <li>
-                <x-nav-link-ml  :href="route('index.proveedores')" :active="request()->routeIs(['index.proveedores'])">
-                    <x-proveedores-icon />
+                <x-nav-link-ml :href="route('index.proveedores')" :active="request()->routeIs(['index.proveedores'])">
+                    <x-proveedores-icon class="block" />
                     <span class="nav-link-lateral oculto">{{ __('Proveedores') }}</span>
                 </x-nav-link-ml>
             </li>
@@ -34,13 +34,26 @@
                 </x-nav-link-ml>
             </li>
             <!-- <li>
-                <x-nav-link-ml :href="route('index.reportes')" :active="request()->routeIs(['index.reportes'])">
-                    {{ __('Reportes') }}
-                </x-nav-link-ml> 
-            </li> -->
+                    <x-nav-link-ml :href="route('index.reportes')" :active="request()->routeIs(['index.reportes'])">
+                        {{ __('Reportes') }}
+                    </x-nav-link-ml>
+                </li> -->
         </ul>
     </nav>
-    <div class="desplegable-menu">
-        <p id="desplegable-btn">Abrir</p>
+    <div class="cont-icon-open-sidebar">
+        <span id="desplegable-btn">
+            <x-open-sidebar-icon />
+        </span>
     </div>
 </div>
+
+<script>
+    function rotateSVG() {
+        var sidebarIcon = document.getElementById('sidebar-icon');
+        if (sidebarIcon.classList.contains('rotate-horizontal')) {
+            sidebarIcon.classList.remove('rotate-horizontal');
+        } else {
+            sidebarIcon.classList.add('rotate-horizontal');
+        }
+    }
+</script>

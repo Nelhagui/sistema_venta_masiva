@@ -28,7 +28,7 @@ const ResumenDetallado = ({ ventas, metodos }) => {
                         const totalVentaMetodo = ventasPorMetodo.reduce((total, venta) => total + parseFloat(venta.monto_total_venta), 0);
 
                         return (
-                            <Card shadow='sm' style={{ minWidth: '100px' }}>
+                            <Card shadow='sm' style={{ minWidth: '133px' }}>
                                 <CardBody>
                                     <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>{metodo?.nombre}</p>
                                     <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(totalVentaMetodo)}</p>
@@ -40,13 +40,13 @@ const ResumenDetallado = ({ ventas, metodos }) => {
             </div>
             <div className='mt-4'>
                 <div className='flex gap-2 mt-1'>
-                    <Card shadow='sm' style={{ minWidth: '100px' }}>
+                    <Card shadow='sm' style={{ minWidth: '133px' }}>
                         <CardBody>
                             <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Aumentos</p>
                             <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${totalAumentosFormateado}</p>
                         </CardBody>
                     </Card>
-                    <Card shadow='sm' style={{ minWidth: '100px' }}>
+                    <Card shadow='sm' style={{ minWidth: '133px' }}>
                         <CardBody>
                             <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Descuentos</p>
                             <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${totalDescuentosFormateado}</p>

@@ -210,3 +210,17 @@
 .bg-anulada {
     background-color: #ffd4d4;
 }
+
+.rotate-horizontal {
+    transform: scaleX(-1);
+}
+
+.cont-icon-open-sidebar {
+    position: absolute;
+    bottom: 2rem;
+}
+.h-contenido {
+    min-height: calc(100vh - 3rem);
+    max-height: calc(100vh - 3rem);
+    overflow-y: scroll;
+}

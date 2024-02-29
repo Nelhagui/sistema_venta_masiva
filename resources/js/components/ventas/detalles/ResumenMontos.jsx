@@ -10,12 +10,24 @@ const ResumenMontos = ({ ventas }) => {
 
     // Calcular el total de 'monto_total_costo'
     const ventasFiltradas = ventas.filter(venta => venta.anulada !== 1);
+
+    //aumentos y descuentos
+    const ventasFiltradasConAumento = ventasFiltradas.filter(venta => venta.aumento > 0);
+    const ventasFiltradasConDescuento = ventasFiltradas.filter(venta => venta.descuento > 0);
+    //aumentos 
+    const totalAumentos = ventasFiltradasConAumento.reduce((total, venta) => total + parseFloat(venta.aumento), 0);
+    const totalDescuentos = ventasFiltradasConDescuento.reduce((total, venta) => total + parseFloat(venta.descuento), 0);
+
+    const diferenciaAumentoDescuento = parseFloat(totalAumentos) - parseFloat(totalDescuentos)
+
+    
     const totalCosto = ventasFiltradas.reduce((total, venta) => total + parseFloat(venta.monto_total_costo), 0);
     const totalCostoFormateado = totalCosto.toFixed(2); // Redondear a dos decimales
 
     // Calcular el total de 'monto_total_venta'
     const totalVenta = ventasFiltradas.reduce((total, venta) => total + parseFloat(venta.monto_total_venta), 0);
-    const totalVentaFormateado = totalVenta.toFixed(2); // Redondear a dos decimales
+    const totalVentaConAumentoDescuento = totalVenta + diferenciaAumentoDescuento;
+    const totalVentaFormateado = totalVentaConAumentoDescuento.toFixed(2); // Redondear a dos decimales
 
     // Verificar si los decimales son todos cero
     const todosDecimalesCero = totalCostoFormateado.split('.')[1] === '00' && totalVentaFormateado.split('.')[1] === '00';

@@ -85,7 +85,7 @@
     <div style="display: flex; flex-direction: column; width: 100%">
         @include('layouts.navigation')
 
-        <div class="min-h-screen">
+        <div class="h-contenido">
 
             <!-- Page Heading -->
             @if (isset($header))
