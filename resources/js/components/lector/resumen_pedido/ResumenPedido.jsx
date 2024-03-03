@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useLectorContext } from '../../../context/LectorContext.jsx';
 import ViewTotalAumentoDescuento from '../ViewTotalAumentoDescuento.jsx';
+import { urls } from '../../../config/config.js';
 import {
     Table,
     TableHeader, TableColumn,
@@ -205,7 +206,9 @@ const ResumenPedido = () => {
                                             <InputCantidadTipoProducto productoSeleccionado={productoSeleccionado} handleInputFraccionChangeCantidad={handleInputFraccionChangeCantidad} handleInputChangeCantidadUnidad={handleInputChangeCantidadUnidad} handleInputFraccionChangeMonto={handleInputFraccionChangeMonto} handleInputChangeVentaAdicional={handleInputChangeVentaAdicional} />
                                         </TableCell>
                                         <TableCell>
-                                            {capitalizeToUpperCase(productoSeleccionado.titulo)}
+                                            <a href={`${urls.productos.editar}/${productoSeleccionado.id}`} target="_blank" className='link-hover'>
+                                                {capitalizeToUpperCase(productoSeleccionado.titulo)}
+                                            </a>
                                         </TableCell>
                                         <TableCell>
                                             {

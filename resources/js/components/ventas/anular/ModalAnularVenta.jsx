@@ -8,19 +8,17 @@ export default function ModalAnularVenta({ idVenta }) {
 
     const handleConfirmarAnular = () => {
         handleSubmit();
-        console.log('epa')
     };
 
     const handleSubmit = async () => {
-        console.log('voy')
         setIsLoading(true);
         try {
             const response = await ventaServices.anularVenta(idVenta);
             const data = await response.json();
             if (response.status !== 200) {
-                alert('fallado')
+                alert('Error al procesar el dato, intente nuevamente por favor.')
             } else {
-                alert('anulado')
+                window.location.reload();
             }
         } catch (error) {
             alert('error')

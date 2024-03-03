@@ -222,5 +222,9 @@
 .h-contenido {
     min-height: calc(100vh - 3rem);
     max-height: calc(100vh - 3rem);
-    overflow-y: scroll;
+    overflow-y: auto;
 }
+.link-hover:hover {
+    text-decoration-line: underline;
+}
+

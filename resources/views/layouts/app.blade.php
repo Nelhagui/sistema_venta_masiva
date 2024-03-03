@@ -71,7 +71,6 @@
     @vite('resources/css/dashboard.css')
     @viteReactRefresh
     @vite('resources/js/app.js')
-    @vite('resources/js/utils/desplegarMenu.js')
 </head>
 
 <body class="font-sans antialiased" style="display: flex">
