@@ -11,10 +11,11 @@ import { useDetalleClienteContext } from "../../../../context/DetalleClienteCont
 import ResumenDeuda from "./ResumenDeuda";
 import estadoCompraUtils from "../../../../utils/estadoCompraUtils";
 import fechaUtils from "../../../../utils/fechaUtils";
+import { useDetalleInversorContext } from "../../../../context/DetalleInversorContext";
 
-export default function TablaDeudas() {
+export default function TablaDeudasInversor() {
 
-    const { deudas, keyDeudasSelecionadas, setKeyDeudasSelecionadas } = useDetalleClienteContext();
+    const { deudas, keyDeudasSelecionadas, setKeyDeudasSelecionadas } = useDetalleInversorContext();
 
     return (
         <>
@@ -66,7 +67,7 @@ export default function TablaDeudas() {
                     </div >
                     : <div style={{ paddingTop: 30, paddingBottom: 30 }}>
                         <p className="antialiased font-medium tracking-wide text-center" style={{ fontSize: 22, color: 'green' }}>Está al día</p>
-                        <p className="ont-sans text-center mt-2 text-descripcion">Excelente, el usuario no cuenta con deudas.</p>
+                        <p className="ont-sans text-center mt-2 text-descripcion">El usuario no cuenta con inversiones.</p>
 
                     </div>
             }

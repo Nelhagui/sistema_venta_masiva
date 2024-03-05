@@ -35,6 +35,9 @@ export const endpoints = {
         detalle: `${API_BASE_URL}/inversores/detalle`,
         crear: `${API_BASE_URL}/inversores/crear`,
     },
+    inversiones: {
+        crear: `${API_BASE_URL}/inversiones/crear`
+    },
     metodosDePago: {
         lista: `${API_BASE_URL}/metodos-pago`,
         crear: `${API_BASE_URL}/metodos-pago`,

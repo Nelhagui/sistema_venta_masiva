@@ -72,7 +72,7 @@ const inversorServices = {
             console.error('Error fetching data:', error);
             throw error;
         }
-    }
+    },
 };
 
 export default inversorServices;
