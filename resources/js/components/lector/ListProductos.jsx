@@ -8,6 +8,7 @@ import { SearchIcon } from '../icons/SearchIcon';
 import TeclaDetector from '../teclado/TeclaDetector';
 import NovedadesInstructivos from './novedades_instructivos/NovedadesInstructivos';
 import lectorServices from '../../services/lectorServices';
+import { capitalizeToUpperCase } from '../../utils/utils';
 import {
     Input,
     Select,
@@ -337,7 +338,9 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                                         addProducto(producto)
                                     }}
                                 >
-                                    <p style={styles.productoTitulo}>{producto.titulo}</p>
+                                    <p style={styles.productoTitulo}>
+                                        {capitalizeToUpperCase(producto.titulo)}
+                                    </p>
                                     <p style={styles.productoPrecioVenta}>{producto.precio_venta ? `$${producto.precio_venta}` : ''}</p>
                                 </li>
                             ))
@@ -362,8 +365,8 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     >
                         {
                             isLoading
-                            ? "Cargando compra..."
-                            : "Cargar Venta"
+                                ? "Cargando compra..."
+                                : "Cargar Venta"
                         }
                     </button>
                 </div>
@@ -421,7 +424,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     <>
                         <div className='flex gap-3'>
                             <div className='w-full'>
-                                <ResumenPedido/>
+                                <ResumenPedido />
                             </div>
                             <div className='flex flex-col min-w-max gap-2 px-3'>
                                 <div className='flex flex-col gap-2 p-3 rounded' style={{ backgroundColor: '#fcfcfc', borderWidth: 1, borderColor: "#e7e8ff" }}>

@@ -19,7 +19,7 @@ import {
 import { PlusIcon } from "../icons/PlusIcon";
 import { SearchIcon } from "../icons/SearchIcon";
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
-import { capitalize, capitalizeToLowerCase } from "../../utils/utils";
+import { capitalize, capitalizeToUpperCase } from "../../utils/utils";
 import { formatearAMoneda } from "../../utils/utils";
 import { EditIcon } from "../icons/EditIcon";
 import { urls } from "../../config/config";
@@ -109,7 +109,7 @@ export default function TablaListProductos({ productos }) {
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {capitalizeToLowerCase(item.titulo)}
+                            {capitalizeToUpperCase(item.titulo)}
                         </p>
                     </div>
                 );
