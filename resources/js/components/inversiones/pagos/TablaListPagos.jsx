@@ -19,13 +19,13 @@ import { EyeIcon } from '../../icons/EyeIcon';
 import { SearchIcon } from '../../icons/SearchIcon';
 import { ChevronDownIcon } from "../../icons/ChevronDownIcon";
 import { urls } from '../../../config/config';
-import ModalCrearInversor from '../agregar/ModalCrearInversor';
+import ModalCrearPago from './agregar/ModalCrearPago';
 import { EditIcon } from '../../icons/EditIcon';
 
 const INITIAL_VISIBLE_COLUMNS = ["nombre", "telefono", "whatsapp", "nota", "acciones"];
 
 
-const TablaListInversores = ({ inversores }) => {
+const TablaListPagos = ({ pagos }) => {
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -55,7 +55,7 @@ const TablaListInversores = ({ inversores }) => {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...inversores];
+        let filteredUsers = [...pagos];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((item) =>
@@ -63,7 +63,7 @@ const TablaListInversores = ({ inversores }) => {
             );
         }
         return filteredUsers;
-    }, [inversores, filterValue]);
+    }, [pagos, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -86,11 +86,11 @@ const TablaListInversores = ({ inversores }) => {
 
 
     function irPaginaDetalle(inversor_id) {
-        window.location.href = `${urls.inversores.detalle}?id=${inversor_id}`;
+        window.location.href = `${urls.pagos.detalle}?id=${inversor_id}`;
     }
 
     function irPaginaEdit(inversor_id) {
-        window.location.href = `${urls.inversores.editar}/${inversor_id}`;
+        window.location.href = `${urls.pagos.editar}/${inversor_id}`;
     }
 
     const renderCell = React.useCallback((item, columnKey) => {
@@ -129,11 +129,11 @@ const TablaListInversores = ({ inversores }) => {
                                 <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
                             </span>
                         </Tooltip>
-                        {/* <Tooltip content="Editar">
+                        <Tooltip content="Editar">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
                                 <EditIcon onClick={() => irPaginaEdit(item?.id)} />
                             </span>
-                        </Tooltip> */}
+                        </Tooltip>
                         {/* <Tooltip color="danger" content="Borrar">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
                                 <DeleteIcon />
@@ -217,12 +217,12 @@ const TablaListInversores = ({ inversores }) => {
                             </DropdownMenu>
                         </Dropdown>
                         <div className='flex gap-2'>
-                            <ModalCrearInversor />
+                            <ModalCrearPago />
                         </div>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {inversores.length} items</span>
+                    <span className="text-default-400 text-small">Total {pagos.length} items</span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por pág.:
                         <select
@@ -234,7 +234,7 @@ const TablaListInversores = ({ inversores }) => {
                             <option value="10">10</option>
                             <option value="15" >15</option>
                             <option value="50" >50</option>
-                            <option value={inversores.length} >Todos</option>
+                            <option value={pagos.length} >Todos</option>
                         </select>
                     </label>
                 </div>
@@ -244,7 +244,7 @@ const TablaListInversores = ({ inversores }) => {
         filterValue,
         visibleColumns,
         onRowsPerPageChange,
-        inversores.length,
+        pagos.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -315,4 +315,4 @@ const TablaListInversores = ({ inversores }) => {
     )
 }
 
-export default TablaListInversores
+export default TablaListPagos

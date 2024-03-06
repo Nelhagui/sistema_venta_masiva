@@ -1,20 +1,18 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import DetalleInversor from './DetalleInversor';
+import DetalleInversion from './DetalleInversion';
 import inversorServices from '../../../services/inversorServices';
 import { DetalleInversorContextProvider } from '../../../context/DetalleInversorContext';
-import { useDetalleInversorContext } from '../../../context/DetalleInversorContext';
 import metodoPagoServices from '../../../services/metodoPagoServices';
 
-export default function MainDetalleInversor() {
-    const {setInversor, setMetodosDePago, setId, setInversiones} = useDetalleInversorContext();
+export default function MainDetalleInversion() {
+    const {pagos, setPagos} = useState([]);
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const idParam = params.get('id');
         if (idParam) {
-            setId(idParam);
             fetchData(idParam);
         }
     }, []);
@@ -57,18 +55,18 @@ export default function MainDetalleInversor() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <DetalleInversor />
+                    : <DetalleInversion pagos={pagos} />
             }
         </>
     )
 }
 
-if (document.getElementById('mainDetalleInversor')) {
-    const domNode = document.getElementById('mainDetalleInversor');
+if (document.getElementById('MainDetalleInversion')) {
+    const domNode = document.getElementById('MainDetalleInversion');
     const root = createRoot(domNode);
     root.render(
         <DetalleInversorContextProvider>
-            <MainDetalleInversor />
+            <MainDetalleInversion />
         </DetalleInversorContextProvider>
     );
 }

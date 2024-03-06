@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Textarea, Input } from "@nextui-org/react";
-import { PlusIcon } from "../../icons/PlusIcon.jsx";
-import inversionesServices from "../../../services/inversionesServices.js";
-import {useDetalleInversorContext} from "../../../context/DetalleInversorContext.jsx"
+import { PlusIcon } from "../../../icons/PlusIcon.jsx";
 
-export default function ModalCrearInversion() {
-    const { id } = useDetalleInversorContext();
+export default function ModalCrearPago() {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [isDisabled, setIsDisabled] = useState(false)
     const [camposObligatorios] = useState(['fecha_inversion', 'monto_invertido', 'porcentaje_ganancia'])

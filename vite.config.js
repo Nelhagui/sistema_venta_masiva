@@ -20,6 +20,7 @@ export default defineConfig({
             'resources/js/components/inversores/ver/MainDetalleInversor.jsx',
             'resources/js/components/home/MainHome.jsx',
             'resources/js/components/maquetado/MainMaquetadoLector.jsx',
+            'resources/js/components/inversiones/ver/MainDetalleInversion.jsx',
         ]),
         react(),
     ],

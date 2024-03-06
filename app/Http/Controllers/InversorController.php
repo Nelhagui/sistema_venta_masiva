@@ -6,8 +6,6 @@ use App\Models\Inversor;
 use App\Models\Comercio;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StoreInversorRequest;
-use App\Http\Requests\UpdateInversorRequest;
 use Illuminate\Http\Request;
 
 class InversorController extends Controller
@@ -107,12 +105,8 @@ class InversorController extends Controller
         $user = Auth::user();
         $inversor = Inversor::where('id', $id)
             ->where('comercio_id', $user->comercio_id)
+            ->with('inversiones')
             ->first();
-        $deudas = $inversor->inversiones()->get();
-        $ventas = $inversor->inversiones()->get();
-
-        $inversor->deudas = $deudas;
-        $inversor->ventas = $ventas;
         return $inversor;
     }
 }

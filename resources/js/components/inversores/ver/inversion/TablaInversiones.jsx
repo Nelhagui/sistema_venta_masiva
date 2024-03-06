@@ -15,17 +15,23 @@ import {
     Tooltip,
     Pagination,
 } from "@nextui-org/react";
-import { EyeIcon } from '../../icons/EyeIcon';
-import { SearchIcon } from '../../icons/SearchIcon';
-import { ChevronDownIcon } from "../../icons/ChevronDownIcon";
-import { urls } from '../../../config/config';
-import ModalCrearInversor from '../agregar/ModalCrearInversor';
-import { EditIcon } from '../../icons/EditIcon';
+import { EyeIcon } from '../../../icons/EyeIcon';
+import { SearchIcon } from '../../../icons/SearchIcon';
+import { ChevronDownIcon } from "../../../icons/ChevronDownIcon";
+import { EditIcon } from '../../../icons/EditIcon';
+import { capitalizeToLowerCase, formatearAMoneda } from '../../../../utils/utils';
 
-const INITIAL_VISIBLE_COLUMNS = ["nombre", "telefono", "whatsapp", "nota", "acciones"];
+import { urls } from '../../../../config/config';
+import ModalCrearInversion from '../../agregar/ModalCrearInversion';
 
 
-const TablaListInversores = ({ inversores }) => {
+import { useDetalleInversorContext } from '../../../../context/DetalleInversorContext';
+
+const INITIAL_VISIBLE_COLUMNS = ["id", "fecha_inversion", "monto_invertido", "porcentaje_ganancia", "total", "acciones"];
+
+
+const TablaInversiones = () => {
+    const { inversiones, inversor } = useDetalleInversorContext();
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -36,12 +42,12 @@ const TablaListInversores = ({ inversores }) => {
 
     const columns = [
         { name: "ID", uid: "id", sortable: true },
-        { name: "NOMBRE", uid: "nombre", sortable: true },
-        { name: "APELLIDO", uid: "apellido", sortable: true },
-        { name: "TELEFONO", uid: "telefono" },
-        { name: "WHATSAPP", uid: "whatsapp", sortable: true },
         { name: "NOTA", uid: "nota", sortable: true },
-        { name: "ACCIONES", uid: "acciones" },
+        { name: "FECHA", uid: "fecha_inversion", sortable: true },
+        { name: "INVERSIÓN", uid: "monto_invertido", sortable: true },
+        { name: "INTERES", uid: "porcentaje_ganancia" },
+        { name: "TOTAL", uid: "total" },
+        // { name: "ACCIONES", uid: "acciones" },
     ];
 
     const [page, setPage] = React.useState(1);
@@ -55,7 +61,7 @@ const TablaListInversores = ({ inversores }) => {
     }, [visibleColumns]);
 
     const filteredItems = React.useMemo(() => {
-        let filteredUsers = [...inversores];
+        let filteredUsers = [...inversiones];
 
         if (hasSearchFilter) {
             filteredUsers = filteredUsers.filter((item) =>
@@ -63,7 +69,7 @@ const TablaListInversores = ({ inversores }) => {
             );
         }
         return filteredUsers;
-    }, [inversores, filterValue]);
+    }, [inversiones, filterValue]);
 
     const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -85,62 +91,46 @@ const TablaListInversores = ({ inversores }) => {
     }, [sortDescriptor, items]);
 
 
-    function irPaginaDetalle(inversor_id) {
-        window.location.href = `${urls.inversores.detalle}?id=${inversor_id}`;
-    }
-
-    function irPaginaEdit(inversor_id) {
-        window.location.href = `${urls.inversores.editar}/${inversor_id}`;
+    function irPaginaDetalle(id) {
+        window.location.href = `${urls.inversiones.detalle}?id=${id}`;
     }
 
     const renderCell = React.useCallback((item, columnKey) => {
         const cellValue = item[columnKey];
 
         switch (columnKey) {
-            case "nombre":
+            case "monto_invertido":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {item.nombre}
+                            ${formatearAMoneda(item.monto_invertido)}
                         </p>
                     </div>
                 );
-            case "telefono":
+            case "total":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {item.telefono ? item.telefono : "-"}
+                            ${formatearAMoneda((Number(item.monto_invertido) * Number(item.porcentaje_ganancia) / 100) + Number(item.monto_invertido))}
                         </p>
                     </div>
                 );
-            case "whatsapp":
+            case "porcentaje_ganancia":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {item.whatsapp ? item.whatsapp : "-"}
+                            {item.porcentaje_ganancia}%
                         </p>
                     </div>
                 );
-            case "acciones":
-                return (
-                    <div className="relative flex items-center gap-2">
-                        <Tooltip content="Ver">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
-                            </span>
-                        </Tooltip>
-                        {/* <Tooltip content="Editar">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon onClick={() => irPaginaEdit(item?.id)} />
-                            </span>
-                        </Tooltip> */}
-                        {/* <Tooltip color="danger" content="Borrar">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
-                                <DeleteIcon />
-                            </span>
-                        </Tooltip> */}
-                    </div>
-                );
+            // case "acciones":
+            //     return (
+            //         <div className="relative flex gap-2">
+            //             <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+            //                 <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
+            //             </span>
+            //         </div>
+            //     );
             default:
                 return cellValue;
         }
@@ -182,17 +172,16 @@ const TablaListInversores = ({ inversores }) => {
             <div className="flex flex-col gap-4 mt-10">
                 <div className="flex justify-between gap-3 items-end">
                     <div className='w-full'>
-                        <Input
-                            isClearable
-                            variant="bordered"
-                            className="max-w-md"
-                            placeholder="Buscar por nombre..."
-                            startContent={<SearchIcon />}
-                            value={filterValue}
-                            onClear={() => onClear()}
-                            onValueChange={onSearchChange}
-                            size="sm"
-                        />
+                        <div className="my-9" style={{ marginTop: 25, marginBottom: 25, display: 'flex', justifyContent: 'space-between' }}>
+                            <div>
+                                <h2 className="antialiased font-medium tracking-wide text-left" style={{ fontSize: 32 }}>
+                                    {capitalizeToLowerCase(inversor?.nombre)}
+                                </h2>
+                                <p className='text-left text-descripcion'>
+                                    Desde esta sección puedes visualizar las inversiones de este usuario.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                     <div className="flex gap-3">
                         <Dropdown>
@@ -217,12 +206,12 @@ const TablaListInversores = ({ inversores }) => {
                             </DropdownMenu>
                         </Dropdown>
                         <div className='flex gap-2'>
-                            <ModalCrearInversor />
+                            <ModalCrearInversion />
                         </div>
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
-                    <span className="text-default-400 text-small">Total {inversores.length} items</span>
+                    <span className="text-default-400 text-small">Total {inversiones.length} items</span>
                     <label className="flex items-center text-default-400 text-small">
                         Filas por pág.:
                         <select
@@ -234,7 +223,7 @@ const TablaListInversores = ({ inversores }) => {
                             <option value="10">10</option>
                             <option value="15" >15</option>
                             <option value="50" >50</option>
-                            <option value={inversores.length} >Todos</option>
+                            <option value={inversiones.length} >Todos</option>
                         </select>
                     </label>
                 </div>
@@ -244,7 +233,7 @@ const TablaListInversores = ({ inversores }) => {
         filterValue,
         visibleColumns,
         onRowsPerPageChange,
-        inversores.length,
+        inversiones.length,
         onSearchChange,
         hasSearchFilter,
     ]);
@@ -315,4 +304,4 @@ const TablaListInversores = ({ inversores }) => {
     )
 }
 
-export default TablaListInversores
+export default TablaInversiones

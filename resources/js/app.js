@@ -21,6 +21,7 @@ import MainHome from './components/home/MainHome.jsx';
 import MainDetalleInversor from './components/inversores/ver/MainDetalleInversor.jsx';
 
 import MainMaquetadoLector from './components/maquetado/MainMaquetadoLector.jsx';
+import MainDetalleInversion from './components/inversiones/ver/MainDetalleInversion.jsx';
 
 
 window.Alpine = Alpine;

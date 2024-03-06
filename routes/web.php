@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CajaMovimientoController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InversionController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\SesionCajaController;
 use App\Http\Controllers\ProductoController;
@@ -80,12 +81,17 @@ Route::middleware(['auth', 'verificarPais'])->group(function () {
         //INVERSORES
         Route::prefix('inversores')->group(function () {
             Route::get('/', [InversorController::class, 'index'])->name('index.inversores');
-            Route::get('/detalle/{inversor}', [InversorController::class, 'show'])->name('show.inversores');
+            Route::get('/detalle', [InversorController::class, 'show'])->name('show.inversores');
 
             // Route::get('/inversores/agregar', [InversorController::class, 'create'])->name('create.inversores');
             // Route::post('/inversores/agregar', [InversorController::class, 'store'])->name('store.inversores');
             // Route::get('/inversores/editar/{inversor}', [InversorController::class, 'edit'])->name('edit.inversores');
             // Route::post('/inversores/editar/{inversor}', [InversorController::class, 'update'])->name('update.inversores');
+        });
+
+        //INVERSIONES
+        Route::prefix('inversiones')->group(function () {
+            Route::get('/detalle', [InversionController::class, 'show'])->name('show.inversiones');
         });
 
 

@@ -3,7 +3,7 @@ import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Button } from "@
 import { UploadFileIcon } from '../../icons/UploadFileIcon';
 import { KeyboardIcon } from '../../icons/KeyboardIcon';
 import { urls } from '../../../config/config';
-import ModalCrearCliente from '../agregar/ModalCrearInversor';
+import ModalCrearInversor from '../agregar/ModalCrearInversor';
 
 const InstructivoSinItems = () => {
     return (
@@ -21,7 +21,7 @@ const InstructivoSinItems = () => {
                 <div className='flex justify-center gap-6' style={{ marginTop: 60 }}>
                     <div className="mt-10">
                         <div className='d-flex text-center mt-4'>
-                            <ModalCrearCliente />
+                            <ModalCrearInversor />
                         </div>
                     </div>
                 </div>

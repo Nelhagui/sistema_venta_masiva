@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\InversionController;
 use App\Http\Controllers\InversorController;
 use App\Http\Controllers\ProductosBaseController;
 use App\Http\Controllers\ProveedorController;
@@ -88,6 +89,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [InversorController::class, 'indexApi']);
         Route::get('/detalle/{id}', [InversorController::class, 'showApi']);
         Route::post('/crear', [InversorController::class, 'storeApi']);
+    });
+
+    // INVERSIONES
+    Route::prefix('inversiones')->group(function () {
+        Route::get('/', [InversionController::class, 'indexApi']);
+        Route::post('/crear', [InversionController::class, 'storeApi']);
+        Route::get('/detalle/{id}', [InversionController::class, 'showApi']);
     });
 
     // PRODUCTOS BASE

@@ -16,9 +16,13 @@ return new class extends Migration
             $table->date('fecha_inversion')->nullable();
             $table->decimal('monto_invertido', 10, 2);
             $table->decimal('porcentaje_ganancia', 10, 2);
+            $table->string("nota")->nullable();
+            $table->string('estado')->default(1);
             // Llave foránea
             $table->unsignedBigInteger('inversor_id');
             $table->foreign('inversor_id')->references('id')->on('inversores')->onDelete('cascade');
+            $table->unsignedBigInteger('comercio_id');
+            $table->foreign('comercio_id')->references('id')->on('comercios')->onDelete('cascade');
 
             $table->timestamps();
         });

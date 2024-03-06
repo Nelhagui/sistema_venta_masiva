@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -35,6 +36,10 @@ class HomeController extends Controller
                 // Redirige al usuario a una página de error o muestra un mensaje de prohibición
                 return "Por el momento no estamos operando en tu país. Disculpas";
             }
+        }
+        if (Auth::check()) {
+            // Si el usuario está autenticado, redirige a otra vista
+            return redirect()->route('index.lector');
         }
 
         // Si el país está permitido, muestra la página normalmente
