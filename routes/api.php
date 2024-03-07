@@ -57,7 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ClienteController::class, 'indexApi']);
         Route::post('/crear', [ClienteController::class, 'storeApi']);
         Route::post('/deudas/saldar', [ClienteController::class, 'saldarDeudaApi']);
-        Route::get('/detalle/{id}', [ClienteController::class, 'showApi']);
+        Route::post('/detalle', [ClienteController::class, 'showApi']);
     });
 
     // PRODUCTOS

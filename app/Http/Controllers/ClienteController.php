@@ -101,9 +101,10 @@ class ClienteController extends Controller
         return $clientes;
     }
 
-    public function showApi(string $id)
+    public function showApi(Request $request)
     {
         $user = Auth::user();
+        $id = $request->id;
         $cliente = Cliente::where('id', $id)
             ->with('ventas')
             ->where('comercio_id', $user->comercio_id)

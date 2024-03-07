@@ -27,16 +27,19 @@ const clienteServices = {
     },
     detalleCliente: async (cliente_id) => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const url = `${endpoints.clientes.detalle}/${cliente_id}`;
+        const url = `${endpoints.clientes.detalle}`;
 
         const requestOptions = {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'Referer': window.location.origin,
                 'X-CSRF-TOKEN': csrfToken
-            }
+            },
+            body: JSON.stringify({
+                id: cliente_id
+            })
         };
 
         try {
