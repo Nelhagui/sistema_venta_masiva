@@ -17,7 +17,6 @@ export default function MainProductos() {
         try {
             const productosResponse = await productoServices.traerLista();
             setProductos(productosResponse);
-            console.log(productosResponse)
         } catch (error) {
             // Maneja el error si la creación de la venta falla
         } finally {

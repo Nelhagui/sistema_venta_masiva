@@ -105,7 +105,6 @@ export default function MainCrearProductos() {
 
     const handleConfirmCompra = () => {
         handleSubmit();
-        console.log(valoresInputs);
     };
 
 
@@ -128,7 +127,12 @@ export default function MainCrearProductos() {
                     });
                     setErrores(objetoResultado);
                 } else {
-                    console.log('error inesperado');
+                    toast.update(id, {
+                        isLoading: false,
+                        autoClose: 3000,
+                        render: "Error inesperado, contacte con soporte",
+                        type: "error",
+                    });
                 }
                 toast.update(id, {
                     isLoading: false,
@@ -153,7 +157,6 @@ export default function MainCrearProductos() {
     };
 
     const resetAll = () => {
-        console.log('borro?')
         setErrores([]);
         setValoresInputs([]);
         setFilas([]);
@@ -237,7 +240,6 @@ export default function MainCrearProductos() {
                             const productoEncontrado = productos.find(producto => producto.codigo_barra === input.codigo_barra);
                             if (productoEncontrado && !input.titulo) {
                                 input.titulo = productoEncontrado.titulo;
-                                console.log(input)
                             }
                         }
                     });

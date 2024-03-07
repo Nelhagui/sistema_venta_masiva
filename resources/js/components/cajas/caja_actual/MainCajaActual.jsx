@@ -20,9 +20,6 @@ export default function MainCajaAcual() {
             setIsLoading(false);
         }
     };
-    const irPaginaAgregarCliente = () => {
-        console.log('voy')
-    }
     return (
         <>
             {

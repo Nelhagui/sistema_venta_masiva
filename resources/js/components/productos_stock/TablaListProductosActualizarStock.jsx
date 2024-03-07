@@ -87,7 +87,6 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
     }
 
     const realizarBusqueda = (textoBusqueda) => {
-        console.log('busco', textoBusqueda)
         const MAX_PRODUCTOS = 30;
         if (textoBusqueda === '') {
             setObjetosBuscados([]);
@@ -114,7 +113,6 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
 
     const addProducto = (producto) => {
         setProductosSeleccionados(prevProductos => {
-            console.log(producto)
             const productoExistente = prevProductos.find(p => p.titulo === producto.titulo);
 
             if (productoExistente) {
@@ -180,7 +178,6 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
     };
 
     const changeSubmit = () => {
-        console.log(productosSeleccionados);
         // Realizar la solicitud GET a la API de productos
         fetch('/api/productos/actualizar/stock', {
             method: 'POST',

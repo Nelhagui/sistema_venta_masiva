@@ -61,7 +61,6 @@ const ResumenDeuda = () => {
             fetchSaldarDeuda();
         } else {
             setMetodoPagoCompletado(false);
-            console.log('seleccioneee un metodo')
         }
     }
 

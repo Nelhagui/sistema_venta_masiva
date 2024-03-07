@@ -146,7 +146,7 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
         } else if (e.key === 'Enter' && objetosBuscados[selectedItem]) {
             agregarFilaConProducto(objetosBuscados[selectedItem]);
         } else if (e.key === 'F12' && productosSeleccionados.length > 0) {
-            console.log('cargo compra')
+            
         }
     };
 
@@ -177,10 +177,13 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                         objetoResultado[`${error.key}-${error.campo}`] = error.error;
                     });
                     setErrores(objetoResultado);
-                    console.log(errores)
-                    console.log("bucleando")
                 } else {
-                    console.log('error inesperado');
+                    toast.update(id, {
+                        isLoading: false,
+                        autoClose: true,
+                        render: "Error inesperado, contacte con soporte. Error A5H",
+                        type: "error",
+                    });
                 }
                 toast.update(id, {
                     isLoading: false,
@@ -208,10 +211,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
             setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        console.log(errores)
-    }, [errores])
 
     useEffect(() => {
         agregarFila();

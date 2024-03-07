@@ -35,7 +35,6 @@ const InputMetodoPago = ({ name, metodos, handleChangeMetodoPago, setMetodosSele
                 );
             }
         });
-        console.log(metodosAgregados)
     }
 
     const handleSelection = (e) => {

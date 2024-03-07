@@ -58,7 +58,6 @@ function ListProductos({ productos, metodosDePago }) {
         const nombreMetodo = e.target.options[e.target.selectedIndex].text;
         // Aquí puedes obtener el markup del método de pago, por ejemplo, asumiendo que el markup está en la propiedad 'markup' del objeto de método de pago
         const metodoSeleccionado = metodosDePago.find((metodo) => metodo.id == value);
-        console.log(metodoSeleccionado)
         const markup = metodoSeleccionado ? metodoSeleccionado.markup : null;
         const tipo_markup = metodoSeleccionado ? metodoSeleccionado.tipo_markup : null;
 
@@ -92,7 +91,6 @@ function ListProductos({ productos, metodosDePago }) {
                     markup: markup, 
                     tipo_markup: tipo_markup
                 };
-                console.log(nuevoMetodo)
                 return [...prevMetodos, nuevoMetodo];
             }
         });
@@ -159,7 +157,6 @@ function ListProductos({ productos, metodosDePago }) {
         })
             .then((response) => {
                 if (!response.ok) {
-                    console.log(response)
                     throw new Error('Network response was not ok');
                 }
                 return response.json();

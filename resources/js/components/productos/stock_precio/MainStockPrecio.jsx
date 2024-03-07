@@ -22,7 +22,6 @@ export default function MainStockPrecio() {
         try {
             const productosResponse = await productoServices.traerLista();
             setProductos(productosResponse);
-            console.log(productosResponse)
         } catch (error) {
             // Maneja el error si la creación de la venta falla
         } finally {
@@ -35,7 +34,6 @@ export default function MainStockPrecio() {
         try {
             const inversoresResponse = await inversorServices.traerLista();
             setInversores(inversoresResponse);
-            console.log(inversoresResponse)
         } catch (error) {
             // Maneja el error si la creación de la venta falla
         } finally {
@@ -48,7 +46,6 @@ export default function MainStockPrecio() {
         try {
             const proveedoresResponse = await proveedorServices.traerLista();
             setProveedores(proveedoresResponse);
-            console.log(proveedoresResponse)
         } catch (error) {
             // Maneja el error si la creación de la venta falla
         } finally {

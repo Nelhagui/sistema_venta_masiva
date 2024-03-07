@@ -3,11 +3,9 @@ import React, { useEffect } from 'react';
 const TeclaDetector = ({ onKeyPress }) => {
 
     const handleKeyPress = (event) => {
-        console.log('Tecla presionada:', event.key);
 
         // Puedes realizar acciones específicas según la tecla presionada
         if (event.key === 'Enter') {
-            console.log('Enter presionado. Realizar alguna acción.');
 
             // Ejecutar la función proporcionada desde las props
             onKeyPress && onKeyPress();

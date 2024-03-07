@@ -188,7 +188,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
     }
 
     const addProducto = (producto) => {
-        console.log(producto);
         setProductosSeleccionados(prevProductos => {
             const productoExistente = prevProductos.find(p => (producto.titulo === p.titulo));
             if (productoExistente) {
@@ -256,7 +255,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         } else if (e.key === 'Enter' && objetosBuscados[selectedItem]) {
             addProducto(objetosBuscados[selectedItem]);
         } else if (e.key === 'F12' && productosSeleccionados.length > 0) {
-            console.log('cargo compra')
         }
     };
 

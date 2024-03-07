@@ -27,7 +27,6 @@ const Buscador = ({ arrayDeObjetos, clickAction, focusInInput = false }) => {
     }
 
     const realizarBusqueda = () => {
-        console.log('busco', inputTextRef.current)
         const MAX_PRODUCTOS = 30;
         if (inputTextRef.current === '') {
             setObjetosBuscados([]);
