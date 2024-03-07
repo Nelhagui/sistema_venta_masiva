@@ -93,6 +93,7 @@ class InversorController extends Controller
         $inversor = new Inversor;
         $inversor->comercio_id = $user->comercio_id;
         $inversor->nombre = $request->nombre;
+        $inversor->apellido = $request->apellido;
         $inversor->telefono = $request->telefono;
         $inversor->whatsapp = $request->whatsapp;
         $inversor->nota = $request->nota;
