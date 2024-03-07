@@ -6,37 +6,48 @@ import { DetalleClienteContextProvider } from '../../../context/DetalleClienteCo
 import { useDetalleClienteContext } from '../../../context/DetalleClienteContext';
 import metodoPagoServices from '../../../services/metodoPagoServices';
 
-export default function MainDetalleCliente({ clienteId }) {
+export default function MainDetalleCliente() {
     const {setCliente, setMetodosDePago, setIdCliente} = useDetalleClienteContext();
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        fetchDetalleCliente()
-        fetchMetodosDePago()
-        setIdCliente(clienteId)
-    }, [clienteId]);
+        const params = new URLSearchParams(window.location.search);
+        const idParam = params.get('id');
+        if (idParam) {
+            setIdCliente(idParam);
+            fetchData(idParam);
+        }
+    }, []);
 
-    const fetchDetalleCliente = async () => {
+    const fetchData = async (idParam) => {
         setIsLoading(true);
         try {
-            const clientesResponse = await clienteServices.detalleCliente(clienteId);
-            setCliente(clientesResponse);
+            await Promise.all([
+                fetchDetalleCliente(idParam),
+                fetchMetodosDePago()
+            ]);
         } catch (error) {
             // Maneja el error si la creación de la venta falla
         } finally {
             setIsLoading(false);
         }
     };
+
+    const fetchDetalleCliente = async (id) => {
+        try {
+            const dataResponse = await clienteServices.detalleCliente(id);
+            setCliente(dataResponse);
+        } catch (error) {
+            // Maneja el error si la creación de la venta falla
+        }
+    };
     const fetchMetodosDePago = async () => {
-        setIsLoading(true);
         try {
             const response = await metodoPagoServices.traerLista();
             setMetodosDePago(response);
         } catch (error) {
             // Maneja el error si la creación de la venta falla
-        } finally {
-            setIsLoading(false);
-        }
+        } 
     };
 
     return (
@@ -52,11 +63,10 @@ export default function MainDetalleCliente({ clienteId }) {
 
 if (document.getElementById('mainDetalleCliente')) {
     const domNode = document.getElementById('mainDetalleCliente');
-    const idCliente = domNode.dataset.clienteId;
     const root = createRoot(domNode);
     root.render(
         <DetalleClienteContextProvider>
-            <MainDetalleCliente clienteId={idCliente} />
+            <MainDetalleCliente />
         </DetalleClienteContextProvider>
     );
 }
