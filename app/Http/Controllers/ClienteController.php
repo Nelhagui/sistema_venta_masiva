@@ -48,10 +48,10 @@ class ClienteController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Cliente $cliente)
     {
-        $cliente_id = $id;
-        return view('clientes.show', compact('cliente_id'));
+        $id = $cliente->id;
+        return view('clientes.show', compact('id'));
     }
 
     /**

@@ -86,7 +86,7 @@ const TablaListClientes = ({ clientes }) => {
 
 
     function irPaginaDetalle(cliente_id) {
-        window.location.href = `${urls.clientes.detalle}/${cliente_id}`;
+        window.location.href = `${urls.clientes.detalle}?id=${cliente_id}`;
     }
 
     function irPaginaEditProducto(cliente_id) {
