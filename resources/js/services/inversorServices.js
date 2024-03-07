@@ -27,16 +27,19 @@ const inversorServices = {
     },
     detalleInversor: async (inversor_id) => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const url = `${endpoints.inversores.detalle}/${inversor_id}`;
+        const url = `${endpoints.inversores.detalle}`;
 
         const requestOptions = {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'Referer': window.location.origin,
                 'X-CSRF-TOKEN': csrfToken
-            }
+            },
+            body: JSON.stringify({
+                id: inversor_id
+            })
         };
 
         try {

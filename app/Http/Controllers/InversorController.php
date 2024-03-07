@@ -100,8 +100,9 @@ class InversorController extends Controller
         return $inversor->save();
     }
 
-    public function showApi(string $id)
+    public function showApi(Request $request)
     {
+        $id = $request->id;
         $user = Auth::user();
         $inversor = Inversor::where('id', $id)
             ->where('comercio_id', $user->comercio_id)

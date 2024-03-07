@@ -7,8 +7,9 @@ import { useDetalleInversorContext } from '../../../context/DetalleInversorConte
 import metodoPagoServices from '../../../services/metodoPagoServices';
 
 export default function MainDetalleInversor() {
-    const {setInversor, setMetodosDePago, setId, setInversiones} = useDetalleInversorContext();
+    const { setInversor, setMetodosDePago, setId, setInversiones } = useDetalleInversorContext();
     const [isLoading, setIsLoading] = useState(true)
+    const [msjError, setMsjError] = useState(false)
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -16,6 +17,8 @@ export default function MainDetalleInversor() {
         if (idParam) {
             setId(idParam);
             fetchData(idParam);
+        } else {
+
         }
     }, []);
 
@@ -27,37 +30,41 @@ export default function MainDetalleInversor() {
                 fetchMetodosDePago()
             ]);
         } catch (error) {
-            // Maneja el error si la creación de la venta falla
+            setMsjError('Error inesperado, contacte con soporte')
         } finally {
             setIsLoading(false);
         }
     };
-    
+
     const fetchDetalleInversor = async (id) => {
         try {
             const dataResponse = await inversorServices.detalleInversor(id);
             setInversor(dataResponse);
             setInversiones(dataResponse.inversiones);
         } catch (error) {
-            // Maneja el error si la creación de la venta falla
+            setMsjError('Error inesperado, contacte con soporte. Error AH9')
         }
     };
-    
+
     const fetchMetodosDePago = async () => {
         try {
             const response = await metodoPagoServices.traerLista();
             setMetodosDePago(response);
         } catch (error) {
-            // Maneja el error si la creación de la venta falla
+            setMsjError('Error inesperado, contacte con soporte. Error MH54')
         }
     };
 
     return (
         <>
             {
-                isLoading
-                    ? "Cargando..."
-                    : <DetalleInversor />
+                msjError
+                    ?
+                    <>{msjError}</>
+                    :
+                    isLoading
+                        ? "Cargando..."
+                        : <DetalleInversor />
             }
         </>
     )

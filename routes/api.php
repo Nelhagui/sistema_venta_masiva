@@ -87,7 +87,7 @@ Route::middleware('auth')->group(function () {
     // INVERSORES
     Route::prefix('inversores')->group(function () {
         Route::get('/', [InversorController::class, 'indexApi']);
-        Route::get('/detalle/{id}', [InversorController::class, 'showApi']);
+        Route::post('/detalle', [InversorController::class, 'showApi']);
         Route::post('/crear', [InversorController::class, 'storeApi']);
     });
 

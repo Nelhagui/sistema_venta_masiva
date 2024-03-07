@@ -89,10 +89,6 @@ const TablaListInversores = ({ inversores }) => {
         window.location.href = `${urls.inversores.detalle}?id=${inversor_id}`;
     }
 
-    function irPaginaEdit(inversor_id) {
-        window.location.href = `${urls.inversores.editar}/${inversor_id}`;
-    }
-
     const renderCell = React.useCallback((item, columnKey) => {
         const cellValue = item[columnKey];
 
