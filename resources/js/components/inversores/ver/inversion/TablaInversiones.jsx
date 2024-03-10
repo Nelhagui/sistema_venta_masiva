@@ -16,9 +16,7 @@ import {
     Pagination,
 } from "@nextui-org/react";
 import { EyeIcon } from '../../../icons/EyeIcon';
-import { SearchIcon } from '../../../icons/SearchIcon';
 import { ChevronDownIcon } from "../../../icons/ChevronDownIcon";
-import { EditIcon } from '../../../icons/EditIcon';
 import { capitalizeToLowerCase, formatearAMoneda } from '../../../../utils/utils';
 
 import { urls } from '../../../../config/config';
@@ -27,7 +25,7 @@ import ModalCrearInversion from '../../agregar/ModalCrearInversion';
 
 import { useDetalleInversorContext } from '../../../../context/DetalleInversorContext';
 
-const INITIAL_VISIBLE_COLUMNS = ["id", "fecha_inversion", "monto_invertido", "porcentaje_ganancia", "total", "acciones"];
+const INITIAL_VISIBLE_COLUMNS = ["id", "fecha_inversion", "monto_invertido", "porcentaje_ganancia", "total", "estado_devolucion", "acciones"];
 
 
 const TablaInversiones = () => {
@@ -47,7 +45,8 @@ const TablaInversiones = () => {
         { name: "INVERSIÓN", uid: "monto_invertido", sortable: true },
         { name: "INTERES", uid: "porcentaje_ganancia" },
         { name: "TOTAL", uid: "total" },
-        // { name: "ACCIONES", uid: "acciones" },
+        { name: "ESTADO", uid: "estado_devolucion", sortable: true },
+        { name: "ACCIONES", uid: "acciones" },
     ];
 
     const [page, setPage] = React.useState(1);
@@ -107,14 +106,6 @@ const TablaInversiones = () => {
                         </p>
                     </div>
                 );
-            case "total":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">
-                            ${formatearAMoneda((Number(item.monto_invertido) * Number(item.porcentaje_ganancia) / 100) + Number(item.monto_invertido))}
-                        </p>
-                    </div>
-                );
             case "porcentaje_ganancia":
                 return (
                     <div className="flex flex-col">
@@ -123,14 +114,40 @@ const TablaInversiones = () => {
                         </p>
                     </div>
                 );
-            // case "acciones":
-            //     return (
-            //         <div className="relative flex gap-2">
-            //             <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-            //                 <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
-            //             </span>
-            //         </div>
-            //     );
+            case "total":
+                return (
+                    <div className="flex flex-col">
+                        <p className="text-bold text-small capitalize">
+                            ${formatearAMoneda((Number(item.monto_invertido) * Number(item.porcentaje_ganancia) / 100) + Number(item.monto_invertido))}
+                        </p>
+                    </div>
+                );
+            case "estado_devolucion":
+                return (
+                    <div className="flex flex-col">
+                        {
+                            item.estado_devolucion === "pago"
+                                ?
+                                <p className="text-bold text-small capitalize" style={{color: 'green'}}>
+                                    {item.estado_devolucion}
+                                </p>
+                                :
+                                <p className="text-bold text-small capitalize" style={{color: 'red'}}>
+                                    {item.estado_devolucion}
+                                </p>
+                        }
+
+                    </div>
+                );
+
+            case "acciones":
+                return (
+                    <div className="relative flex gap-2">
+                        <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                            <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
+                        </span>
+                    </div>
+                );
             default:
                 return cellValue;
         }
@@ -266,7 +283,7 @@ const TablaInversiones = () => {
 
     return (
         <Table
-            aria-label="Example table with custom cells, pagination and sorting"
+            aria-label="Tabla con lista de inversores del servicio"
             isHeaderSticky={true}
             isStriped
             bottomContent={bottomContent}
@@ -293,7 +310,7 @@ const TablaInversiones = () => {
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={"Sin resultados que coincidan"} items={sortedItems}>
+            <TableBody emptyContent={"No hay registros de inversores"} items={sortedItems}>
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

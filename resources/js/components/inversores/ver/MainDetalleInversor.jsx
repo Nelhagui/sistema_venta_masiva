@@ -27,7 +27,6 @@ export default function MainDetalleInversor() {
         try {
             await Promise.all([
                 fetchDetalleInversor(idParam),
-                fetchMetodosDePago()
             ]);
         } catch (error) {
             setMsjError('Error inesperado, contacte con soporte')
@@ -43,15 +42,6 @@ export default function MainDetalleInversor() {
             setInversiones(dataResponse.inversiones);
         } catch (error) {
             setMsjError('Error inesperado, contacte con soporte. Error AH9')
-        }
-    };
-
-    const fetchMetodosDePago = async () => {
-        try {
-            const response = await metodoPagoServices.traerLista();
-            setMetodosDePago(response);
-        } catch (error) {
-            setMsjError('Error inesperado, contacte con soporte. Error MH54')
         }
     };
 

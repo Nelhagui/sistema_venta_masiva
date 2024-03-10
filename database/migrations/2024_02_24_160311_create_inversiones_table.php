@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('porcentaje_ganancia', 10, 2);
             $table->string("nota")->nullable();
             $table->string('estado')->default(1);
+            $table->enum('estado_devolucion', ['pendiente','pago'])->default('pendiente');
             // Llave foránea
             $table->unsignedBigInteger('inversor_id');
             $table->foreign('inversor_id')->references('id')->on('inversores')->onDelete('cascade');

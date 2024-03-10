@@ -1,33 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Textarea, Input } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Textarea, Input, Select } from "@nextui-org/react";
 import { PlusIcon } from "../../../icons/PlusIcon.jsx";
+import inversionesServices from "../../../../services/inversionesServices.js";
 
-export default function ModalCrearPago() {
+export default function ModalCrearPago({ id }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [isDisabled, setIsDisabled] = useState(false)
-    const [camposObligatorios] = useState(['fecha_inversion', 'monto_invertido', 'porcentaje_ganancia'])
+    const [camposObligatorios] = useState(['fecha_pago', 'monto_abonado'])
 
     const [data, setData] = useState({})
     const [msjError, setMsjError] = useState({
-        inversor_id: id,
-        fecha_inversion: null,
-        monto_invertido: null,
-        porcentaje_ganancia: null,
+        inversion_id: id,
+        fecha_pago: null,
+        monto_abonado: null,
         nota: null,
     })
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
         setData({
-            inversor_id: id,
-            fecha_inversion: '',
-            monto_invertido: '',
-            porcentaje_ganancia: '',
+            inversion_id: id,
+            fecha_pago: formattedDate,
+            monto_abonado: '',
             nota: ''
         })
         setMsjError(null)
         setIsDisabled(true);
-    }, [isOpen])
+    }, [isOpen, id])
 
     useEffect(() => {
         const todosCamposLlenos = camposObligatorios.every(campo => data[campo] !== '' && data[campo] !== null);
@@ -59,14 +60,13 @@ export default function ModalCrearPago() {
     const fetchService = async () => {
         setIsLoading(true);
         try {
-            const response = await inversionesServices.crearInversion(data)
+            const response = await inversionesServices.crearPago(data)
             if (response.status === 200) {
                 window.location.reload();
             } else {
                 setMessage(data.message);
             }
         } catch (error) {
-            // Maneja el error si la creación de la venta falla
         } finally {
             setIsLoading(false);
         }
@@ -80,7 +80,7 @@ export default function ModalCrearPago() {
                 endContent={<PlusIcon />}
                 onClick={onOpen}
             >
-                Crear Inversión
+                Cargar Pago
             </Button>
             <Modal
                 isOpen={isOpen}
@@ -90,46 +90,33 @@ export default function ModalCrearPago() {
                 <ModalContent>
                     {(onClose) => (
                         <>
-                            <ModalHeader className="flex flex-col gap-1">Nueva Inversión</ModalHeader>
+                            <ModalHeader className="flex flex-col gap-1">Cargar Pago</ModalHeader>
                             <ModalBody>
                                 <Input
-                                    isRequired={camposObligatorios.includes('fecha_inversion')}
-                                    label="Fecha de Inversión"
+                                    isRequired={camposObligatorios.includes('fecha_pago')}
+                                    label="Fecha del Pago"
                                     placeholder="Ingresa la fecha"
                                     variant="bordered"
                                     isDisabled={isLoading}
-                                    name="fecha_inversion"
-                                    value={data.fecha_inversion}
+                                    name="fecha_pago"
+                                    value={data.fecha_pago}
                                     type="date"
                                     onChange={onChangeValue}
-                                    isInvalid={msjError?.fecha_inversion ?? false}
-                                    errorMessage={msjError?.fecha_inversion ?? ''}
+                                    isInvalid={msjError?.fecha_pago ?? false}
+                                    errorMessage={msjError?.fecha_pago ?? ''}
                                 />
                                 <Input
-                                    isRequired={camposObligatorios.includes('monto_invertido')}
-                                    label="Monto Invertido"
+                                    isRequired={camposObligatorios.includes('monto_abonado')}
+                                    label="Monto Abonado"
                                     placeholder="Ingrese el monto"
                                     variant="bordered"
                                     isDisabled={isLoading}
-                                    name="monto_invertido"
+                                    name="monto_abonado"
                                     type="number"
-                                    value={data?.monto_invertido}
+                                    value={data?.monto_abonado}
                                     onChange={onChangeValue}
-                                    isInvalid={msjError?.monto_invertido ?? false}
-                                    errorMessage={msjError?.monto_invertido ?? ''}
-                                />
-                                <Input
-                                    isRequired={camposObligatorios.includes('porcentaje_ganancia')}
-                                    label="Ganancia"
-                                    placeholder="Ingrese el porcentaje de ganancia"
-                                    variant="bordered"
-                                    isDisabled={isLoading}
-                                    name="porcentaje_ganancia"
-                                    type="number"
-                                    value={data?.porcentaje_ganancia}
-                                    onChange={onChangeValue}
-                                    isInvalid={msjError?.porcentaje_ganancia ?? false}
-                                    errorMessage={msjError?.porcentaje_ganancia ?? ''}
+                                    isInvalid={msjError?.monto_abonado ?? false}
+                                    errorMessage={msjError?.monto_abonado ?? ''}
                                 />
                                 <div className="w-full flex flex-col gap-2 max-w-[240px]">
                                     <Textarea

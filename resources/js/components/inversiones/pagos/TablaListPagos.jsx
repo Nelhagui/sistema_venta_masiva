@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
     Table,
     TableHeader,
@@ -6,26 +6,33 @@ import {
     TableBody,
     TableRow,
     TableCell,
-    Input,
     Button,
     DropdownTrigger,
     Dropdown,
     DropdownMenu,
     DropdownItem,
-    Tooltip,
+    Chip,
     Pagination,
 } from "@nextui-org/react";
 import { EyeIcon } from '../../icons/EyeIcon';
-import { SearchIcon } from '../../icons/SearchIcon';
 import { ChevronDownIcon } from "../../icons/ChevronDownIcon";
 import { urls } from '../../../config/config';
 import ModalCrearPago from './agregar/ModalCrearPago';
 import { EditIcon } from '../../icons/EditIcon';
+import fechaUtils from '../../../utils/fechaUtils';
+import { formatearAMoneda } from '../../../utils/utils';
 
-const INITIAL_VISIBLE_COLUMNS = ["nombre", "telefono", "whatsapp", "nota", "acciones"];
+const INITIAL_VISIBLE_COLUMNS = ["id", "fecha_pago", "monto_abonado", "nota", "acciones"];
 
+const TablaListPagos = ({ pagos, inversion }) => {
 
-const TablaListPagos = ({ pagos }) => {
+    const inversionMasGanancia = Number(inversion.monto_invertido) * (1 + inversion.porcentaje_ganancia / 100);
+
+    // Calcular el total de los pagos
+    const totalPagos = pagos.reduce((total, pago) => total + Number(pago.monto_abonado), 0);
+    // Calcular el saldo
+    const saldo = Number(inversionMasGanancia) - totalPagos;
+
     const [filterValue, setFilterValue] = React.useState("");
     const [visibleColumns, setVisibleColumns] = React.useState(new Set(INITIAL_VISIBLE_COLUMNS));
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -36,12 +43,9 @@ const TablaListPagos = ({ pagos }) => {
 
     const columns = [
         { name: "ID", uid: "id", sortable: true },
-        { name: "NOMBRE", uid: "nombre", sortable: true },
-        { name: "APELLIDO", uid: "apellido", sortable: true },
-        { name: "TELEFONO", uid: "telefono" },
-        { name: "WHATSAPP", uid: "whatsapp", sortable: true },
+        { name: "FECHA", uid: "fecha_pago", sortable: true },
+        { name: "MONTO", uid: "monto_abonado", sortable: true },
         { name: "NOTA", uid: "nota", sortable: true },
-        { name: "ACCIONES", uid: "acciones" },
     ];
 
     const [page, setPage] = React.useState(1);
@@ -84,61 +88,24 @@ const TablaListPagos = ({ pagos }) => {
         });
     }, [sortDescriptor, items]);
 
-
-    function irPaginaDetalle(inversor_id) {
-        window.location.href = `${urls.pagos.detalle}?id=${inversor_id}`;
-    }
-
-    function irPaginaEdit(inversor_id) {
-        window.location.href = `${urls.pagos.editar}/${inversor_id}`;
-    }
-
     const renderCell = React.useCallback((item, columnKey) => {
         const cellValue = item[columnKey];
 
         switch (columnKey) {
-            case "nombre":
+            case "monto_abonado":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {item.nombre}
+                            ${formatearAMoneda(item?.monto_abonado)}
                         </p>
                     </div>
                 );
-            case "telefono":
+            case "fecha_pago":
                 return (
                     <div className="flex flex-col">
                         <p className="text-bold text-small capitalize">
-                            {item.telefono ? item.telefono : "-"}
+                            {fechaUtils.convertirFormatoFecha(item?.fecha_pago)}
                         </p>
-                    </div>
-                );
-            case "whatsapp":
-                return (
-                    <div className="flex flex-col">
-                        <p className="text-bold text-small capitalize">
-                            {item.whatsapp ? item.whatsapp : "-"}
-                        </p>
-                    </div>
-                );
-            case "acciones":
-                return (
-                    <div className="relative flex items-center gap-2">
-                        <Tooltip content="Ver">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
-                            </span>
-                        </Tooltip>
-                        <Tooltip content="Editar">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon onClick={() => irPaginaEdit(item?.id)} />
-                            </span>
-                        </Tooltip>
-                        {/* <Tooltip color="danger" content="Borrar">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
-                                <DeleteIcon />
-                            </span>
-                        </Tooltip> */}
                     </div>
                 );
             default:
@@ -172,27 +139,37 @@ const TablaListPagos = ({ pagos }) => {
         }
     }, []);
 
-    const onClear = React.useCallback(() => {
-        setFilterValue("")
-        setPage(1)
-    }, [])
-
     const topContent = React.useMemo(() => {
         return (
             <div className="flex flex-col gap-4 mt-10">
                 <div className="flex justify-between gap-3 items-end">
                     <div className='w-full'>
-                        <Input
-                            isClearable
-                            variant="bordered"
-                            className="max-w-md"
-                            placeholder="Buscar por nombre..."
-                            startContent={<SearchIcon />}
-                            value={filterValue}
-                            onClear={() => onClear()}
-                            onValueChange={onSearchChange}
-                            size="sm"
-                        />
+                        <div className="my-9" style={{ marginTop: 25, marginBottom: 25, display: 'flex', justifyContent: 'space-between' }}>
+                            <div>
+                                <h2 className="antialiased font-medium tracking-wide text-left" style={{ fontSize: 32 }}>
+                                    Pagos Realizados a Inversión
+                                </h2>
+                                <div className='flex mt-1 gap-4'>
+                                    <div>
+                                        <span style={{fontWeight: 'bold'}}> Inversión: </span>${formatearAMoneda(inversion.monto_invertido)}
+                                    </div>
+                                    <div>
+                                        <span style={{fontWeight: 'bold'}}> Ganancia: </span>${formatearAMoneda(inversion.porcentaje_ganancia * inversion.monto_invertido / 100)}
+                                    </div>
+                                    <div>
+                                        <span style={{fontWeight: 'bold'}}> Inversión + Ganancia: </span>${formatearAMoneda(inversionMasGanancia)}
+                                    </div>
+                                </div>
+                                <div className='flex mt-6 gap-2'>
+                                    <Chip variant="bordered">
+                                        Pagos: ${formatearAMoneda(totalPagos)}
+                                    </Chip>
+                                    <Chip variant="bordered">
+                                        Saldo: ${formatearAMoneda(saldo)}
+                                    </Chip>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div className="flex gap-3">
                         <Dropdown>
@@ -216,9 +193,14 @@ const TablaListPagos = ({ pagos }) => {
                                 ))}
                             </DropdownMenu>
                         </Dropdown>
-                        <div className='flex gap-2'>
-                            <ModalCrearPago />
-                        </div>
+                        {
+                            saldo > 0
+                                ?
+                                <div className='flex gap-2'>
+                                    <ModalCrearPago id={inversion.id} />
+                                </div>
+                                : null
+                        }
                     </div>
                 </div>
                 <div className="flex justify-between items-center">
@@ -247,6 +229,7 @@ const TablaListPagos = ({ pagos }) => {
         pagos.length,
         onSearchChange,
         hasSearchFilter,
+        inversion
     ]);
 
     const bottomContent = React.useMemo(() => {
@@ -304,7 +287,7 @@ const TablaListPagos = ({ pagos }) => {
                     </TableColumn>
                 )}
             </TableHeader>
-            <TableBody emptyContent={"Sin resultados que coincidan"} items={sortedItems}>
+            <TableBody emptyContent={"No se registra ningún pago"} items={sortedItems}>
                 {(item) => (
                     <TableRow key={item.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

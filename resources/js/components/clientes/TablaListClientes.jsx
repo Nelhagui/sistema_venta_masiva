@@ -124,16 +124,12 @@ const TablaListClientes = ({ clientes }) => {
             case "acciones":
                 return (
                     <div className="relative flex items-center gap-2">
-                        <Tooltip content="Ver">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
-                            </span>
-                        </Tooltip>
-                        <Tooltip content="Editar">
-                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EditIcon onClick={() => irPaginaEditProducto(item?.id)} />
-                            </span>
-                        </Tooltip>
+                        <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                            <EyeIcon onClick={() => irPaginaDetalle(item?.id)} />
+                        </span>
+                        <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                            <EditIcon onClick={() => irPaginaEditProducto(item?.id)} />
+                        </span>
                         {/* <Tooltip color="danger" content="Borrar">
                             <span style={{ cursor: 'pointer' }} className="text-lg text-danger cursor-pointer active:opacity-50">
                                 <DeleteIcon />

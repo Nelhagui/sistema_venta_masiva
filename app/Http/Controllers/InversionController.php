@@ -26,4 +26,20 @@ class InversionController extends Controller
 
         return $inversion->save();
     }
+
+    public function showApi(Request $request)
+    {
+        $user = Auth::user();
+
+        $inversion = Inversion::where('id', $request->id)
+            ->where('comercio_id', $user->comercio_id)
+            ->with('pagos')
+            ->first();
+
+        // Verificar si la inversión no existe
+        if (!$inversion) {
+            return response()->json(['error' => 'La inversión no existe o no tienes permiso para acceder a ella'], 404);
+        }
+        return $inversion;
+    }
 }

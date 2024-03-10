@@ -1,52 +1,33 @@
+import React from 'react'
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import DetalleInversion from './DetalleInversion';
-import inversorServices from '../../../services/inversorServices';
+import inversionesServices from '../../../services/inversionesServices';
 import { DetalleInversorContextProvider } from '../../../context/DetalleInversorContext';
-import metodoPagoServices from '../../../services/metodoPagoServices';
+import TablaListPagos from '../pagos/TablaListPagos';
 
 export default function MainDetalleInversion() {
-    const {pagos, setPagos} = useState([]);
+    const [inversion, setInversion] = useState({});
+    const [pagados, setPagados] = useState([])
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const idParam = params.get('id');
         if (idParam) {
-            fetchData(idParam);
+            fetchDetalleInversion(idParam);
         }
     }, []);
-
-    const fetchData = async (idParam) => {
+    
+    const fetchDetalleInversion = async (id) => {
         setIsLoading(true);
         try {
-            await Promise.all([
-                fetchDetalleInversor(idParam),
-                fetchMetodosDePago()
-            ]);
+            const dataResponse = await inversionesServices.detalleInversion(id)
+            setInversion(dataResponse);
+            setPagados(dataResponse.pagos);
         } catch (error) {
             // Maneja el error si la creación de la venta falla
         } finally {
             setIsLoading(false);
-        }
-    };
-    
-    const fetchDetalleInversor = async (id) => {
-        try {
-            const dataResponse = await inversorServices.detalleInversor(id);
-            setInversor(dataResponse);
-            setInversiones(dataResponse.inversiones);
-        } catch (error) {
-            // Maneja el error si la creación de la venta falla
-        }
-    };
-    
-    const fetchMetodosDePago = async () => {
-        try {
-            const response = await metodoPagoServices.traerLista();
-            setMetodosDePago(response);
-        } catch (error) {
-            // Maneja el error si la creación de la venta falla
         }
     };
 
@@ -55,14 +36,14 @@ export default function MainDetalleInversion() {
             {
                 isLoading
                     ? "Cargando..."
-                    : <DetalleInversion pagos={pagos} />
+                    : <TablaListPagos pagos={pagados} inversion={inversion}  />
             }
         </>
     )
 }
 
-if (document.getElementById('MainDetalleInversion')) {
-    const domNode = document.getElementById('MainDetalleInversion');
+if (document.getElementById('mainDetalleInversion')) {
+    const domNode = document.getElementById('mainDetalleInversion');
     const root = createRoot(domNode);
     root.render(
         <DetalleInversorContextProvider>

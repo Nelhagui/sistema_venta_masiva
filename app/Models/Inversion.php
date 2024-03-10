@@ -19,4 +19,9 @@ class Inversion extends Model
     {
         return $this->belongsToMany(Producto::class)->withPivot('cantidad_invertida');
     }
+
+    public function pagos()
+    {
+        return $this->hasMany(PagoInversion::class);
+    }
 }

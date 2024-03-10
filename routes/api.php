@@ -3,6 +3,8 @@
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\InversionController;
 use App\Http\Controllers\InversorController;
+use App\Http\Controllers\PagoController;
+use App\Http\Controllers\PagoInversionController;
 use App\Http\Controllers\ProductosBaseController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\VentaController;
@@ -93,9 +95,9 @@ Route::middleware('auth')->group(function () {
 
     // INVERSIONES
     Route::prefix('inversiones')->group(function () {
-        Route::get('/', [InversionController::class, 'indexApi']);
+        Route::post('/detalle', [InversionController::class, 'showApi']);
         Route::post('/crear', [InversionController::class, 'storeApi']);
-        Route::get('/detalle/{id}', [InversionController::class, 'showApi']);
+        Route::post('/pagos/crear', [PagoInversionController::class, 'storeApi']);
     });
 
     // PRODUCTOS BASE
