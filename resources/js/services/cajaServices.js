@@ -1,12 +1,9 @@
 import { endpoints } from "../config/config";
-const ventaServices = {
-    traerLista: async (query = null) => {
+const cajaServices = {
+    traerCajaActual: async () => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        let url = endpoints.caja.cajaActual;
         
-        let url = `${endpoints.ventas.lista}`;
-        if(query)
-            url = `${endpoints.ventas.lista}?fecha=${query}`;
-
         const requestOptions = {
             method: 'GET',
             headers: {
@@ -28,37 +25,9 @@ const ventaServices = {
             throw error;
         }
     },
-    traerListaSegunSesionCaja: async (sesionCajaId = null) => {
+    cerrarCaja: async () => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
-        let url = `${endpoints.ventas.lista}`;
-        if(sesionCajaId)
-            url = `${endpoints.ventas.lista}/${sesionCajaId}`;
-
-        const requestOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Referer': window.location.origin,
-                'X-CSRF-TOKEN': csrfToken
-            }
-        };
-
-        try {
-            const response = await fetch(url, requestOptions);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            throw error;
-        }
-    },
-    anularVenta: async (data) => {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        const url = endpoints.ventas.anular;
+        const url = endpoints.caja.cerrarCaja;
 
         const requestOptions = {
             method: 'POST',
@@ -68,9 +37,6 @@ const ventaServices = {
                 'Referer': window.location.origin,
                 'X-CSRF-TOKEN': csrfToken
             },
-            body: JSON.stringify({ 
-                id: data
-            })
         };
 
         try {
@@ -81,6 +47,6 @@ const ventaServices = {
             throw error;
         }
     }
-};
+}
 
-export default ventaServices;
+export default cajaServices;

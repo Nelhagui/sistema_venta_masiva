@@ -165,6 +165,49 @@ class VentaController extends Controller
         // Devolver la respuesta como JSON
         return response()->json($respuesta);
     }
+
+    public function indexSesionApi (Request $request, string $sesionCajaId)
+    {
+        $user = Auth::user();
+        $id_comercio = $user->comercio_id;
+
+        // Obtener la fecha proporcionada en el request, o usar la fecha de hoy si no se proporciona ninguna fecha
+        $fecha = $request->query('fecha') ? Carbon::parse($request->query('fecha')) : Carbon::today();
+
+        // Obtener las ventas del mismo comercio con clientes para la fecha proporcionada
+        $ventasConClientes = Venta::where('comercio_id', $id_comercio)
+            ->whereDate('fecha_hora_venta', $fecha->toDateString())
+            ->whereHas('cliente') // Filtra las ventas que tienen un cliente asociado
+            ->where('sesion_caja_id', $sesionCajaId)
+            ->with(['cliente', 'sesionCaja.cajero', 'metodoPago'])
+            ->get();
+
+        // Obtener las ventas del mismo comercio sin clientes para la fecha proporcionada
+        $ventasSinClientes = Venta::where('comercio_id', $id_comercio)
+            ->whereDate('fecha_hora_venta', $fecha->toDateString())
+            ->whereDoesntHave('cliente') // Filtra las ventas que no tienen un cliente asociado
+            ->where('sesion_caja_id', $sesionCajaId)
+            ->with(['sesionCaja.cajero', 'metodoPago'])
+            ->get();
+
+        // Combinar los resultados en una sola colección
+        $ventasCombinadas = $ventasConClientes->merge($ventasSinClientes);
+
+        $ventasOrdenadas = $ventasCombinadas->sortByDesc(function ($venta) {
+            return $venta->created_at; // Suponiendo que la fecha de creación sea relevante para ordenar
+        })->values(); // Utiliza values() para obtener un array de objetos
+
+        // Verificar si hay una sesión de caja abierta para el usuario logueado, la fecha seleccionada y el comercio_id específico
+        
+
+        $respuesta = [
+            'ventas' => $ventasOrdenadas,
+        ];
+
+        // Devolver la respuesta como JSON
+        return response()->json($respuesta);
+    }
+
     public function storeApi(Request $request)
     {
         try {

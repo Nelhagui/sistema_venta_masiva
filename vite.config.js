@@ -21,6 +21,8 @@ export default defineConfig({
             'resources/js/components/home/MainHome.jsx',
             'resources/js/components/maquetado/MainMaquetadoLector.jsx',
             'resources/js/components/inversiones/ver/MainDetalleInversion.jsx',
+            'resources/js/components/cajas/caja_actual/MainCajaActual.jsx',
+            'resources/js/components/cajas/detalle/ResumenDetallado.jsx',
         ]),
         react(),
     ],

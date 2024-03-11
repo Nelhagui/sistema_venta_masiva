@@ -8,6 +8,7 @@ use App\Http\Controllers\PagoInversionController;
 use App\Http\Controllers\ProductosBaseController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\VentaController;
+use App\Http\Controllers\SesionCajaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Producto;
@@ -53,6 +54,12 @@ Route::get('/compras', function () {
 
 
 Route::middleware('auth')->group(function () {
+
+    // CAJA
+    Route::prefix('caja')->group(function () {
+        Route::get('/', [SesionCajaController::class, 'showApi']);
+        Route::post('/cierre-caja', [SesionCajaController::class, 'storeCierreApi']);
+    });
     
     // CLIENTES
     Route::prefix('clientes')->group(function () {
@@ -76,6 +83,7 @@ Route::middleware('auth')->group(function () {
     // VENTAS
     Route::prefix('ventas')->group(function () {
         Route::get('/', [VentaController::class, 'indexApi']);
+        Route::get('/{sesionCajaId}', [VentaController::class, 'indexSesionApi']);
         Route::post('/crear', [VentaController::class, 'storeApi']);
         Route::post('/anular', [VentaController::class, 'anularVentaApi']);
     });

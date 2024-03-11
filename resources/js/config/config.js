@@ -11,6 +11,10 @@ export const endpoints = {
         crear: `${API_BASE_URL}/ventas/crear`,
         anular: `${API_BASE_URL}/ventas/anular`,
     },
+    caja: {
+        cajaActual: `${API_BASE_URL}/caja`,
+        cerrarCaja: `${API_BASE_URL}/caja/cierre-caja`
+    },
     clientes: {
         lista: `${API_BASE_URL}/clientes`,
         crear: `${API_BASE_URL}/clientes/crear`,
@@ -48,14 +52,19 @@ export const endpoints = {
         crear: `${API_BASE_URL}/metodos-pago`,
         eliminar:  `${API_BASE_URL}/metodos-pago/eliminar`
     },
-    caja: {
-        detall: `${API_BASE_URL}/caja`
-    },
+
 };
 
 export const urls = {
     lector: {
         ver: `${BASE_URL}/lector`
+    },
+    caja: {
+        apertura: `${BASE_URL}/apertura-caja`,
+        detalleCaja: `${BASE_URL}/caja-detalle`,
+        historial: `${BASE_URL}/cajas`,
+        ingreso: `${BASE_URL}/caja/cargar-ingreso`,
+        egreso: `${BASE_URL}/caja/cargar-egreso`
     },
     ventas: {
         lista: `${BASE_URL}/ventas`,
