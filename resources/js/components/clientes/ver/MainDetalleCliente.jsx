@@ -7,8 +7,9 @@ import { useDetalleClienteContext } from '../../../context/DetalleClienteContext
 import metodoPagoServices from '../../../services/metodoPagoServices';
 
 export default function MainDetalleCliente() {
-    const {setCliente, setMetodosDePago, setIdCliente} = useDetalleClienteContext();
+    const { setCliente, setMetodosDePago, setIdCliente } = useDetalleClienteContext();
     const [isLoading, setIsLoading] = useState(true)
+    const [msjError, setMsjError] = useState(false)
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -39,6 +40,7 @@ export default function MainDetalleCliente() {
             setCliente(dataResponse);
         } catch (error) {
             // Maneja el error si la creación de la venta falla
+            setMsjError('Error inesperado, contacte con soporte. Error AT9')
         }
     };
     const fetchMetodosDePago = async () => {
@@ -47,15 +49,19 @@ export default function MainDetalleCliente() {
             setMetodosDePago(response);
         } catch (error) {
             // Maneja el error si la creación de la venta falla
-        } 
+        }
     };
 
     return (
         <>
             {
-                isLoading
-                    ? "Cargando..."
-                    : <DetalleCliente />
+                msjError
+                    ?
+                    <>{msjError}</>
+                    :
+                    isLoading
+                        ? "Cargando..."
+                        : <DetalleCliente />
             }
         </>
     )

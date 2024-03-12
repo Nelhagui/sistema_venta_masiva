@@ -13,6 +13,7 @@ const LectorContextProvider = ({ children }) => {
     const [descuento, setDescuento] = useState('')
     const [tipoVariableDescuento, setTipoVariableDescuento] = useState(tipoMontoFijo)
     const [tipoVariableAumento, setTipoVariableAumento] = useState(tipoMontoFijo)
+    const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = React.useState("0");
 
     const sacarProducto = (productoId) => {
         const filtrados = productosSeleccionados.filter((item) => item.id !== productoId)
@@ -133,7 +134,9 @@ const LectorContextProvider = ({ children }) => {
                 setMontoAbonado,
                 tipoMontoFijo,
                 tipoPorcentaje,
-                obtenerTotalSegunTipoProducto
+                obtenerTotalSegunTipoProducto,
+                metodoPagoSeleccionado, 
+                setMetodoPagoSeleccionado
             }}
         >
             {children}

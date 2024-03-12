@@ -32,11 +32,12 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         setMontoAbonado,
         resetAll,
         aumento,
-        descuento
+        descuento,
+        metodoPagoSeleccionado, 
+        setMetodoPagoSeleccionado
     } = useLectorContext();
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
     const [estadoDelPago, setEstadoDelPago] = useState(null)
-    const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] = React.useState("0");
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [isLoading, setIsLoading] = useState(false)

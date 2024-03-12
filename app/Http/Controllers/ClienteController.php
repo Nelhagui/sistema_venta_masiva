@@ -109,6 +109,10 @@ class ClienteController extends Controller
             ->with('ventas')
             ->where('comercio_id', $user->comercio_id)
             ->first();
+        if (!$cliente) {
+            // Cliente no encontrado, puedes manejar este caso según tus necesidades
+            return response()->json(['error' => 'Cliente no encontrado'], 404);
+        }
         $deudas = $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with('pagos')->get();
         $ventas = $cliente->ventas()->with('pagos')->get();
 
@@ -185,7 +189,7 @@ class ClienteController extends Controller
         } catch (\Exception $e) {
             // Si ocurre una excepción, deshacer la transacción
             DB::rollback();
-            
+
             // Devolver el mensaje de error de la excepción
             return response()->json(['error' => $e->getMessage()], 500);
         }

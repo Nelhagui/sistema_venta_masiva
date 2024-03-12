@@ -32,11 +32,13 @@ const ResumenPedido = () => {
         setProductosSeleccionados,
         sacarProducto,
         obtenerTotalSegunTipoProducto,
-        resetAll
+        resetAll,
+        setMetodoPagoSeleccionado
     } = useLectorContext()
 
     const funCancelarCompra = () => {
         resetAll()
+        setMetodoPagoSeleccionado("0");
     }
 
     const handleInputChangeCantidadUnidad = (e, productoSeleccionado) => {

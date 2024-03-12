@@ -2,13 +2,12 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import cajaServices from '../../../services/cajaServices';
 import { formatearAMoneda } from '../../../utils/utils';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Accordion, AccordionItem } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
 import { urls } from '../../../config/config';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ResumenDetallado from '../detalle/ResumenDetallado';
 import metodoPagoServices from '../../../services/metodoPagoServices';
-import ventaServices from '../../../services/ventaServices';
 
 export default function MainCajaActual() {
     const [montoTotal, setMontoTotal] = useState(0)
@@ -49,7 +48,6 @@ export default function MainCajaActual() {
     }
 
     const fetchService = async () => {
-        setIsLoading(true);
         const id = toast.loading("Procesando datos, aguarde...", {
             isLoading: true,
             position: "bottom-right",
@@ -59,12 +57,6 @@ export default function MainCajaActual() {
         try {
             const response = await cajaServices.cerrarCaja();
             if (response.status === 200) {
-                toast.update(id, {
-                    isLoading: false,
-                    autoClose: 9000,
-                    render: "Proceso finalizado correctamente!",
-                    type: "success",
-                });
                 window.location.href = `${urls.caja.apertura}`
             } else {
                 setMessage(data.message);
@@ -82,8 +74,6 @@ export default function MainCajaActual() {
                 render: "Error inesperado, contacte con soporte",
                 type: "error",
             });
-        } finally {
-            setIsLoading(false);
         }
     };
 
