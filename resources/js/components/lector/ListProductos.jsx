@@ -94,6 +94,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             });
             resetAll();
             reset();
+            setMetodoPagoSeleccionado("0");
         }
     };
 
@@ -123,7 +124,6 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         focusInput();
         setObjetosBuscados([]);
         setInputText('')
-        setMetodoPagoSeleccionado("0");
     }
     const handleInputChange = (e) => {
         const value = e.target.value;
