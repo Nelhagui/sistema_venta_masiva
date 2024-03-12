@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import cajaServices from '../../../services/cajaServices';
 import { formatearAMoneda } from '../../../utils/utils';
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Accordion, AccordionItem} from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Accordion, AccordionItem } from "@nextui-org/react";
 import { urls } from '../../../config/config';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -18,7 +18,7 @@ export default function MainCajaActual() {
     const [metodos, setMetodos] = useState(null)
     const [ventas, setVentas] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     useEffect(() => {
         fetchCajaActual()
@@ -32,9 +32,7 @@ export default function MainCajaActual() {
             setMovimientosAdicion(response.movimientosAdicion);
             setmMovimientosRetiro(response.movimientosRetiro);
 
-            // Fetch de ventas
-            const ventaResponse = await ventaServices.traerListaSegunSesionCaja(response.ultimaSesion.id);
-            setVentas(ventaResponse.ventas);
+            setVentas(response.ultimaSesion.ventas);
 
             // Fetch de métodos de pago
             const metodoPagoResponse = await metodoPagoServices.traerLista();
@@ -83,7 +81,7 @@ export default function MainCajaActual() {
                 autoClose: 3000,
                 render: "Error inesperado, contacte con soporte",
                 type: "error",
-            });        
+            });
         } finally {
             setIsLoading(false);
         }
@@ -114,8 +112,8 @@ export default function MainCajaActual() {
                                     <div className="flex flex-col gap-10">
                                         <div className="flex items-center">
                                             <div>
-                                                <p className="text-4xl">${ formatearAMoneda(montoTotal) }</p>
-                                                <p>Efectivo de apertura: ${ sesionActual?.monto_inicial }</p>
+                                                <p className="text-4xl">${formatearAMoneda(montoTotal)}</p>
+                                                <p>Efectivo de apertura: ${sesionActual?.monto_inicial}</p>
                                             </div>
                                             <div className="flex ml-4 gap-4">
                                                 <Button onClick={() => irPaginaIngreso()}>Ingresar</Button>
@@ -130,53 +128,42 @@ export default function MainCajaActual() {
                                         <Button onPress={onOpen}>Cerrar Caja</Button>
                                         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                                             <ModalContent>
-                                            {(onClose) => (
-                                                <>
-                                                    <ModalHeader className="flex flex-col gap-1">Confirmar Cerrar Caja</ModalHeader>
-                                                    <ModalBody>
-                                                        <p>¿Estás seguro de que deseas cerrar la caja?</p>
-                                                    </ModalBody>
-                                                    <ModalFooter>
-                                                        <Button color="danger" variant="light" onPress={onClose}>
-                                                        Cancelar
-                                                        </Button>
-                                                        <Button color="primary" onPress={onPressSubmit}>
-                                                        Cerrar Caja
-                                                        </Button>
-                                                    </ModalFooter>
-                                                </>
-                                            )}
+                                                {(onClose) => (
+                                                    <>
+                                                        <ModalHeader className="flex flex-col gap-1">Confirmar Cerrar Caja</ModalHeader>
+                                                        <ModalBody>
+                                                            <p>¿Estás seguro de que deseas cerrar la caja?</p>
+                                                        </ModalBody>
+                                                        <ModalFooter>
+                                                            <Button color="danger" variant="light" onPress={onClose}>
+                                                                Cancelar
+                                                            </Button>
+                                                            <Button color="primary" onPress={onPressSubmit}>
+                                                                Cerrar Caja
+                                                            </Button>
+                                                        </ModalFooter>
+                                                    </>
+                                                )}
                                             </ModalContent>
                                         </Modal>
                                     </div>
-                                    
+
                                     <div className="dark:text-gray-500">
-                                        <Button onClick={() => irPaginaHistorial()}>Historial</Button>                                        
+                                        <Button onClick={() => irPaginaHistorial()}>Historial</Button>
                                     </div>
                                 </div>
                             </div>
                             <div className='flex mt-4 max-w-7xl mx-auto sm:px-6 lg:px-8'>
-                                <Accordion
-                                    variant='shadow'
-                                    isCompact
-                                >
-                                    <AccordionItem
-                                        key="1"
-                                        aria-label='Resumen Detallado'
-                                        style={{marginLeft: 10}}
-                                        title={
-                                            <span>Ver más</span>
-                                        }>
-                                        <div className='ml-2 mb-4'>
-                                            <ResumenDetallado
-                                                ventas={ventas}
-                                                metodos={metodos}
-                                                movimientosAdicion={movimientosAdicion}
-                                                movimientosRetiro={movimientosRetiro}
-                                            />
-                                        </div>
-                                    </AccordionItem>
-                                </Accordion>
+                                <div className='ml-2 mb-4'>
+                                    <ResumenDetallado
+                                        ventas={ventas}
+                                        metodos={metodos}
+                                        movimientosAdicion={movimientosAdicion}
+                                        movimientosRetiro={movimientosRetiro}
+                                        sesionActual={sesionActual}
+                                    />
+                                </div>
+
                             </div>
                             <ToastContainer />
 
