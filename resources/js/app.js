@@ -20,6 +20,7 @@ import MainMetodosPago from './components/metodosPago/MainMetodosPago.jsx';
 import MainHome from './components/home/MainHome.jsx';
 import MainDetalleInversor from './components/inversores/ver/MainDetalleInversor.jsx';
 import MainCajaActual from './components/cajas/caja_actual/MainCajaActual.jsx';
+import CajaEgresos from './components/cajas/egresos/CajaEgresos.jsx';
 
 import MainMaquetadoLector from './components/maquetado/MainMaquetadoLector.jsx';
 import MainDetalleInversion from './components/inversiones/ver/MainDetalleInversion.jsx';

@@ -166,7 +166,11 @@ class ClienteController extends Controller
                     $pago->venta_id = $venta->id;
                     $pago->fecha_pago = now();
                     $pago->monto_pagado = $resta_abonar;
-                    $pago->metodos_de_pago = implode(', ', $request->metodoPago);
+                    if(is_array($request->metodoPago)) {
+                        $pago->metodos_de_pago = implode(', ', $request->metodoPago);
+                    } else {
+                        $pago->metodos_de_pago = $request->metodoPago;
+                    }
                     $pago->save();
 
 

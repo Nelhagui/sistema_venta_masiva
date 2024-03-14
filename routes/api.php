@@ -20,6 +20,7 @@ use App\Models\Venta;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\MetodoPagoController;
 use App\Http\Controllers\CompraController;
+use App\Http\Controllers\CajaMovimientoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,7 +59,9 @@ Route::middleware('auth')->group(function () {
     // CAJA
     Route::prefix('caja')->group(function () {
         Route::get('/', [SesionCajaController::class, 'showApi']);
+        Route::get('/egresos', [CajaMovimientoController::class, 'createEgresoApi']);
         Route::post('/cierre-caja', [SesionCajaController::class, 'storeCierreApi']);
+        Route::post('/egresos/cargar', [CajaMovimientoController::class, 'storeEgresoApi']);
     });
     
     // CLIENTES

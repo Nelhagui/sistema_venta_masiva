@@ -13,7 +13,9 @@ export const endpoints = {
     },
     caja: {
         cajaActual: `${API_BASE_URL}/caja`,
-        cerrarCaja: `${API_BASE_URL}/caja/cierre-caja`
+        cerrarCaja: `${API_BASE_URL}/caja/cierre-caja`,
+        egreso: `${API_BASE_URL}/caja/egresos`,
+        retirarMonto: `${API_BASE_URL}/caja/egresos/cargar`,
     },
     clientes: {
         lista: `${API_BASE_URL}/clientes`,
