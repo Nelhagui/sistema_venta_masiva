@@ -176,6 +176,7 @@ class ClienteController extends Controller
 
                     $ventaDb = Venta::find($venta->id);
                     $ventaDb->estado_pago = Venta::COBRADA;
+                    $ventaDb->metodos_de_pago = $pago->metodos_de_pago;
                     $ventaDb->update();
                 }
             } else {
