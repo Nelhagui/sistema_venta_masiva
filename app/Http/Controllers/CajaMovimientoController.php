@@ -103,6 +103,7 @@ class CajaMovimientoController extends Controller
         return redirect()->back();
     }
 
+
     public function retirarDinero(Request $request, $sesionCajaId)
     {
         $user = Auth::user();
@@ -158,6 +159,7 @@ class CajaMovimientoController extends Controller
 
         $ultimosEgresos = CajaMovimiento::where('tipo', 'retiro')
             ->where('sesion_caja_id', $ultimaSesion->id)
+            ->with('user')
             ->latest()  // Esto ordenará por la columna 'created_at' de forma descendente
             ->take(10)
             ->get();
@@ -205,6 +207,17 @@ class CajaMovimientoController extends Controller
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    
+    public function verEfectivoEnCaja($sesionCajaId) 
+    {
+        $user = Auth::user();
+        $comercio_id = $user->comercio_id;
+        $sesion = SesionCaja::find($sesionCajaId);
+
+        
+        return $sesion->efectivoDisponibleEnCaja();
     }
 
 }

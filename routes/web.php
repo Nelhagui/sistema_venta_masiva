@@ -106,6 +106,7 @@ Route::middleware(['auth', 'verificarPais'])->group(function () {
         Route::get('/apertura-caja', [SesionCajaController::class, 'createApertura'])->name('create.aperturaCaja')->middleware('checksesion');
         Route::post('/apertura-caja', [SesionCajaController::class, 'storeApertura'])->name('store.aperturaCaja');
         Route::post('/cierre-caja', [SesionCajaController::class, 'storeCierre'])->name('cerrar.caja');
+        Route::get('/caja/efectivo-disponible/{sesionCajaId}', [CajaMovimientoController::class, 'verEfectivoEnCaja']);
 
         // GASTOS
         Route::get('/gastos', [SesionCajaController::class, 'index'])->name('index.gastos');

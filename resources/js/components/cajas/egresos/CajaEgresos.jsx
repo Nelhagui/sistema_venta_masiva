@@ -151,10 +151,10 @@ export default function CajaEgresos() {
                                     <table className='min-w-full h-auto table-auto w-full' >
                                         <thead className='[&>tr]:first:rounded-lg' style={{ textAlign: 'start' }}>
                                             <tr className='group outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2' style={{ textAlign: 'start' }}>
-                                                <th style={{ backgroundColor: '#999cbe', fontWeight: 'bold', color: 'white', }} className='group px-3 h-10 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>ID</th>
-                                                <th style={{ backgroundColor: '#999cbe', fontWeight: 'bold', color: 'white', }} className='group px-3 h-10 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>CAJA INICIADA POR</th>
-                                                <th style={{ backgroundColor: '#999cbe', fontWeight: 'bold', color: 'white', textAlign: 'end'}} className='group px-3 h-10 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>MONTO RETIRADO</th>
-                                                <th style={{ backgroundColor: '#999cbe', fontWeight: 'bold', color: 'white', textAlign: 'end'}} className='group px-3 h-10 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>DESCRIPCIÓN</th>
+                                                <th style={{ backgroundColor: '#999cbe', fontWeight: 'bold', color: 'white' }} className='group px-3 h-10 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>ID</th>
+                                                <th style={{ backgroundColor: '#999cbe', fontWeight: 'bold', color: 'white' }} className='group px-3 h-10 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>CAJA INICIADA POR</th>
+                                                <th style={{ backgroundColor: '#999cbe', fontWeight: 'bold', color: 'white' }} className='group px-3 h-10 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>MONTO RETIRADO</th>
+                                                <th style={{ backgroundColor: '#999cbe', fontWeight: 'bold', color: 'white' }} className='group px-3 h-10 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg'>DESCRIPCIÓN</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -166,14 +166,14 @@ export default function CajaEgresos() {
                                                                 <p>{egreso?.id}</p>
                                                             </td>
                                                             <td className="py-2 px-3 text-small font-normal text-center">
-                                                                <p>{egreso?.cajero?.nombre}</p>
+                                                                <p>{egreso?.user?.nombre}</p>
                                                             </td>
 
                                                             <td className="py-2 px-3 text-small font-normal text-center">
-                                                                <p>{egreso?.monto}</p>
+                                                                <p>${egreso?.monto}</p>
                                                             </td>
                                                             <td className="py-2 px-3 text-small font-normal text-center">
-                                                                <p>{egreso?.descripcion}</p>
+                                                                <p>{egreso?.descripcion ?? "-"}</p>
                                                             </td>
                                                         </tr>
                                                     ))

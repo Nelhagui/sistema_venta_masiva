@@ -36,4 +36,32 @@ class SesionCaja extends Model
     {
         return $this->hasMany(CajaMovimiento::class);
     }
+
+    public function efectivoDisponibleEnCaja()
+    {
+        // $retirosEfectivo $ingresosEfectivo $ventasEfectivo $descuentosEfectivo $aumentosEfectivo $pagoInversores
+        $ventas =  $this->hasMany(Venta::class)
+            ->where('metodos_de_pago', 0)
+            ->sum('monto_total_venta');
+        
+        $apertura = $this->monto_inicial;
+
+        $aumentosVentas = $this->hasMany(Venta::class)
+            ->where('aumento', '>', 0)
+            ->sum('aumento');
+
+        $descuentosVentas = $this->hasMany(Venta::class)
+            ->where('descuento', '>', 0)
+            ->sum('descuento');
+
+        $movimientosAdicion = $this->hasMany(CajaMovimiento::class)
+            ->where('tipo', 'adicion')
+            ->sum('monto');
+
+        // Obtener los movimientos de caja (retiro) para la sesión de caja del usuario
+        $movimientosRetiro = $this->hasMany(CajaMovimiento::class)
+            ->where('tipo', 'retiro')
+            ->sum('monto');
+        return $descuentosVentas;
+    }
 }
