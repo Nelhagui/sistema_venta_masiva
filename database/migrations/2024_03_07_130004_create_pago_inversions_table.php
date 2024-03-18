@@ -27,6 +27,9 @@ return new class extends Migration
             $table->unsignedBigInteger('usuario_carga_id');
             $table->foreign('usuario_carga_id')->references('id')->on('users')->onDelete('cascade');
 
+            $table->unsignedBigInteger('sesion_caja_id');
+            $table->foreign('sesion_caja_id')->references('id')->on('sesiones_caja')->onDelete('cascade');
+
             $table->timestamps();
         });
     }

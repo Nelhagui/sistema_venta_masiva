@@ -60,8 +60,10 @@ Route::middleware('auth')->group(function () {
     Route::prefix('caja')->group(function () {
         Route::get('/', [SesionCajaController::class, 'showApi']);
         Route::get('/egresos', [CajaMovimientoController::class, 'createEgresoApi']);
+        Route::get('/ingresos', [CajaMovimientoController::class, 'createIngresoApi']);
         Route::post('/cierre-caja', [SesionCajaController::class, 'storeCierreApi']);
         Route::post('/egresos/cargar', [CajaMovimientoController::class, 'storeEgresoApi']);
+        Route::post('/ingresos/cargar', [CajaMovimientoController::class, 'storeIngresoApi']);
     });
     
     // CLIENTES

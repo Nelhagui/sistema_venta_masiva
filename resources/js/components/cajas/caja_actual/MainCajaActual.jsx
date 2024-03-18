@@ -13,7 +13,8 @@ export default function MainCajaActual() {
     const [montoTotal, setMontoTotal] = useState(0)
     const [sesionActual, setSesionActual] = useState(null)
     const [movimientosAdicion, setMovimientosAdicion] = useState(0)
-    const [movimientosRetiro, setmMovimientosRetiro] = useState(0)
+    const [pagoInversores, setPagoInversores] = useState(0)
+    const [movimientosRetiro, setMovimientosRetiro] = useState(0)
     const [metodos, setMetodos] = useState(null)
     const [ventas, setVentas] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
@@ -29,7 +30,8 @@ export default function MainCajaActual() {
             setMontoTotal(response.total);
             setSesionActual(response.ultimaSesion);
             setMovimientosAdicion(response.movimientosAdicion);
-            setmMovimientosRetiro(response.movimientosRetiro);
+            setMovimientosRetiro(response.movimientosRetiro);
+            setPagoInversores(response.pagoInversores);
 
             setVentas(response.ultimaSesion.ventas);
 
@@ -151,6 +153,7 @@ export default function MainCajaActual() {
                                         movimientosAdicion={movimientosAdicion}
                                         movimientosRetiro={movimientosRetiro}
                                         sesionActual={sesionActual}
+                                        pagoInversores={pagoInversores}
                                     />
                                 </div>
 

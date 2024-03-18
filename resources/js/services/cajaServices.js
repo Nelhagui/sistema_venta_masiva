@@ -47,6 +47,28 @@ const cajaServices = {
             throw error;
         }
     },
+    traerIngresos: async () => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        const url = endpoints.caja.ingresos
+
+        const requestOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Referer': window.location.origin,
+                'X-CSRF-TOKEN': csrfToken
+            }
+        }
+
+        try {
+            const response = await fetch(url, requestOptions)
+            return response.json()
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    },
     retirarMonto: async (data) => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const url = endpoints.caja.retirarMonto;
@@ -64,7 +86,30 @@ const cajaServices = {
 
         try {
             const response = await fetch(url, requestOptions);
-            return response;
+            return response.json();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    },
+    ingresarMonto: async (data) => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const url = endpoints.caja.ingresarMonto;
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Referer': window.location.origin,
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify(data)
+        };
+
+        try {
+            const response = await fetch(url, requestOptions);
+            return response.json();
         } catch (error) {
             console.error('Error fetching data:', error);
             throw error;

@@ -14,4 +14,9 @@ class PagoInversion extends Model
     {
         return $this->belongsTo(Inversion::class);
     }
+
+    public function sesionCaja()
+    {
+        return $this->belongsTo(SesionCaja::class);
+    }
 }

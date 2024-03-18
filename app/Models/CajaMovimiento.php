@@ -10,7 +10,7 @@ class CajaMovimiento extends Model
     use HasFactory;
 
     protected $fillable = [
-        'sesion_caja_id', 'user_id', 'tipo', 'descripcion', 'monto'
+        'sesion_caja_id', 'user_id', 'tipo', 'descripcion', 'monto', 'metodo_pago','metodo_id'
     ];
     /**
      * Un movimiento de caja pertenece a una sesión de caja.

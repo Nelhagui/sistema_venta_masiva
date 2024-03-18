@@ -7,6 +7,7 @@ use App\Models\Venta;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\SesionCaja;
+use App\Models\PagoInversion;
 
 class SesionCajaController extends Controller
 {
@@ -115,14 +116,19 @@ class SesionCajaController extends Controller
             ->where('tipo', 'retiro')
             ->sum('monto');
 
+        $pagoInversores = PagoInversion::where('sesion_caja_id', $ultimaSesion->id)
+            ->sum('monto_abonado');
+
+
         // Calcular el total (monto inicial + total de ventas + movimientos de adicion - movimientos de resta)
-        $total = $ultimaSesion->monto_inicial + $ventas + $movimientosAdicion - $movimientosRetiro + $aumentos - $descuentos;
+        $total = $ultimaSesion->monto_inicial + $ventas + $movimientosAdicion - $movimientosRetiro + $aumentos - $descuentos - $pagoInversores;
 
         $respuesta = [
             'ultimaSesion' => $ultimaSesion,
             'total' => $total,
             'movimientosAdicion' => $movimientosAdicion,
-            'movimientosRetiro' => $movimientosRetiro
+            'movimientosRetiro' => $movimientosRetiro,
+            'pagoInversores' => $pagoInversores
         ];
 
         // Devolver la respuesta como JSON

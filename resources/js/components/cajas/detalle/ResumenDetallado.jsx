@@ -6,10 +6,11 @@ import {
 } from "@nextui-org/react";
 import { formatearAMoneda } from '../../../utils/utils';
 
-const ResumenDetallado = ({ ventas, metodos, movimientosRetiro, movimientosAdicion, sesionActual }) => {
+const ResumenDetallado = ({ ventas, metodos, movimientosRetiro, movimientosAdicion, sesionActual, pagoInversores }) => {
     let sumaTotalGanancias = 0;
     const totalAdicionRetiro = Number(movimientosAdicion) + Number(-1 * movimientosRetiro);
     const ventasFiltradas = ventas.filter(venta => venta.anulada !== 1);
+    const totalVentas = ventas.reduce((total, venta) => total + parseFloat(venta.monto_total_venta), 0);
 
     const ventasFiltradasConAumento = ventasFiltradas.filter(venta => venta.aumento > 0);
     const totalAumentos = ventasFiltradasConAumento.reduce((total, venta) => total + parseFloat(venta.aumento), 0);
@@ -43,12 +44,12 @@ const ResumenDetallado = ({ ventas, metodos, movimientosRetiro, movimientosAdici
                             // Calcular el total de ventas para el método actual
                             const totalVentaMetodo = Number(ventasPorMetodo.reduce((total, venta) => total + parseFloat(venta.monto_total_venta), 0)) + Number(totalDescuentoAumentoEnMetodo);
 
-                            const totalConApertura = metodo.id === 0 ? (Number(totalVentaMetodo) + Number(sesionActual.monto_inicial) + Number(totalAdicionRetiro)) : totalVentaMetodo;
+                            const totalConApertura = metodo.id === 0 ? (Number(totalVentaMetodo) + Number(sesionActual.monto_inicial) + Number(totalAdicionRetiro) - Number(pagoInversores)) : totalVentaMetodo;
 
                             return (
                                 <Card key={metodo?.id} shadow='sm' style={{ minWidth: '133px' }}>
                                     <CardBody>
-                                        <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Total {metodo?.nombre}</p>
+                                        <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Total {metodo?.nombre} en Caja</p>
                                         <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(totalConApertura)}</p>
                                     </CardBody>
                                 </Card>
@@ -56,6 +57,14 @@ const ResumenDetallado = ({ ventas, metodos, movimientosRetiro, movimientosAdici
                         })}
                     </div>
                 </div>
+            </div>
+            <div className='mt-4'>
+                <Card shadow='sm' style={{ minWidth: '133px', maxWidth: '200px' }}>
+                    <CardBody>
+                        <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Total Ventas</p>
+                        <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(totalVentas)}</p>
+                    </CardBody>
+                </Card>
             </div>
             <div className='mt-4'>
                 <div className='flex flex-col mt-1'>
@@ -128,6 +137,19 @@ const ResumenDetallado = ({ ventas, metodos, movimientosRetiro, movimientosAdici
                     </Card>
                 </div>
             </div>
+            {
+                pagoInversores > 0 ?
+                <div className='mt-4'>
+                    <Card shadow='sm' style={{ minWidth: '133px', maxWidth: '200px' }}>
+                        <CardBody>
+                            <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Pago Inversores</p>
+                            <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(pagoInversores)}</p>
+                        </CardBody>
+                    </Card>
+                </div>
+                :
+                <></>
+            }
         </div>
     )
 }

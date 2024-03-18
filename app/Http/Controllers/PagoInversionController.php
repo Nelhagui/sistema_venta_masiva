@@ -12,6 +12,12 @@ class PagoInversionController extends Controller
     public function storeApi(Request $request)
     {
         $user = Auth::user();
+        $sesion = $user->sesionesCaja()->latest()->first();
+
+        if (!$sesion) {
+            return response()->json(['error' => 'Primero debes abrir la caja para poder realizar el pago'], 404);
+        }
+
         $inversion = Inversion::find($request->inversion_id);
         if (!$inversion) {
             return response()->json(['error' => 'La inversión no existe'], 404);
@@ -24,6 +30,7 @@ class PagoInversionController extends Controller
 
             $pagoInversion->inversion_id = $inversion->id;
             $pagoInversion->usuario_carga_id = $user->id;
+            $pagoInversion->sesion_caja_id = $sesion->id;
 
             $pagoInversion->save();
 

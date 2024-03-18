@@ -30,7 +30,7 @@ class CajaMovimientoController extends Controller
             ->sum('monto');
 
         // Calcular el total (monto inicial + total de ventas + movimientos de adicion - movimientos de resta)
-        $total = $ultimaSesion->monto_inicial + $ventas + $movimientosAdicion - $movimientosRetiro;
+        $total = $ultimaSesion->efectivoDisponibleEnCaja();
 
         $ultimosIngresos = CajaMovimiento::where('tipo', 'adicion')
             ->where('sesion_caja_id', $ultimaSesion->id)
@@ -62,7 +62,7 @@ class CajaMovimientoController extends Controller
             ->sum('monto');
 
         // Calcular el total (monto inicial + total de ventas + movimientos de adicion - movimientos de resta)
-        $total = $ultimaSesion->monto_inicial + $ventas + $movimientosAdicion - $movimientosRetiro;
+        $total = $ultimaSesion->efectivoDisponibleEnCaja();
 
 
         $ultimosEgresos = CajaMovimiento::where('tipo', 'retiro')
@@ -92,6 +92,8 @@ class CajaMovimientoController extends Controller
                     'user_id' => Auth::id(),
                     'tipo' => 'adicion',
                     'monto' => $monto,
+                    'metodo_pago' => "Efectivo",
+                    'metodo_id' => 0,
                     'descripcion' => $descripcion
                 ]);
 
@@ -122,6 +124,8 @@ class CajaMovimientoController extends Controller
                     'user_id' => Auth::id(),
                     'tipo' => 'retiro',
                     'monto' => $monto,
+                    'metodo_pago' => "Efectivo",
+                    'metodo_id' => 0,
                     'descripcion' => $descripcion,
                 ]);
 
@@ -154,7 +158,7 @@ class CajaMovimientoController extends Controller
             ->sum('monto');
 
         // Calcular el total (monto inicial + total de ventas + movimientos de adicion - movimientos de resta)
-        $total = $ultimaSesion->monto_inicial + $ventas + $movimientosAdicion - $movimientosRetiro;
+        $total = $ultimaSesion->efectivoDisponibleEnCaja();
 
 
         $ultimosEgresos = CajaMovimiento::where('tipo', 'retiro')
@@ -174,6 +178,45 @@ class CajaMovimientoController extends Controller
         return response()->json($respuesta);
     }
 
+    public function createIngresoApi()
+    {
+        $user = Auth::user();
+        $ultimaSesion = $user->sesionesCaja()->with('cajero')->latest()->first();
+
+        // Calcular el total de ventas para la sesión de caja del usuario
+        $ventas = Venta::where('sesion_caja_id', $ultimaSesion->id)->sum('monto_total_venta');
+
+        // Obtener los movimientos de caja (adicion) para la sesión de caja del usuario
+        $movimientosAdicion = CajaMovimiento::where('sesion_caja_id', $ultimaSesion->id)
+            ->where('tipo', 'adicion')
+            ->sum('monto');
+
+        // Obtener los movimientos de caja (retiro) para la sesión de caja del usuario
+        $movimientosRetiro = CajaMovimiento::where('sesion_caja_id', $ultimaSesion->id)
+            ->where('tipo', 'retiro')
+            ->sum('monto');
+
+        // Calcular el total (monto inicial + total de ventas + movimientos de adicion - movimientos de resta)
+        $total = $ultimaSesion->efectivoDisponibleEnCaja();
+
+
+        $ultimosIngresos = CajaMovimiento::where('tipo', 'adicion')
+            ->where('sesion_caja_id', $ultimaSesion->id)
+            ->with('user')
+            ->latest()  // Esto ordenará por la columna 'created_at' de forma descendente
+            ->take(10)
+            ->get();
+
+        $respuesta = [
+            'total' => $total,
+            'ultimaSesion' => $ultimaSesion,
+            'ultimosIngresos' => $ultimosIngresos
+        ];
+
+        // Devolver la respuesta como JSON
+        return response()->json($respuesta);
+    }
+
     public function storeEgresoApi(Request $request)
     {
         try {
@@ -181,10 +224,15 @@ class CajaMovimientoController extends Controller
             $comercio_id = $user->comercio_id;
             $sesion = $user->sesionesCaja()->latest()->first();
             $sesionCajaId = $sesion->id;
-    
+
+            $efectivoDisponible = $sesion->efectivoDisponibleEnCaja();
+            $monto = $request->input('monto');
+
+            if($efectivoDisponible < $monto) {
+                return response()->json(['message' => 'El monto retirado no puede ser mayor al monto que se encuentra en caja.', 'status' => 406], 406);
+            }
             if ($comercio_id == $sesion->comercio_id) {
-    
-                $monto = $request->input('monto');
+
                 $descripcion = $request->input('descripcion');
     
                 DB::transaction(function () use ($monto, $sesionCajaId, $descripcion) {
@@ -194,6 +242,8 @@ class CajaMovimientoController extends Controller
                         'user_id' => Auth::id(),
                         'tipo' => 'retiro',
                         'monto' => $monto,
+                        'metodo_pago' => "Efectivo",
+                        'metodo_id' => 0,
                         'descripcion' => $descripcion,
                     ]);
     
@@ -202,10 +252,47 @@ class CajaMovimientoController extends Controller
                     $sesionCaja->save();
                 });
             }        
-            return response()->json(['message' => 'Proceso realizado con éxito.'], 200);
+            return response()->json(['message' => 'Proceso realizado con éxito.', 'status' => 200], 200);
 
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage(), 'status' => 500], 500);
+        }
+    }
+
+    public function storeIngresoApi(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $comercio_id = $user->comercio_id;
+            $sesion = $user->sesionesCaja()->latest()->first();
+            $sesionCajaId = $sesion->id;
+
+            if ($comercio_id == $sesion->comercio_id) {
+
+                $descripcion = $request->input('descripcion');
+                $monto = $request->input('monto');
+
+                DB::transaction(function () use ($monto, $sesionCajaId, $descripcion) {
+                    // Registrar el movimiento
+                    CajaMovimiento::create([
+                        'sesion_caja_id' => $sesionCajaId,
+                        'user_id' => Auth::id(),
+                        'tipo' => 'adicion',
+                        'monto' => $monto,
+                        'metodo_pago' => "Efectivo",
+                        'metodo_id' => 0,
+                        'descripcion' => $descripcion,
+                    ]);
+    
+                    // Actualizar monto actual en sesiones_cajas
+                    $sesionCaja = SesionCaja::find($sesionCajaId);
+                    $sesionCaja->save();
+                });
+            }        
+            return response()->json(['message' => 'Proceso realizado con éxito.', 'status' => 200], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage(), 'status' => 500], 500);
         }
     }
 

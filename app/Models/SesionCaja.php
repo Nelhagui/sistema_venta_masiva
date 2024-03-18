@@ -56,12 +56,21 @@ class SesionCaja extends Model
 
         $movimientosAdicion = $this->hasMany(CajaMovimiento::class)
             ->where('tipo', 'adicion')
+            ->where('metodo_pago', "Efectivo")
             ->sum('monto');
 
         // Obtener los movimientos de caja (retiro) para la sesión de caja del usuario
         $movimientosRetiro = $this->hasMany(CajaMovimiento::class)
             ->where('tipo', 'retiro')
+            ->where('metodo_pago', "Efectivo")
             ->sum('monto');
-        return $descuentosVentas;
+
+        $pagoInversores = $this->hasMany(PagoInversion::class)
+            ->where('metodo_pago_titulo', 'Efectivo')
+            ->sum('monto_abonado');
+
+        $total = $ventas + $apertura + $aumentosVentas - $descuentosVentas + $movimientosAdicion - $movimientosRetiro - $pagoInversores;
+
+        return $total;
     }
 }
