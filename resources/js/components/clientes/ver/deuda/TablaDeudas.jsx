@@ -5,12 +5,17 @@ import {
     TableColumn,
     TableBody,
     TableRow,
-    TableCell
+    TableCell,
+    Popover,
+    PopoverTrigger,
+    PopoverContent
 } from "@nextui-org/react";
 import { useDetalleClienteContext } from "../../../../context/DetalleClienteContext";
 import ResumenDeuda from "./ResumenDeuda";
 import estadoCompraUtils from "../../../../utils/estadoCompraUtils";
 import fechaUtils from "../../../../utils/fechaUtils";
+import { EyeIcon } from "../../../icons/EyeIcon";
+import { formatearAMoneda } from "../../../../utils/utils";
 
 export default function TablaDeudas() {
 
@@ -34,8 +39,8 @@ export default function TablaDeudas() {
                                 <TableColumn>ID</TableColumn>
                                 <TableColumn>FECHA</TableColumn>
                                 <TableColumn>ESTADO</TableColumn>
-                                {/* <TableColumn>ABONADO</TableColumn> */}
                                 <TableColumn>DEUDA</TableColumn>
+                                <TableColumn>DETALLE</TableColumn>
                             </TableHeader>
                             <TableBody>
                                 {
@@ -50,13 +55,48 @@ export default function TablaDeudas() {
                                                     {estadoCompraUtils.getTextoEstadoCompra(deuda?.estado_pago)}
                                                 </p>
                                             </TableCell>
-                                            {/* <TableCell>
-                                                ${estadoCompraUtils.calcularMontoTotalPagos(deuda?.pagos)}
-                                            </TableCell> */}
                                             <TableCell>
                                                 <p style={{ color: '#ff0000' }}>
                                                     ${Number(deuda?.monto_total_venta) - estadoCompraUtils.calcularMontoTotalPagos(deuda?.pagos)}
                                                 </p>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Popover placement="right">
+                                                    <PopoverTrigger>
+                                                        <div className="cursor-pointer" >
+                                                            <EyeIcon />
+                                                        </div>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent>
+                                                        <div className="px-1 py-2">
+                                                            <div className="text-small font-bold mb-1">ITEMS:</div>
+                                                            <ul>
+                                                                {
+                                                                    deuda?.detalles?.map(producto => {
+                                                                        return (
+                                                                            <li key={producto.id}
+                                                                                style={{
+                                                                                    marginBottom: "3px",
+                                                                                    backgroundColor: "#eeeeee",
+                                                                                    padding: "5px",
+                                                                                    borderRadius: "5px"
+                                                                                }}>
+                                                                                <div className="flex justify-between">
+                                                                                    <div className="text-tiny mr-2">{producto.nombre_producto}</div>
+                                                                                    <div className="flex" style={{ marginLeft: '16px'}}>
+                                                                                        <div className="text-tiny mr-2">({parseInt(producto.cantidad)})</div>
+                                                                                        <div className="text-tiny font-bold" style={{fontWeight: 'bold' }}>${formatearAMoneda(producto.precio_unitario * producto.cantidad)}</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </li>
+                                                                        )
+                                                                    })
+                                                                }
+                                                            </ul>
+
+                                                        </div>
+                                                    </PopoverContent>
+                                                </Popover>
                                             </TableCell>
                                         </TableRow>
                                     ))

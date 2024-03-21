@@ -13,6 +13,7 @@ use App\Models\Venta;
 use App\Models\Lote;
 use App\Models\Pago;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class VentaController extends Controller
 {
@@ -103,7 +104,7 @@ class VentaController extends Controller
         })->values(); // Utiliza values() para obtener un array de objetos
 
         // Verificar si hay una sesión de caja abierta para el usuario logueado, la fecha seleccionada y el comercio_id específico
-        
+
         $sesionCaja = SesionCaja::where('user_id', $user->id)
             ->where('fecha_hora_apertura', '<=', $fecha)
             ->where('fecha_hora_cierre', '>=', $fecha)
@@ -126,7 +127,7 @@ class VentaController extends Controller
         return response()->json($respuesta);
     }
 
-    public function indexSesionApi (Request $request, string $sesionCajaId)
+    public function indexSesionApi(Request $request, string $sesionCajaId)
     {
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
@@ -158,7 +159,7 @@ class VentaController extends Controller
         })->values(); // Utiliza values() para obtener un array de objetos
 
         // Verificar si hay una sesión de caja abierta para el usuario logueado, la fecha seleccionada y el comercio_id específico
-        
+
 
         $respuesta = [
             'ventas' => $ventasOrdenadas,
@@ -170,14 +171,38 @@ class VentaController extends Controller
 
     public function storeApi(Request $request)
     {
+        $user = Auth::user();
+        $dataProductos = json_encode($request->productos);
+        $dataUsuario = json_encode($user);
+
+        $dataCliente = json_encode($request['cliente']);
+        $dataMetodo = json_encode($request['metodoPago']);
+        $dataEstadoPago = json_encode($request['estadoPago']);
+        $dataAumento = json_encode($request['aumento']);
+        $dataDescuento = json_encode($request['descuento']);
+        // Crear un array asociativo con las variables codificadas en JSON
+        $data = [
+            'cliente' => $dataCliente,
+            'metodoPago' => $dataMetodo,
+            'estadoPago' => $dataEstadoPago,
+            'aumento' => $dataAumento,
+            'descuento' => $dataDescuento,
+        ];
+
+        // Codificar el array como un objeto JSON
+        $dataRequest = json_encode($data);
+
+
         try {
-            // Obtén el usuario logueado
-            $user = Auth::user();
+            
             // Obtén la última sesión de caja abierta del usuario
             $ultimaSesionCaja = $user->ultimaSesionCajaAbierta()->first();
 
             // Si $ultimaSesionCaja es null, se ejecuta el bloque else, de lo contrario, simplemente no se hace nada
             if (!$ultimaSesionCaja) {
+                $logMessageProdNofound = "[" . now()->toDateTimeString() . "] Ultima sesión no encontrada: Datos de la venta Productos: $dataProductos. Datos del usuario: $dataUsuario, datos del request: $dataRequest";
+                Storage::disk('local')->append('fallos_en_venta.log', $logMessageProdNofound);
+
                 return response()->json(['error' => 'No se encontró una sesión de caja abierta para este usuario.'], 404);
             }
 
@@ -206,6 +231,10 @@ class VentaController extends Controller
             foreach ($request->productos as $producto) {
                 $productoEnDb = Producto::find($producto['id']);
                 if (!$productoEnDb) {
+
+                    $logMessageProdNofound = "[" . now()->toDateTimeString() . "] Producto No Encontrado: " . $producto['id'] . ". Datos de la venta Productos: $dataProductos. Datos del usuario: $dataUsuario, datos del request: $dataRequest";
+                    Storage::disk('local')->append('fallos_en_venta.log', $logMessageProdNofound);
+
                     DB::rollBack(); // Revierte la transacción si un producto no se encuentra
                     throw new \Exception('Producto no encontrado: ' . $producto['id']);
                 }
@@ -223,20 +252,6 @@ class VentaController extends Controller
                 // Resto cantidad vendida del stock
                 $productoEnDb->stock_actual -= $producto['cantidad'];
                 $productoEnDb->save();
-
-
-                $lote = Lote::where('cantidad_restante', '>', 0)
-                    ->where('producto_id', $productoEnDb->id)
-                    ->orderByRaw('ISNULL(fecha_vencimiento), fecha_vencimiento DESC') // Ordena por fecha de vencimiento
-                    ->orderByRaw('IF(fecha_vencimiento IS NULL, 1, 0)') // Prioriza los lotes sin fecha de vencimiento
-                    ->orderByDesc('precio_costo') // Prioriza los lotes con precio de costo más alto
-                    ->get()
-                    ->first();
-
-                if ($lote) {
-                    $lote->cantidad_restante -= $producto['cantidad'];
-                    $lote->save();
-                }
             }
 
             if ($venta->estado_pago == Venta::PARCIALMENTE_COBRADA) {
@@ -253,9 +268,15 @@ class VentaController extends Controller
 
         } catch (\Exception $e) {
 
-            DB::rollBack(); // Revierte la transacción si hay una excepción
+            // Guarda el intento de ingreso en un archivo de registro
+            $mensaje = $e->getMessage();
+            $logMessage = "[" . now()->toDateTimeString() . "] Intento de guardar una venta. Msj: " . $mensaje . ". Datos de la venta Productos: $dataProductos. Datos del usuario: $dataUsuario, datos del request: $dataRequest";
+            Storage::disk('local')->append('fallos_en_venta.log', $logMessage);
 
+            DB::rollBack(); // Revierte la transacción si hay una excepción
             return response()->json(['message' => $e->getMessage()], 500);
+
+
         }
     }
 
@@ -263,9 +284,9 @@ class VentaController extends Controller
     {
         $venta = Venta::find($request->id);
         $user = Auth::user();
-        if($user->comercio_id === $venta->comercio_id){
+        if ($user->comercio_id === $venta->comercio_id) {
             $venta->anulada = true;
-            return $venta->update(); 
+            return $venta->update();
         }
         return response()->json(['error' => 'Error al procesar los datos'], 400);
     }

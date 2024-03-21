@@ -66,7 +66,7 @@ export default function CajaIngresos(){
         setIsLoading(true);
         const id = toast.loading("Procesando datos, aguarde...", {
             isLoading: true,
-            position: "bottom-right",
+            position: "top-right",
             closeOnClick: true,
             theme: "colored",
         })
@@ -75,13 +75,15 @@ export default function CajaIngresos(){
             if (response.status === 200) {
                 toast.update(id, {
                     isLoading: false,
-                    autoClose: 2000,
                     render: "Proceso finalizado correctamente!",
                     type: "success",
                 });
                 fetchCajaIngresos();
+                setData({
+                    monto: '',
+                    descripcion: ''
+                })
             } else {
-                console.log(response)
                 toast.update(id, {
                     isLoading: false,
                     render: response.message,
@@ -95,11 +97,9 @@ export default function CajaIngresos(){
         }
     };
 
-
-
     return (
         <div className="py-12">
-            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-emerald-200 p-5 rounded">
+            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 p-5 rounded" style={{backgroundColor: '#d6edd6'}}>
                 <div className="flex flex-col">
                     <div className="flex flew-row justify-between">
                         <div className="flex items-center">
@@ -143,10 +143,11 @@ export default function CajaIngresos(){
                             <div>
                                 <Button
                                     color="success"
+                                    className="text-white"
                                     onPress={onPressSubmit}
                                     isDisabled={isLoading}
                                 >
-                                    Guardar Ingreso
+                                    GUARDAR INGRESO
                                 </Button>
                             </div>
                         </form>

@@ -24,6 +24,14 @@ const ResumenDetallado = ({ ventas, metodos, movimientosRetiro, movimientosAdici
 
     return (
         <div className='mt-4'>
+             <div className='mt-4'>
+                <Card shadow='sm' style={{ minWidth: '133px', maxWidth: '200px' }}>
+                    <CardBody>
+                        <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Total Ventas</p>
+                        <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(totalVentas)}</p>
+                    </CardBody>
+                </Card>
+            </div>
             <div className='mt-4'>
                 <div className='flex flex-col mt-1'>
                     <div className='flex gap-2'>
@@ -57,14 +65,6 @@ const ResumenDetallado = ({ ventas, metodos, movimientosRetiro, movimientosAdici
                         })}
                     </div>
                 </div>
-            </div>
-            <div className='mt-4'>
-                <Card shadow='sm' style={{ minWidth: '133px', maxWidth: '200px' }}>
-                    <CardBody>
-                        <p className='text-center' style={{ fontSize: '1rem', fontWeight: '500' }}>Total Ventas</p>
-                        <p className='text-center text-descripcion mt-1' style={{ fontSize: '1.1rem' }}>${formatearAMoneda(totalVentas)}</p>
-                    </CardBody>
-                </Card>
             </div>
             <div className='mt-4'>
                 <div className='flex flex-col mt-1'>

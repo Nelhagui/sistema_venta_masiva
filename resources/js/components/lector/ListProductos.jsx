@@ -33,7 +33,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         resetAll,
         aumento,
         descuento,
-        metodoPagoSeleccionado, 
+        metodoPagoSeleccionado,
         setMetodoPagoSeleccionado
     } = useLectorContext();
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
@@ -68,7 +68,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
             theme: "colored",
         })
         try {
-            await lectorServices.crearVenta(
+            const resultado = await lectorServices.crearVenta(
                 productosSeleccionados,
                 clienteSeleccionado,
                 estadoDelPago,
@@ -77,25 +77,34 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                 aumento,
                 descuento
             );
-            // Realiza alguna acción adicional después de completar la creación de la venta, si es necesario
+            if (resultado.ok) {
+                toast.update(id, {
+                    isLoading: false,
+                    autoClose: 9000,
+                    render: "Proceso finalizado correctamente!",
+                    type: "success",
+                });
+                resetAll();
+                reset();
+                setMetodoPagoSeleccionado("0");
+            } else {
+                // La petición no fue exitosa, manejar el error utilizando resultado.error
+                toast.update(id, {
+                    isLoading: false,
+                    render: "Proceso incompleto, vuelva a intentarlo.",
+                    type: "error",
+                });
+            }
+
         } catch (error) {
             toast.update(id, {
                 isLoading: false,
-                autoClose: 3000,
-                render: "Proceso incompleto, vuelva a intentarlo",
+                render: "Proceso incompleto, vuelva a intentarlo o contacte con soporte.",
                 type: "error",
             });
         } finally {
             setIsLoading(false);
-            toast.update(id, {
-                isLoading: false,
-                autoClose: 9000,
-                render: "Proceso finalizado correctamente!",
-                type: "success",
-            });
-            resetAll();
-            reset();
-            setMetodoPagoSeleccionado("0");
+            console.log('finally');
         }
     };
 

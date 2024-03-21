@@ -108,8 +108,8 @@ export default function MainCajaActual() {
                                                 <p>Efectivo de apertura: ${sesionActual?.monto_inicial}</p>
                                             </div>
                                             <div className="flex ml-4 gap-4">
-                                                <Button onClick={() => irPaginaIngreso()}>Ingresar</Button>
-                                                <Button onClick={() => irPaginaRetiro()}>Retirar</Button>
+                                                <Button onClick={() => irPaginaIngreso()} style={{backgroundColor: "#5fbb66", color: 'white'}}>Ingresar</Button>
+                                                <Button onClick={() => irPaginaRetiro()} color="danger">Retirar</Button>
                                             </div>
                                         </div>
                                     </div>

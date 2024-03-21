@@ -14,8 +14,8 @@ const DetalleClienteContextProvider = ({ children }) => {
     useEffect(() => {
         if (cliente?.deudas)
             setDeudas(cliente?.deudas)
-        if(cliente?.ventas)
-            setVentas(cliente?.ventas);
+        if(cliente?.todas_las_ventas)
+            setVentas(cliente?.todas_las_ventas);
     }, [cliente])
 
 

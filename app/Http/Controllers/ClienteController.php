@@ -113,11 +113,11 @@ class ClienteController extends Controller
             // Cliente no encontrado, puedes manejar este caso según tus necesidades
             return response()->json(['error' => 'Cliente no encontrado'], 404);
         }
-        $deudas = $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with('pagos')->get();
-        $ventas = $cliente->ventas()->with('pagos')->get();
+        $deudas = $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with(['pagos', 'detalles'])->get();
+        $ventas = $cliente->ventas()->with(['pagos', 'detalles'])->get();
 
         $cliente->deudas = $deudas;
-        $cliente->ventas = $ventas;
+        $cliente->todas_las_ventas = $ventas;
         return $cliente;
     }
 

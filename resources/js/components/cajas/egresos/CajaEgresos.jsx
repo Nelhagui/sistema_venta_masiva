@@ -68,7 +68,7 @@ export default function CajaEgresos() {
         setIsLoading(true);
         const id = toast.loading("Procesando datos, aguarde...", {
             isLoading: true,
-            position: "bottom-right",
+            position: "top-right",
             closeOnClick: true,
             theme: "colored",
         })
@@ -77,13 +77,15 @@ export default function CajaEgresos() {
             if (response.status === 200) {
                 toast.update(id, {
                     isLoading: false,
-                    autoClose: 2000,
                     render: "Proceso finalizado correctamente!",
                     type: "success",
                 });
                 fetchCajaEgresos();
+                setData({
+                    monto: '',
+                    descripcion: '',
+                })
             } else {
-                console.log(response)
                 toast.update(id, {
                     isLoading: false,
                     render: response.message,
@@ -146,7 +148,7 @@ export default function CajaEgresos() {
                                     onPress={onPressSubmit}
                                     isDisabled={isLoading}
                                 >
-                                    Guardar Retiro
+                                    GUARDAR RETIRO
                                 </Button>
                             </div>
                         </form>

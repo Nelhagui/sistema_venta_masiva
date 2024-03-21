@@ -15,8 +15,6 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
     const [proveedores, setProveedores] = useState([])
     const [inversores, setInversores] = useState([])
     const [isLoading, setIsLoading] = useState(false)
-    const [isLoadingProveedores, setIsLoadingProveedores] = useState(true)
-    const [isLoadingInversores, setIsLoadingInversores] = useState(true)
     const [inputText, setInputText] = useState('');
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
@@ -26,42 +24,6 @@ const TablaListaProductosActualizarStock = ({ productos }) => {
         if (inputRef.current) {
             focusInput();
         }
-        // Realizar la solicitud GET a la API de productos
-        fetch('/api/proveedores')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setProveedores(data);
-            })
-            .finally(() => {
-                setIsLoadingProveedores(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-
-        fetch('/api/inversores')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Actualizar el estado con la lista de productos
-                setInversores(data);
-            })
-            .finally(() => {
-                setIsLoadingInversores(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
     }, []);
 
     const focusInput = () => inputRef.current.focus();
