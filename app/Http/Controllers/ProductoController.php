@@ -446,73 +446,19 @@ class ProductoController extends Controller
             return response()->json(['errors' => $errores], 422);
         }
 
-        $totalCompra = 0; // Variable para almacenar el total de la compra
 
-        // Iterar sobre los productos para calcular el costo total de la compra
-        foreach ($productos as $producto) {
-            $totalCompra += $producto['stock_actual'] * $producto['precio_costo'];
-        }
-
-        $compra = new Compra;
-        $compra->fecha_compra = $datosCompra['fechaCompra'] ?? now();
-        $compra->fecha_carga = date('Y-m-d H:i:s');
-        $compra->precio_total = $totalCompra;
-        $compra->numero_factura = $datosCompra['nroFactura'] ?? null;
-        $compra->proveedor_id = $datosCompra['proveedor'] ?? null;
-        $compra->comercio_id = $id_comercio;
-        $compra->save();
-
-
-        DB::transaction(function () use ($productos, $compra, $id_comercio) {
+        DB::transaction(function () use ($productos) {
             foreach ($productos as $producto) {
 
                 if (isset($producto['id'])) {
                     $productoDB = Producto::find($producto['id']);
                 } else {
-                    $productoDB = new Producto;
-                    $productoDB->titulo = $producto['titulo'];
-                    $productoDB->codigo_barra = $producto['codigo_barra'];
-                    $productoDB->comercio_id = $id_comercio;
-                    $productoDB->save();
+                    // error de no encontrar el producto
                 }
-                $productoDB->tipo = $producto['tipo'];
                 $productoDB->precio_venta = $producto['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $producto['precio_venta'];
                 $productoDB->precio_costo = $producto['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $producto['precio_costo'];
-                $productoDB->stock_actual = $productoDB->stock_actual + $producto['stock_actual'];
-                $productoDB->usar_control_por_lote = $producto['usar_control_por_lote'] == "on" ? 1 : 0;
+                $productoDB->stock_actual = $producto['stock_actual'];
                 $productoDB->update();
-
-                if ($producto['usar_control_por_lote']) {
-                    $newLoteProducto = new Lote;
-                    $newLoteProducto->producto_id = $productoDB->id;
-                    $newLoteProducto->compra_id = $compra->id;
-                    $newLoteProducto->comercio_id = $id_comercio;
-                    $newLoteProducto->fecha_vencimiento = $producto['fecha_vencimiento'] ?? null;
-                    $newLoteProducto->precio_costo = $producto['precio_costo'];
-                    $newLoteProducto->precio_venta = $producto['precio_venta'];
-                    $newLoteProducto->precio_dolar = $producto['precio_dolar'] ?? null;
-                    $newLoteProducto->cantidad_inicial = $producto['stock_actual'];
-                    $newLoteProducto->cantidad_restante = $producto['stock_actual'];
-                    $newLoteProducto->save();
-
-                }
-
-                if (isset($producto['inversor_id'])) {
-                    $inversorProducto = new InversorProducto;
-                    $inversorProducto->model()->associate($productoDB);
-                    $inversorProducto->cantidad_producto_invertido = $producto['stock_actual'];
-                    $inversorProducto->inversor_id = $producto['inversor_id'];
-                    $inversorProducto->save();
-                }
-
-                $detalleCompra = new CompraDetalle;
-                $detalleCompra->compra_id = $compra->id;
-                $detalleCompra->producto_id = $productoDB->id;
-                $detalleCompra->precio_unitario = $producto['precio_costo'];
-                $detalleCompra->cantidad = $producto['stock_actual'];
-                $detalleCompra->precio_total = $compra->precio_total;
-                $detalleCompra->save();
-
             }
         });
 

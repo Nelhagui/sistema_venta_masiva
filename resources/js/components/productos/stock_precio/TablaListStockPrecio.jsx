@@ -1,35 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { capitalizeFirstLetterOfEachWord } from '../../../utils/capitalizeFirstLetterOfEachWord';
 import { debounce } from '../../../utils/debounce';
-import { Input, Select, SelectItem, Checkbox, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Tooltip, Divider } from "@nextui-org/react";
+import { Input, Switch, Select, SelectItem, Checkbox, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Tooltip, Divider } from "@nextui-org/react";
 import { SearchIcon } from '../../icons/SearchIcon';
 import productoServices from '../../../services/productoServices';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SaveIcon } from '../../icons/SaveIcon';
-import { InfoIcon } from '../../icons/InfoIcon';
 
-// Estilo de resaltado
-const highlightedStyle = {
-    backgroundColor: 'green',
-    transition: 'background-color 2s ease', // Animación de transición
-};
 
-const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
+
+const TablaListStockPrecio = ({ productos }) => {
     const [productosIniciales, setProductosIniciales] = useState(productos)
     const productosInicialesRef = useRef([]);
-    const nuevoProducto = {
-        key: Math.random(),
-        titulo: '',
-        codigo_barra: '',
-        precio_costo: '',
-        precio_venta: '',
-        stock_actual: '',
-        usar_control_por_lote: false,
-        fecha_vencimiento: '',
-        inversor_id: '',
-        highlighted: false,
-    };
+
     const [keyCounter, setKeyCounter] = useState(0);
     const [filas, setFilas] = useState([]);
     const [valoresInputs, setValoresInputs] = useState([]);
@@ -43,11 +27,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
     const inputRef = useRef(null);
     const [objetosBuscados, setObjetosBuscados] = useState([]);
     const [productosSeleccionados, setProductosSeleccionados] = useState([])
-    const [datosCompra, setDatosCompra] = useState({
-        fechaCompra: "",
-        proveedor: "",
-        nroFactura: ""
-    })
     const [errores, setErrores] = useState([])
     const selectedItemRef = useRef(null);
     const listContainerRef = useRef(null);
@@ -99,10 +78,7 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
         }
     }, [selectedItem]);
 
-    const handleChangeDatosCompra = (e) => {
-        const { name, value } = e.target
-        setDatosCompra({ ...datosCompra, [name]: value })
-    }
+
 
     const realizarBusqueda = (textoBusqueda) => {
         const productosActuales = productosInicialesRef.current;
@@ -146,7 +122,7 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
         } else if (e.key === 'Enter' && objetosBuscados[selectedItem]) {
             agregarFilaConProducto(objetosBuscados[selectedItem]);
         } else if (e.key === 'F12' && productosSeleccionados.length > 0) {
-            
+
         }
     };
 
@@ -167,7 +143,7 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                 theme: "colored",
             })
 
-            const response = await productoServices.cargarCompra(valoresInputs, datosCompra);
+            const response = await productoServices.stockPrecio(valoresInputs);
             const data = await response.json();
 
             if (response.status !== 200) {
@@ -198,12 +174,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                     type: "success",
                 });
                 setProductosSeleccionados([]);
-
-                setDatosCompra({
-                    fechaCompra: "",
-                    proveedor: "",
-                    nroFactura: ""
-                })
             }
         } catch (error) {
             // Maneja el error si la creación de la compra falla
@@ -211,10 +181,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
             setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        agregarFila();
-    }, []);
 
 
     const generarIdUnico = (() => {
@@ -224,33 +190,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
             return `${fechaActual}-${contador++}`;
         };
     })();
-
-    const agregarFila = () => {
-        const id = generarIdUnico(); // Genera un identificador único
-        setFilas(prevFilas => [...prevFilas, {
-            key: id,
-            columnaTitulo: 'titulo',
-            columnaTipo: 'tipo',
-            columnaCodigoBarra: 'codigo_barra',
-            columnaPrecioCosto: 'precio_costo',
-            columnaPrecioVenta: 'precio_venta',
-            columnaStock: 'stock',
-            columnaFechaVencimiento: 'fecha_vencimiento'
-        }]);
-        setValoresInputs(prevValores => [...prevValores, {
-            key: id,
-            titulo: '',
-            tipo: "unidad",
-            codigo_barra: '',
-            precio_costo: '',
-            precio_venta: '',
-            stock_actual: '',
-            usar_control_por_lote: '',
-            fecha_vencimiento: ''
-        }]);
-
-    };
-
 
     const agregarFilaConProducto = (producto) => {
         // Verificar si el producto ya existe en las filas
@@ -308,6 +247,10 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
         setValoresInputs(nuevosValoresInputs);
     };
 
+    useEffect(() => {
+        console.log(valoresInputs);
+    }, [valoresInputs])
+
     return (
         <>
             {/* BUSCADOR */}
@@ -342,7 +285,7 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                                 ref={listContainerRef}
                                 style={{
                                     ...inputText ? styles.productosListWithBorder : styles.productosList,
-                                    boxShadow: '0 0 5px rgba(0, 0, 0, 0.1)', // Aplica la sombra difuminada
+                                    boxShadow: '7 10 6 rgba(0, 0, 0, 0.1)', // Aplica la sombra difuminada
                                     display: objetosBuscados.length > 0 || (inputText && !isLoading) ? 'block' : 'none',
                                 }}
                             >
@@ -373,46 +316,10 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                             </ul>
                         </div>
                         {/* FIN BUSCADOR */}
-                    </div>
-                    <div style={{ display: 'flex', marginTop: '-1.5em', gap: '.5em' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Input
-                                variant="faded"
-                                type="date"
-                                name='fechaCompra'
-                                label="Fecha de compra"
-                                labelPlacement="outside"
-                                placeholder="."
-                                onChange={handleChangeDatosCompra}
-                            />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Select
-                                label="Proveedor"
-                                labelPlacement="outside"
-                                placeholder="Seleccione proveedor"
-                                name="proveedor"
-                                style={{ minWidth: '150px' }}
-                                onChange={handleChangeDatosCompra}
-                            >
-                                {proveedores.map((proveedor) => (
-                                    <SelectItem key={proveedor.id} value={proveedor.id}>
-                                        {proveedor.nombre}
-                                    </SelectItem>
-                                ))}
-                            </Select>
-
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Input
-                                variant="faded"
-                                type="text"
-                                name='nroFactura'
-                                label="Número de Factura"
-                                labelPlacement="outside"
-                                placeholder="Nro de Factura"
-                                onChange={handleChangeDatosCompra}
-                            />
+                        <div  className='flex' style={{paddingBottom: '20px'}}>
+                            <Switch defaultSelected>
+                                Editar precios
+                            </Switch>
                         </div>
                     </div>
                     <div>
@@ -439,47 +346,8 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                                 <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
                                     <div className='flex gap-2'>
                                         TIPO
-                                        <Tooltip
-                                            placement='bottom'
-                                            content={
-                                                <div className="px-1 py-2">
-                                                    <div className='p-1'>
-                                                        <div className="text-medium font-bold">Unidad</div>
-                                                        <div className="text-tiny">Vendido individualmente</div>
-                                                        <div className="text-tiny">Ejemplo: Una Camiseta, Un encendedor.</div>
-                                                    </div>
-                                                    <Divider className='my-2' />
-                                                    <div className='p-1'>
-                                                        <div className="text-medium font-bold">Fracción</div>
-                                                        <div className="text-tiny">Dividido en partes</div>
-                                                        <div className="text-tiny">Ejemplo: Queso por gramo, Pan.</div>
-                                                    </div>
-                                                    <Divider className='my-2' />
-                                                    <div className='p-1'>
-                                                        <div className='flex'>
-                                                            <div>
-                                                                <div className="text-medium font-bold">Costo Adicional</div>
-                                                                <div className="text-tiny mt-1">Un ejemplo podría ser </div>
-                                                                <div className="text-tiny mt-1">el adicional para la Recarga de tarjeta SUBE.</div>
-                                                            </div>
-                                                            <div className='text-center'>
-                                                                <span style={{ backgroundColor: '#818cf8', padding: 4, borderRadius: 6, color: 'white' }}>NUEVO</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        >
-                                            <span style={{ cursor: 'pointer' }} className="text-lg text-default-400 cursor-pointer">
-                                                <InfoIcon fill='#ffffff' size={20} />
-                                            </span>
-                                        </Tooltip>
                                     </div>
                                 </th>
-                                <th
-                                    style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'
-                                >
-                                    CÓDIGO BARRA</th>
                                 <th
                                     style={{ maxWidth: "6.5rem", backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'
                                 >
@@ -493,8 +361,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                                 >
                                     STOCK
                                 </th>
-                                <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='text-center group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>CONTROL POR LOTE</th>
-                                <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>FECHA DE VENCIMIENTO</th>
                                 <th style={{ backgroundColor: '#999cbe', color: 'white' }} className='group px-3 h-10 text-left align-middle bg-default-100 whitespace-nowrap text-foreground-500 text-tiny font-semibold first:rounded-l-lg last:rounded-r-lg data-[sortable=true]:transition-colors data-[sortable=true]:cursor-pointer data-[hover=true]:text-foreground-400 outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>ACCIÓN</th>
                             </tr>
                         </thead>
@@ -502,89 +368,32 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                             {filas.map((fila, index) => (
                                 <tr key={index} className='group outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2'>
                                     <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
-                                        <input
-                                            type="text"
-                                            className='input-text'
-                                            value={valoresInputs[index].titulo}
-                                            onChange={(e) => handleInputChange(e, index, 'titulo')}
-                                        />
-                                        <p style={{ color: 'red' }}>{errores[`${fila.key}-titulo`] ?? ""}</p>
+                                        <p style={{ border: '0.5px' }}>{valoresInputs[index].titulo}</p>
                                     </td>
                                     <td
                                         style={{ minWidth: '10rem' }}
                                         className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1  data-[focus-visible=true]:outline-focus before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
-
-                                        <Select
-                                            placeholder="Seleccione tipo"
-                                            labelPlacement="outside"
-                                            variant='bordered'
-                                            defaultSelectedKeys={["unidad"]}
-                                            // disabledKeys={["costo_adicional"]}
-                                            aria-label="Tipo de Producto"
-                                            onChange={(e) => handleInputChange(e, index, 'tipo')}
-                                            className='min-w-min'
-                                            fullWidth
-                                            size='sm'
-                                        >
-                                            <SelectItem key="unidad" textValue="Unidad" SelectItem>
-                                                <div className="flex gap-2 items-center">
-                                                    <div className="flex flex-col">
-                                                        <span className="text-small">Unidad</span>
-                                                        <span className="text-tiny text-default-400"></span>
-                                                    </div>
-                                                </div>
-                                            </SelectItem>
-                                            <SelectItem key="fraccion" textValue="Fracción">
-                                                <div className="flex gap-2 items-center">
-                                                    <div className="flex flex-col">
-                                                        <span className="text-small">Fracción</span>
-                                                    </div>
-                                                </div>
-                                            </SelectItem>
-                                            <SelectItem key="costo_adicional" textValue="Costo Adicional">
-                                                <div className="flex gap-2 items-center">
-                                                    <div className="flex flex-col">
-                                                        <span className="text-small">Costo Adicional</span>
-                                                        <span className="text-tiny text-default-400"></span>
-                                                    </div>
-                                                </div>
-                                            </SelectItem>
-                                        </Select>
-                                    </td>
-                                    <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
-                                        <input
-                                            type="number"
-                                            className='input-text'
-                                            value={valoresInputs[index].codigo_barra}
-                                            onChange={(e) => handleInputChange(e, index, 'codigo_barra')}
-                                        />
-                                        <p style={{ color: 'red' }}>{errores[`${fila.key}-codigo_barra`] ?? ""}</p>
+                                        {
+                                            valoresInputs[index].tipo === "costo_adicional" ?
+                                                <p>Costo Adicional</p> :
+                                                valoresInputs[index].tipo === "fraccion" ?
+                                                    <p>Fracción</p> :
+                                                    valoresInputs[index].tipo === "unidad" ?
+                                                        <p>Unidad</p> :
+                                                        null // Si ninguno de los casos anteriores coincide, devuelve null
+                                        }
                                     </td>
                                     <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                         {
                                             valoresInputs[index].tipo === "costo_adicional"
                                                 ?
                                                 <>
-                                                    <Tooltip
-                                                        content={
-                                                            <div className="px-1 py-2">
-                                                                <div className="text-small font-bold">SIN PRECIO COSTO</div>
-                                                                <div className="text-tiny">En un producto de tipo "costo adicional" no se incluye el precio costo.</div>
-                                                                <div className="text-tiny">Al cobrar, simplemente ingresa el monto del producto y el adicional.</div>
-                                                            </div>
-                                                        }
-                                                    >
-                                                        <div>
-                                                            <input
-                                                                style={{ maxWidth: '6.5rem' }}
-                                                                type="number"
-                                                                disabled
-                                                                className='input-text'
-                                                                value={valoresInputs[index].precio_costo}
-                                                                onChange={(e) => handleInputChange(e, index, 'precio_costo')}
-                                                            />
-                                                        </div>
-                                                    </Tooltip>
+                                                    <input
+                                                        style={{ maxWidth: '6.5rem' }}
+                                                        type="number"
+                                                        className='input-text'
+                                                        disabled
+                                                    />
                                                 </>
                                                 :
                                                 <>
@@ -651,22 +460,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                                         />
                                         <p style={{ color: 'red' }}>{errores[`${fila.key}-stock_actual`] ?? ""}</p>
                                     </td>
-                                    <td className="py-2 px-3 relative text-center align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
-                                        <Checkbox
-                                            value={valoresInputs[index].usar_control_por_lote}
-                                            name='usar_control_por_lote'
-                                            onValueChange={(e) => handleInputChange(e, index, 'usar_control_por_lote')}
-                                        ></Checkbox>
-                                    </td>
-                                    <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
-                                        <input
-                                            type="date"
-                                            className='input-text'
-                                            value={valoresInputs[index].fecha_vencimiento}
-                                            onChange={(e) => handleInputChange(e, index, 'fecha_vencimiento')}
-                                        />
-                                        <p style={{ color: 'red' }}>{errores[`${fila.key}-fecha_vencimiento`] ?? ""}</p>
-                                    </td>
                                     <td className="py-2 px-3 relative align-middle whitespace-normal text-small font-normal [&>*]:z-1 [&>*]:relative outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2 before:content-[''] before:absolute before:z-0 before:inset-0 before:opacity-0 data-[selected=true]:before:opacity-100 group-data-[disabled=true]:text-foreground-300 before:bg-default/40 data-[selected=true]:text-default-foreground first:before:rounded-l-lg last:before:rounded-r-lg">
                                         <button onClick={() => eliminarFila(index)}>Eliminar</button>
                                     </td>
@@ -674,9 +467,6 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                             ))}
                         </tbody>
                     </table>
-                </div>
-                <div className='d-flex text-center mt-4'>
-                    <Button variant="ghost" onClick={() => agregarFila()}>Agregar Fila</Button>
                 </div>
                 <ToastContainer />
             </div>
@@ -707,7 +497,7 @@ const styles = {
         paddingRight: 15,
         paddingTop: 9,
         paddingBottom: 9,
-        backgroundColor: "#fff",
+        backgroundColor: "#fbfbfb",
     },
     productoTitulo: {
         fontSize: '10pt',
@@ -726,6 +516,8 @@ const styles = {
 styles.productosListWithBorder = {
     ...styles.productosList,
     border: '1px solid #ccc',
+    borderRadius: '5px',
+    width: '100%'
 };
 
 export default TablaListStockPrecio

@@ -167,7 +167,7 @@ const TablaListStockPrecio = ({ productos, inversores, proveedores }) => {
                 theme: "colored",
             })
 
-            const response = await productoServices.cargarCompra(valoresInputs, datosCompra);
+            const response = await productoServices.stockPrecio(valoresInputs, datosCompra);
             const data = await response.json();
 
             if (response.status !== 200) {

@@ -48,7 +48,7 @@ const productoServices = {
             throw error;
         }
     },
-    cargarCompra: async (valoresInputs, datosCompra) => {
+    stockPrecio: async (valoresInputs) => {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const url = endpoints.productos.stockPrecio;
 
@@ -61,8 +61,7 @@ const productoServices = {
                 'X-CSRF-TOKEN': csrfToken
             },
             body: JSON.stringify({
-                productos: [...valoresInputs],
-                datosCompra: datosCompra,
+                productos: [...valoresInputs]
             })
         };
 
