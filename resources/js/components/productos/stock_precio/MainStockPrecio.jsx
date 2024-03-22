@@ -31,7 +31,8 @@ export default function MainStockPrecio() {
             isLoading
                 ? "Cargando..."
                 :   <TablaListStockPrecio 
-                        productos={productos} 
+                        productos={productos}
+                        fetchProductos={fetchProductos}
                     />
         }
         </>

@@ -13,10 +13,9 @@ use Illuminate\Pagination\Paginator;
 
 class ReporteController extends Controller
 {
-    public function indexProductos()
+    public function index()
     {
-        $productos = Producto::orderBy('titulo')->paginate(50);
-        return view('reportes.index', compact('productos'));
+        return view('reportes.index');
     }
     public function showProducto($id, $anio, $mes)
     {

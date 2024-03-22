@@ -4,6 +4,7 @@ import cajaServices from '../../../services/cajaServices';
 import { Button, Input } from "@nextui-org/react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { formatearAMoneda } from '../../../utils/utils';
 
 export default function CajaEgresos() {
     const [isLoading, setIsLoading] = useState(false)
@@ -107,7 +108,7 @@ export default function CajaEgresos() {
                         <div className="flex items-center">
                             <div className="text-center">
                                 <p>Efectivo en Caja</p>
-                                <p className="text-4xl">${montoTotal}</p>
+                                <p className="text-4xl">${formatearAMoneda(montoTotal)}</p>
                             </div>
                         </div>
                     </div>

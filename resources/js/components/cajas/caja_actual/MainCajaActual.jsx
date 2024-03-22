@@ -105,7 +105,7 @@ export default function MainCajaActual() {
                                         <div className="flex items-center">
                                             <div>
                                                 <p className="text-4xl">${formatearAMoneda(montoTotal)}</p>
-                                                <p>Efectivo de apertura: ${sesionActual?.monto_inicial}</p>
+                                                <p>Efectivo de apertura: ${formatearAMoneda(sesionActual?.monto_inicial)}</p>
                                             </div>
                                             <div className="flex ml-4 gap-4">
                                                 <Button onClick={() => irPaginaIngreso()} style={{backgroundColor: "#5fbb66", color: 'white'}}>Ingresar</Button>

@@ -161,12 +161,6 @@ class ProductoController extends Controller
         $messages = [
             'titulo.required' => 'El campo Título es obligatorio.',
             'titulo.unique' => 'El título ya está en uso.',
-            'precio_venta.required' => 'El campo Precio de venta es obligatorio.',
-            'precio_venta.numeric' => 'El campo Precio de venta debe ser un valor numérico.',
-            'precio_costo.required' => 'El campo Precio de costo es obligatorio.',
-            'precio_costo.numeric' => 'El campo Precio de costo debe ser un valor numérico.',
-            'stock_actual.required' => 'El campo Stock es obligatorio.',
-            'stock_actual.numeric' => 'El campo Stock debe ser un valor numérico.',
             'codigo_barra.numeric' => 'El campo requiere números.',
             'codigo_barra.unique' => 'El código de barras ya ha sigo registrado.',
         ];
@@ -179,9 +173,6 @@ class ProductoController extends Controller
                 })->ignore($producto->id),
             ],
             'tipo' => 'required|string|in:unidad,fraccion,costo_adicional',
-            'precio_venta' => $request->tipo == 'costo_adicional' ? '' : 'required|numeric',
-            'precio_costo' => $request->tipo == 'costo_adicional' ? '' : 'required|numeric',
-            'stock_actual' => 'required|numeric',
             'codigo_barra' => [
                 'nullable',
                 'sometimes',
@@ -194,9 +185,6 @@ class ProductoController extends Controller
 
         $producto->titulo = $request->titulo;
         $producto->tipo = $request->tipo;
-        $producto->precio_venta = $request->precio_venta;
-        $producto->precio_costo = $request->precio_costo;
-        $producto->stock_actual = $request->stock_actual;
         $producto->codigo_barra = $request->codigo_barra;
         $producto->update();
 
@@ -400,7 +388,6 @@ class ProductoController extends Controller
         $user = Auth::user();
         $id_comercio = $user->comercio_id;
         $productos = $request->productos;
-        $datosCompra = $request->datosCompra;
 
         $errores = [];
 
@@ -408,10 +395,19 @@ class ProductoController extends Controller
             $key = $producto['key'];
 
             $reglas_validacion = [
-                'titulo' => 'required|unique:productos,titulo,NULL,id,comercio_id,' . $id_comercio,
-                'codigo_barra' => 'nullable|unique:productos,codigo_barra,NULL,id,comercio_id,' . $id_comercio,
+                'key' => [
+                    'required',
+                    function ($attribute, $value, $fail) use ($id_comercio) {
+                        // Verificar si el producto pertenece al comercio del usuario logueado
+                        $producto = Producto::find($value);
+                        if (!$producto || $producto->comercio_id != $id_comercio) {
+                            $fail('El producto no pertenece al comercio del usuario.');
+                        }
+                    },
+                ],
                 'stock_actual' => 'required',
             ];
+            
 
             if ($producto['tipo'] !== Producto::COSTO_ADICIONAL) {
                 $reglas_validacion['precio_costo'] = 'required';
@@ -419,10 +415,10 @@ class ProductoController extends Controller
             }
 
             $validator = Validator::make($producto, $reglas_validacion);
+            
 
             $validator->messages()->merge([
                 'required' => 'Campo obligatorio.',
-                'unique' => 'El :attribute ya está en uso.',
                 'numeric' => 'El campo :attribute requiere números.',
             ]);
 
@@ -440,25 +436,33 @@ class ProductoController extends Controller
             }
 
         }
-
+        
         if (!empty($errores)) {
             // Devolver una respuesta JSON con los errores ordenados por clave de producto
             return response()->json(['errors' => $errores], 422);
         }
 
-
-        DB::transaction(function () use ($productos) {
+        DB::transaction(function () use ($productos, $id_comercio) {
             foreach ($productos as $producto) {
+                if (isset($producto['key'])) {
+                    try {
+                        $productoDB = Producto::where('id', $producto['key'])
+                            ->where('comercio_id', $id_comercio)
+                            ->firstOrFail();
+                        
+                        $productoDB->precio_venta = $producto['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $producto['precio_venta'];
+                        $productoDB->precio_costo = $producto['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $producto['precio_costo'];
+                        $productoDB->stock_actual = $producto['stock_actual'];
+                        $productoDB->update();
 
-                if (isset($producto['id'])) {
-                    $productoDB = Producto::find($producto['id']);
+                    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                        // Devolver un error si no se encuentra el producto
+                        abort(404, 'El producto no se encontró o no pertenece al comercio del usuario.');
+                    }
                 } else {
-                    // error de no encontrar el producto
+                    // Devolver un error si no se proporciona un ID de producto
+                    abort(422, 'Se debe proporcionar un ID de producto.');
                 }
-                $productoDB->precio_venta = $producto['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $producto['precio_venta'];
-                $productoDB->precio_costo = $producto['tipo'] == Producto::COSTO_ADICIONAL ? 0 : $producto['precio_costo'];
-                $productoDB->stock_actual = $producto['stock_actual'];
-                $productoDB->update();
             }
         });
 

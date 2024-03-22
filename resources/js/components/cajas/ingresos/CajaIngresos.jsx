@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import cajaServices from "../../../services/cajaServices";
+import { formatearAMoneda } from "../../../utils/utils";
 
 
 export default function CajaIngresos(){
@@ -105,7 +106,7 @@ export default function CajaIngresos(){
                         <div className="flex items-center">
                             <div className="text-center">
                                 <p>Efectivo en Caja</p>
-                                <p className="text-4xl">${montoTotal}</p>
+                                <p className="text-4xl">${formatearAMoneda(montoTotal)}</p>
                             </div>
                         </div>
                     </div>
