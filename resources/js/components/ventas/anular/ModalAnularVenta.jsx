@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Spinner } from "@nextui-org/react";
 import ventaServices from "../../../services/ventaServices";
+import { PlusIcon } from "../../icons/PlusIcon";
 
 export default function ModalAnularVenta({ idVenta }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -30,7 +31,7 @@ export default function ModalAnularVenta({ idVenta }) {
 
     return (
         <>
-            <p onClick={onOpen} style={{ cursor: 'pointer' }}>Anular</p>
+            <p onClick={onOpen} style={{ cursor: 'pointer' }} >Anular</p>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
