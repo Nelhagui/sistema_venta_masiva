@@ -113,8 +113,13 @@ class ClienteController extends Controller
             // Cliente no encontrado, puedes manejar este caso según tus necesidades
             return response()->json(['error' => 'Cliente no encontrado'], 404);
         }
-        $deudas = $cliente->ventas()->where('estado_pago', '!=', 'cobrada')->with(['pagos', 'detalles'])->get();
-        $ventas = $cliente->ventas()->with(['pagos', 'detalles'])->get();
+        $deudas = $cliente->ventas()
+            ->where('estado_pago', '!=', 'cobrada')
+            ->where('anulada', '==', 0)
+            ->with(['pagos', 'detalles'])->get();
+        $ventas = $cliente->ventas()
+            ->where('anulada', '==', 0)
+            ->with(['pagos', 'detalles'])->get();
 
         $cliente->deudas = $deudas;
         $cliente->todas_las_ventas = $ventas;
@@ -166,7 +171,7 @@ class ClienteController extends Controller
                     $pago->venta_id = $venta->id;
                     $pago->fecha_pago = now();
                     $pago->monto_pagado = $resta_abonar;
-                    if(is_array($request->metodoPago)) {
+                    if (is_array($request->metodoPago)) {
                         $pago->metodos_de_pago = implode(', ', $request->metodoPago);
                     } else {
                         $pago->metodos_de_pago = $request->metodoPago;
