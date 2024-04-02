@@ -10,6 +10,7 @@ export const endpoints = {
         lista: `${API_BASE_URL}/ventas`,
         crear: `${API_BASE_URL}/ventas/crear`,
         anular: `${API_BASE_URL}/ventas/anular`,
+        detalle: `${API_BASE_URL}/ventas/ver`,
     },
     caja: {
         cajaActual: `${API_BASE_URL}/caja`,
@@ -101,6 +102,7 @@ export const urls = {
         stockPrecio: `${BASE_URL}/productos/stock-precio`,
         importarArchivo: `${BASE_URL}/productos/importar`
     },
-    descargarExcelEjemplo: `${BASE_URL}/public/files/rapido-ventas-excel-ejemplo.xlsx`
+    descargarExcelEjemplo: `${BASE_URL}/public/files/rapido-ventas-excel-ejemplo.xlsx`,
+
 };
 

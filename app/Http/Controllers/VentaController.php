@@ -14,6 +14,7 @@ use App\Models\Lote;
 use App\Models\Pago;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use PDF;
 
 class VentaController extends Controller
 {
@@ -67,6 +68,10 @@ class VentaController extends Controller
             }
         }
         return $total_valor_venta;
+    }
+
+    public function imprimirEtiqueta(Request $request) {
+        
     }
 
 
@@ -280,6 +285,18 @@ class VentaController extends Controller
         }
     }
 
+    public function showApi(string $id)
+    {
+        $venta = Venta::with('detalles')->find($id);
+        $comercio = $venta->user->comercio;
+        $respuesta = [
+            'venta' => $venta,
+            'comercio' => $comercio
+        ];
+
+        return response()->json($respuesta);
+    }
+
     public function anularVentaApi(Request $request)
     {
         $venta = Venta::find($request->id);
@@ -290,4 +307,6 @@ class VentaController extends Controller
         }
         return response()->json(['error' => 'Error al procesar los datos'], 400);
     }
+
+
 }

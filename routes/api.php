@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('ventas')->group(function () {
         Route::get('/', [VentaController::class, 'indexApi']);
         Route::get('/{sesionCajaId}', [VentaController::class, 'indexSesionApi']);
+        Route::get('/ver/{id}', [VentaController::class, 'showApi']);
         Route::post('/crear', [VentaController::class, 'storeApi']);
         Route::post('/anular', [VentaController::class, 'anularVentaApi']);
     });

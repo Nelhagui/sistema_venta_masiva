@@ -7,10 +7,12 @@ import { urls } from '../../config/config';
 import ResumenMontos from './detalles/ResumenMontos';
 import ModalAnularVenta from './anular/ModalAnularVenta';
 import ResumenDetallado from './detalles/ResumenDetallado';
+import ModalImprimirTicket from './impresion/ModalImprimirTicket';
 
 
 const TablaListVentas = ({ ventas, metodos }) => {
     const [selectedDate, setSelectedDate] = useState('');
+    const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
 
     useEffect(() => {
         // Obtener el valor de fecha de la query (si existe)
@@ -19,7 +21,6 @@ const TablaListVentas = ({ ventas, metodos }) => {
         // Establecer la fecha seleccionada en el estado
         setSelectedDate(queryDate || new Date().toISOString().split('T')[0]);
     }, []);
-
 
 
     const handleDateChange = (event) => {
@@ -152,6 +153,7 @@ const TablaListVentas = ({ ventas, metodos }) => {
                                                 <a href={`${urls.ventas.ver}/${venta.id}`} >
                                                     <EyeIcon style={{ cursor: 'pointer' }} />
                                                 </a>
+                                                <ModalImprimirTicket idVenta={venta?.id} />
                                                 <div>
                                                     {
                                                         venta?.anulada
