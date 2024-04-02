@@ -108,6 +108,8 @@ export default function ModalImprimirTicket({idVenta}) {
                 </head>
                 <body>
                     <div class="text-center">
+                        <p>X</p>
+                        <p>DOCUMENTO NO FISCAL</p>
                         <h1>${comercio?.nombre}</h1>
                         <div class="fecha border-dotted">
                             <p>Fecha: ${fechaUtils.convertirFormatoFecha(venta?.created_at)}</p>
