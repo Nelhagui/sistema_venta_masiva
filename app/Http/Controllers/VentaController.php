@@ -269,7 +269,7 @@ class VentaController extends Controller
             }
 
             DB::commit(); // Confirma la transacción si todo se ejecuta correctamente
-            return response()->json(['message' => 'Venta realizada con éxito.'], 200);
+            return response()->json(['message' => 'Venta realizada con éxito.', 'id_ultima_venta' => $venta->id], 200);
 
         } catch (\Exception $e) {
 
@@ -308,5 +308,30 @@ class VentaController extends Controller
         return response()->json(['error' => 'Error al procesar los datos'], 400);
     }
 
+    public function ultimaVentaApi()
+    {
+        $user = Auth::user();
 
+        // Obtén la última sesión de caja abierta del usuario
+        $sesionCaja = $user->ultimaSesionCajaAbierta()->first();
+
+        // Si $sesionCaja es null, se ejecuta el bloque else, de lo contrario, simplemente no se hace nada
+        if (!$sesionCaja) {
+            $logMessageProdNofound = "[" . now()->toDateTimeString() . "] Ultima sesión no encontrada. Vista Lector. Error en la busqueda de la sesión para traer la ultima venta.";
+            Storage::disk('local')->append('fallos_en_lector.log', $logMessageProdNofound);
+            return response()->json(['error' => 'No se encontró una sesión de caja abierta para este usuario.'], 404);
+        }
+        // Obtener la última venta asociada a la sesión de caja
+        $ultimaVenta = $sesionCaja->ventas()->latest('created_at')->first();
+
+        // Verificar si se encontró alguna venta
+        if ($ultimaVenta) {
+            // Hacer algo con $ultimaVenta
+            return response()->json(['id_ultima_venta' => $ultimaVenta->id]);
+        } else {
+            // Manejar la situación donde no se encontró ninguna venta
+            return response()->json(['mensaje' => 'No se encontró ninguna venta para esta sesión de caja'], 404);
+        }
+
+    }
 }

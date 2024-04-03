@@ -34,7 +34,8 @@ function ListProductos({ productos, metodosDePago, clientes }) {
         aumento,
         descuento,
         metodoPagoSeleccionado,
-        setMetodoPagoSeleccionado
+        setMetodoPagoSeleccionado,
+        setIdUltimaVenta
     } = useLectorContext();
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
     const [estadoDelPago, setEstadoDelPago] = useState(null)
@@ -84,6 +85,7 @@ function ListProductos({ productos, metodosDePago, clientes }) {
                     render: "Proceso finalizado correctamente!",
                     type: "success",
                 });
+                setIdUltimaVenta(resultado.data.id_ultima_venta);
                 resetAll();
                 reset();
                 setMetodoPagoSeleccionado("0");

@@ -6,7 +6,7 @@ import { endpoints } from '../../../config/config';
 import { capitalizeToLowerCase, formatearAMoneda } from '../../../utils/utils';
 import fechaUtils from '../../../utils/fechaUtils';
 
-export default function ModalImprimirTicket({idVenta}) {
+export default function ModalImprimirTicket({ idVenta, label = null, propStyle = '' }) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const [isLoading, setIsLoading] = useState(false);
     const [venta, setVenta] = useState(null);
@@ -27,7 +27,7 @@ export default function ModalImprimirTicket({idVenta}) {
             // Si venta aún no tiene un valor asignado, no hacemos nada
             return;
         }
-    
+
         const style = `
             body {
                 margin: 0; /* Eliminar márgenes */
@@ -78,7 +78,7 @@ export default function ModalImprimirTicket({idVenta}) {
                 margin-right: 5px
             }
         `;
-    
+
         const detallesVentaHTML = venta?.detalles.map(detalle => `
             <tr key="${detalle.id}">
                 <td class="producto">
@@ -90,11 +90,11 @@ export default function ModalImprimirTicket({idVenta}) {
                 </td>
             </tr>
         `).join('');
-    
+
         const iframe = document.createElement('iframe');
         iframe.style.display = 'none';
         document.body.appendChild(iframe);
-    
+
         // Escribir el contenido en el iframe
         const iframeDocument = iframe.contentWindow.document;
         iframeDocument.open();
@@ -127,14 +127,14 @@ export default function ModalImprimirTicket({idVenta}) {
             </html>
         `);
         iframeDocument.close();
-    
+
         // Llamar al método print en el iframe
         iframe.contentWindow.print();
 
         onOpenChange()
     };
-    
-  
+
+
     useEffect(() => {
         if (isOpen) {
             fetchVenta();
@@ -143,9 +143,17 @@ export default function ModalImprimirTicket({idVenta}) {
 
     return (
         <>
-            <p onClick={onOpen} style={{ cursor: 'pointer' }}>
-                <PrintIcon/>
-            </p>
+            <div onClick={onOpen} style={{ cursor: 'pointer' }}>
+                {
+                    label ?
+                        <div className={propStyle}>
+                            <PrintIcon />
+                            <p>{label}</p>
+                        </div>
+                        :
+                        <PrintIcon />
+                }
+            </div>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>
                     {(onClose) => (
@@ -174,10 +182,10 @@ export default function ModalImprimirTicket({idVenta}) {
                                 >
                                     {
                                         isLoading ?
-                                        <>
-                                            <Spinner color='default' size='sm' /> Procesando... 
-                                        </>
-                                        : "Imprimir Ticket"
+                                            <>
+                                                <Spinner color='default' size='sm' /> Procesando...
+                                            </>
+                                            : "Imprimir Ticket"
                                     }
                                 </Button>
                             </ModalFooter>

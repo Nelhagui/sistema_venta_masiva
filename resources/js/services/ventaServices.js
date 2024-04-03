@@ -106,6 +106,27 @@ const ventaServices = {
             throw error;
         }
     },
+    ultimaVenta: async () => {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const url = endpoints.ventas.ultimaVenta;
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Referer': window.location.origin,
+                'X-CSRF-TOKEN': csrfToken
+            }
+        };
+        try {
+            const response = await fetch(url, requestOptions);
+            return response;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            throw error;
+        }
+    }
 
 };
 

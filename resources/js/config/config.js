@@ -1,9 +1,9 @@
-// export const BASE_URL = 'http://127.0.0.1:8000';
-// export const API_BASE_URL = 'http://127.0.0.1:8000/api';
+export const BASE_URL = 'http://127.0.0.1:8000';
+export const API_BASE_URL = 'http://127.0.0.1:8000/api';
 // export const BASE_URL = 'https://rapidoventas.com.ar';
 // export const API_BASE_URL = 'https://rapidoventas.com.ar/api';
-export const BASE_URL = 'https://test.rapidoventas.com.ar';
-export const API_BASE_URL = 'https://test.rapidoventas.com.ar/api';
+// export const BASE_URL = 'https://test.rapidoventas.com.ar';
+// export const API_BASE_URL = 'https://test.rapidoventas.com.ar/api';
 
 export const endpoints = {
     ventas: {
@@ -11,6 +11,7 @@ export const endpoints = {
         crear: `${API_BASE_URL}/ventas/crear`,
         anular: `${API_BASE_URL}/ventas/anular`,
         detalle: `${API_BASE_URL}/ventas/ver`,
+        ultimaVenta: `${API_BASE_URL}/ventas/ultima-venta`,
     },
     caja: {
         cajaActual: `${API_BASE_URL}/caja`,

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import ListProductos from './ListProductos';
 import { LectorContextProvider } from '../../context/LectorContext';
 import metodoPagoServices from '../../services/metodoPagoServices';
 import clienteServices from '../../services/clienteServices';
