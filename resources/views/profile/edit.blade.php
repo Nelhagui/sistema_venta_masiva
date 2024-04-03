@@ -10,6 +10,12 @@
                 </div>
             </div>
 
+            {{-- <div class="p-4 sm:p-8  dark:bg-gray-800 shadow sm:rounded-lg">
+                <div class="max-w-xl">
+                    @include('profile.partials.update-comercio-information-form')
+                </div>
+            </div> --}}
+
             <div class="p-4 sm:p-8  dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
