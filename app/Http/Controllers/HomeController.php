@@ -13,30 +13,30 @@ class HomeController extends Controller
     {
         $verificarPais = env('VERIFICAR_PAIS', false);
 
-        if ($verificarPais) {
-            // Obtiene la dirección IP del cliente
-            $ip = $request->ip();
+        // if ($verificarPais) {
+        //     // Obtiene la dirección IP del cliente
+        //     $ip = $request->ip();
     
-            // Consulta la API de geolocalización
-            $response = Http::get("http://ip-api.com/json/{$ip}");
+        //     // Consulta la API de geolocalización
+        //     $response = Http::get("http://ip-api.com/json/{$ip}");
     
-            // Analiza la respuesta JSON
-            $data = $response->json();
+        //     // Analiza la respuesta JSON
+        //     $data = $response->json();
     
-            // Obtiene el país desde los datos de la API
-            $country = $data['country'];
+        //     // Obtiene el país desde los datos de la API
+        //     $country = $data['country'];
     
-            // Restringe el acceso basado en el país
-            if ($country !== 'Argentina') {
-                $url = $request->url();
-                $logMessage = "[" . now()->toDateTimeString() . "] Intento de ingreso desde $country con la dirección IP: $ip. Ruta: $url";
+        //     // Restringe el acceso basado en el país
+        //     if ($country !== 'Argentina') {
+        //         $url = $request->url();
+        //         $logMessage = "[" . now()->toDateTimeString() . "] Intento de ingreso desde $country con la dirección IP: $ip. Ruta: $url";
     
-                Storage::disk('local')->append('intentos_ingreso.log', $logMessage);
+        //         Storage::disk('local')->append('intentos_ingreso.log', $logMessage);
                 
-                // Redirige al usuario a una página de error o muestra un mensaje de prohibición
-                return "Por el momento no estamos operando en tu país. Disculpas";
-            }
-        }
+        //         // Redirige al usuario a una página de error o muestra un mensaje de prohibición
+        //         return "Por el momento no estamos operando en tu país. Disculpas";
+        //     }
+        // }
         if (Auth::check()) {
             // Si el usuario está autenticado, redirige a otra vista
             return redirect()->route('index.lector');
