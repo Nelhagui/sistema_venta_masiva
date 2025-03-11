@@ -24,7 +24,7 @@ class SesionCajaController extends Controller
         $ultimaSesion = $user->sesionesCaja()->with('ventas')->latest()->first();
 
         // Calcular el total de ventas para la sesión de caja del usuario
-        $ventas = Venta::where('sesion_caja_id', $ultimaSesion->id)->sum('monto_total_venta');
+        $ventas = Venta::where('sesion_caja_id', $ultimaSesion->id)->where('estado_pago', 'cobrada')->sum('monto_total_venta');
 
         // Obtener los movimientos de caja (adicion) para la sesión de caja del usuario
         $movimientosAdicion = CajaMovimiento::where('sesion_caja_id', $ultimaSesion->id)
@@ -99,10 +99,14 @@ class SesionCajaController extends Controller
     public function showApi(Request $request)
     {
         $user = Auth::user();
-        $ultimaSesion = $user->sesionesCaja()->with('ventas')->latest()->first();
+        
+        $ultimaSesion = $user->sesionesCaja()->with(['ventas' => function($query) {
+            $query->where('estado_pago', 'cobrada');
+        }])->latest()->first();
 
         // Calcular el total de ventas para la sesión de caja del usuario
-        $ventas = Venta::where('sesion_caja_id', $ultimaSesion->id)->sum('monto_total_venta');
+        $ventas = Venta::where('sesion_caja_id', $ultimaSesion->id)->where('estado_pago', 'cobrada')->sum('monto_total_venta');
+        
         $aumentos = Venta::where('sesion_caja_id', $ultimaSesion->id)->sum('aumento');
         $descuentos = Venta::where('sesion_caja_id', $ultimaSesion->id)->sum('descuento');
 
